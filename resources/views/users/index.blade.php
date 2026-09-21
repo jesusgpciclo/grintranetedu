@@ -22,17 +22,17 @@
 
     <!-- Search and Filter Bar -->
     <div class="card" style="padding: 1.5rem; margin-bottom: 2rem;">
-        <form action="{{ route('users.index') }}" method="GET" style="display: flex; gap: 1rem; align-items: center;">
+        <form action="{{ route('users.index') }}" method="GET" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
             <!-- Preserve sort params -->
             @if(request('sort_by')) <input type="hidden" name="sort_by" value="{{ request('sort_by') }}"> @endif
             @if(request('sort_order')) <input type="hidden" name="sort_order" value="{{ request('sort_order') }}"> @endif
 
-            <div style="flex: 2;">
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por nombre o email..."
+            <div style="flex: 2; min-width: 200px;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por nombre, email o departamento..."
                     style="width: 100%;">
             </div>
 
-            <div style="flex: 1;">
+            <div style="flex: 1; min-width: 150px;">
                 <select name="group_id" style="width: 100%;" onchange="this.form.submit()">
                     <option value="">Cualquier Grupo</option>
                     @foreach($groups as $group)
@@ -43,7 +43,7 @@
                 </select>
             </div>
 
-            <div style="flex: 1;">
+            <div style="flex: 1; min-width: 150px;">
                 <select name="role" style="width: 100%;" onchange="this.form.submit()">
                     <option value="">Todos los roles</option>
                     @foreach($roles as $role)
@@ -55,23 +55,23 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Filtrar</button>
-            @if(request('search') || request('role') || request('course') || request('group'))
+            @if(request('search') || request('role') || request('group_id'))
                 <a href="{{ route('users.index') }}" class="btn" style="background: rgba(255, 255, 255, 0.1);">Limpiar</a>
             @endif
         </form>
     </div>
 
     <div class="card table-container">
-        <table>
+        <table class="smart-table" data-column-filters="false">
             <thead>
                 <tr>
                     <th style="width: 50px;"></th>
                     <th><x-sort-header column="name" label="Nombre" route="users.index" /></th>
                     <th><x-sort-header column="last_name" label="Apellidos" route="users.index" /></th>
-                    <th>Grupo / Curso</th>
+                    <th><x-sort-header column="departamento" label="Departamento" route="users.index" /></th>
+                    <th>Grupo</th>
                     <th><x-sort-header column="email" label="Email" route="users.index" /></th>
                     <th>Roles</th>
-                    <th><x-sort-header column="created_at" label="Fecha Creación" route="users.index" /></th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -89,9 +89,18 @@
                         </td>
                         <td style="font-weight: 500;">{{ $user->name }}</td>
                         <td>{{ $user->last_name }}</td>
+                        <td>
+                            @if($user->departamento)
+                                <span class="badge" style="background: rgba(56, 189, 248, 0.15); color: var(--primary); border: 1px solid var(--primary-border);">
+                                    {{ $user->departamento }}
+                                </span>
+                            @else
+                                <span style="color: var(--text-muted);">-</span>
+                            @endif
+                        </td>
                         <td style="color: var(--primary); font-weight: 500;">
                             @if($user->groupRel)
-                                {{ $user->groupRel->course }} - {{ $user->groupRel->name }}
+                                {{ $user->groupRel->name }}
                             @else
                                 -
                             @endif
@@ -102,7 +111,6 @@
                                 <span class="badge badge-role">{{ $role->name }}</span>
                             @endforeach
                         </td>
-                        <td style="color: var(--text-muted);">{{ $user->created_at->format('d/m/Y') }}</td>
                         <td>
                             <div style="display: flex; gap: 0.5rem;">
                                 <a href="{{ route('users.edit', $user) }}" class="btn"

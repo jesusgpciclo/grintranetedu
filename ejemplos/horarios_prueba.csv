@@ -1,0 +1,4 @@
+Profesor_Email;Profesor_Nombre;Curso_Escolar;Plantilla_ID;Plantilla_Nombre;Dia;Tramo_ID;Tramo_Nombre;Tipo;Asignatura_o_Texto;Grupo_ID;Grupo_Nombre;Guardia_ID
+profesjesus@example.com;Jesús García;2026/2027;1;Horario Escolar;Lunes;1;1a;clase;Matemáticas;1;1º ESO A;
+profesjesus@example.com;Jesús García;2026/2027;1;Horario Escolar;Lunes;2;2a;guardia;Guardia;;;1
+profesjesus@example.com;Jesús García;2026/2027;1;Horario Escolar;Martes;3;3a;texto;Reunión de Departamento;;;

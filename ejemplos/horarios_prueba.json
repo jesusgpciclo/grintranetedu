@@ -1,0 +1,33 @@
+{
+  "meta": {
+    "description": "Prueba de importación de horario para Jesús García"
+  },
+  "schedules": [
+    {
+      "profesor_email": "profesjesus@example.com",
+      "plantilla_id": 1,
+      "selections": [
+        {
+          "day": "Lunes",
+          "time_slot_id": 1,
+          "type": "clase",
+          "subject": "Matemáticas",
+          "group_id": 1,
+          "value": "Matemáticas (1º ESO A)"
+        },
+        {
+          "day": "Lunes",
+          "time_slot_id": 2,
+          "type": "guardia",
+          "value": "Guardia"
+        },
+        {
+          "day": "Martes",
+          "time_slot_id": 3,
+          "type": "texto",
+          "value": "Reunión de Departamento"
+        }
+      ]
+    }
+  ]
+}

@@ -6,7 +6,7 @@
     <div class="login-page">
         <div class="card login-card">
             <div style="text-align: center; margin-bottom: 2rem;">
-                <h1 style="font-size: 2.5rem; color: var(--primary);">Laravel<span style="color: #fff">Admin</span></h1>
+                <h1 style="font-size: 2.5rem; color: var(--primary);">GR<span style="color: #fff"> Intranet</span><span style="color: var(--primary)"> EDU</span></h1>
                 <p style="color: var(--text-muted);">Restablecer contraseña</p>
             </div>
 

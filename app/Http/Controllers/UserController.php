@@ -20,7 +20,10 @@ class UserController extends Controller
             $search = $request->search;
             $query->where(function($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                  ->orWhere('last_name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('departamento', 'like', "%{$search}%")
+                  ->orWhere('observaciones', 'like', "%{$search}%");
             });
         }
 
@@ -40,14 +43,14 @@ class UserController extends Controller
             $sortBy = $request->input('sort_by');
             
             // Allow sorting by Valid columns only
-            if (in_array($sortBy, ['name', 'last_name', 'email', 'created_at'])) {
+            if (in_array($sortBy, ['name', 'last_name', 'email', 'departamento', 'created_at'])) {
                 $query->orderBy($sortBy, $sortOrder);
             }
         } else {
             $query->orderBy('created_at', 'desc'); // Default sort
         }
 
-        $users = $query->paginate(20);
+        $users = $query->paginate($request->input('per_page', 25));
         $roles = Role::all();
         $groups = Group::all();
         return view('users.index', compact('users', 'roles', 'groups'));
@@ -65,21 +68,29 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'group_id' => 'required_if:role,alumno|nullable|exists:groups,id',
+            'departamento' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string',
+            'group_id' => 'nullable|exists:groups,id',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|string|exists:roles,name',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,name',
         ]);
+
+        $roles = $request->roles;
+        $isAlumno = in_array('alumno', $roles);
 
         $user = User::create([
             'name' => $request->name,
             'last_name' => $request->last_name,
-            'group_id' => $request->role === 'alumno' ? $request->group_id : null,
+            'departamento' => !$isAlumno ? $request->departamento : null,
+            'observaciones' => $request->observaciones,
+            'group_id' => $isAlumno ? $request->group_id : null,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $user->assignRole($request->role);
+        $user->assignRole($roles);
 
         return redirect()->route('users.index')->with('success', 'Usuario creado correctamente.');
     }
@@ -96,15 +107,23 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'last_name' => 'nullable|string|max:255',
-            'group_id' => 'required_if:role,alumno|nullable|exists:groups,id',
+            'departamento' => 'nullable|string|max:255',
+            'observaciones' => 'nullable|string',
+            'group_id' => 'nullable|exists:groups,id',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'role' => 'required|string|exists:roles,name',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,name',
         ]);
+
+        $roles = $request->roles;
+        $isAlumno = in_array('alumno', $roles);
 
         $user->update([
             'name' => $request->name,
             'last_name' => $request->last_name,
-            'group_id' => $request->role === 'alumno' ? $request->group_id : null,
+            'departamento' => !$isAlumno ? $request->departamento : null,
+            'observaciones' => $request->observaciones,
+            'group_id' => $isAlumno ? $request->group_id : null,
             'email' => $request->email,
         ]);
 
@@ -117,7 +136,7 @@ class UserController extends Controller
             ]);
         }
 
-        $user->syncRoles([$request->role]);
+        $user->syncRoles($roles);
 
         return redirect()->route('users.index')->with('success', 'Usuario actualizado correctamente.');
     }

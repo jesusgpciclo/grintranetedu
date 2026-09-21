@@ -9,7 +9,21 @@ class ScheduleSelection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_schedule_id', 'time_slot_id', 'day', 'value', 'guardia_id'];
+    protected $fillable = [
+        'user_schedule_id',
+        'time_slot_id',
+        'day',
+        'value',
+        'type',
+        'subject',
+        'group_id',
+        'guardia_id',
+        'is_convivencia'
+    ];
+
+    protected $casts = [
+        'is_convivencia' => 'boolean',
+    ];
 
     public function userSchedule()
     {
@@ -24,5 +38,10 @@ class ScheduleSelection extends Model
     public function guardia()
     {
         return $this->belongsTo(Guardia::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
     }
 }

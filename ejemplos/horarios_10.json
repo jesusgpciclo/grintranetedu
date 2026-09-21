@@ -1,0 +1,2317 @@
+{
+    "meta": {
+        "description": "Horarios completos (18h clase, 7h complementarias) para 10 profesores"
+    },
+    "schedules": [
+        {
+            "profesor_email": "carlos.garcia@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Matemáticas",
+                    "group_id": 1,
+                    "value": "Matemáticas (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "maria.lopez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Lengua Castellana",
+                    "group_id": 2,
+                    "value": "Lengua Castellana (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 1,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "juan.perez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Geografía",
+                    "group_id": 3,
+                    "value": "Geografía (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "ana.martinez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Biología",
+                    "group_id": 1,
+                    "value": "Biología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 1,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "luis.rodriguez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Educación Física",
+                    "group_id": 2,
+                    "value": "Educación Física (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 1,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "laura.sanchez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Inglés",
+                    "group_id": 3,
+                    "value": "Inglés (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "pedro.gomez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Tecnología",
+                    "group_id": 1,
+                    "value": "Tecnología (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 1,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "elena.fernandez@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Física y Química",
+                    "group_id": 3,
+                    "value": "Física y Química (3º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 1,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "miguel.ruiz@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Historia",
+                    "group_id": 1,
+                    "value": "Historia (1º ESO A)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 7,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 3,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 7,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        },
+        {
+            "profesor_email": "sofia.diaz@example.com",
+            "plantilla_id": 1,
+            "selections": [
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Lunes",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Martes",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 3,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 5,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 6,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Miércoles",
+                    "time_slot_id": 7,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 1,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 2,
+                    "type": "clase",
+                    "subject": "Plástica",
+                    "group_id": 2,
+                    "value": "Plástica (2º ESO B)",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 3,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 5,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Jueves",
+                    "time_slot_id": 6,
+                    "type": "guardia",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 1,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Tutoría",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 2,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Reunión de Departamento",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 5,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Recreo",
+                    "guardia_id": null
+                },
+                {
+                    "day": "Viernes",
+                    "time_slot_id": 6,
+                    "type": "texto",
+                    "subject": null,
+                    "group_id": null,
+                    "value": "Guardia de Biblioteca",
+                    "guardia_id": null
+                }
+            ]
+        }
+    ]
+}

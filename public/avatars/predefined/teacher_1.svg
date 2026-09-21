@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <circle cx="60" cy="60" r="58" fill="#e0f2fe" stroke="#38bdf8" stroke-width="4"/>
+  <!-- Body / Clothes -->
+  <path d="M26 112c2-26 18-36 34-36s32 10 34 36" fill="#0284c7"/>
+  <path d="M50 76h20v14H50z" fill="#fbcfe8"/>
+  <polygon points="60,86 52,76 68,76" fill="#0369a1"/>
+  <!-- Head & Neck -->
+  <rect x="52" y="66" width="16" height="14" rx="4" fill="#fed7aa"/>
+  <circle cx="60" cy="48" r="22" fill="#fed7aa"/>
+  <!-- Hair -->
+  <path d="M38 46c0-14 10-24 22-24s22 10 22 24c0 3-1 6-2 6-3-10-8-14-20-14-10 0-16 4-20 14-1 0-2-3-2-6z" fill="#334155"/>
+  <!-- Glasses -->
+  <circle cx="51" cy="48" r="7" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <circle cx="69" cy="48" r="7" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+  <line x1="58" y1="48" x2="62" y2="48" stroke="#0f172a" stroke-width="2.5"/>
+  <!-- Eyes & Smile -->
+  <circle cx="51" cy="48" r="2.5" fill="#0f172a"/>
+  <circle cx="69" cy="48" r="2.5" fill="#0f172a"/>
+  <path d="M55 58 Q60 63 65 58" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/>
+</svg>
