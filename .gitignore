@@ -24,3 +24,7 @@ Homestead.yaml
 Thumbs.db
 .agents/
 storage/framework
+create_db.php
+temp_create_db.php
+zonas_prueba.*
+hecho.md

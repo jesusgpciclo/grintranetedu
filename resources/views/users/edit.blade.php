@@ -25,6 +25,12 @@
                 @error('last_name') <span style="color: var(--danger); font-size: 0.8rem;">{{ $message }}</span> @enderror
             </div>
 
+            <div class="form-group" id="dept-field">
+                <label for="departamento">Departamento</label>
+                <input type="text" name="departamento" id="departamento" value="{{ old('departamento', $user->departamento) }}" placeholder="Ej: Matemáticas, Lengua, Informática...">
+                @error('departamento') <span style="color: var(--danger); font-size: 0.8rem;">{{ $message }}</span> @enderror
+            </div>
+
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}" required>
@@ -44,39 +50,47 @@
                 @error('group_id') <span style="color: var(--danger); font-size: 0.8rem;">{{ $message }}</span> @enderror
             </div>
 
+            <div class="form-group">
+                <label for="observaciones">Observaciones</label>
+                <textarea name="observaciones" id="observaciones" rows="3" placeholder="Notas u observaciones sobre el usuario...">{{ old('observaciones', $user->observaciones) }}</textarea>
+                @error('observaciones') <span style="color: var(--danger); font-size: 0.8rem;">{{ $message }}</span> @enderror
+            </div>
+
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
-                    const roleSelect = document.getElementById('role');
-                    const courseGroup = document.getElementById('course-group');
-
-                    function toggleCourse() {
-                        if (roleSelect.value === 'alumno') {
-                            document.getElementById('student-only-fields').style.display = 'block';
-                        } else {
-                            document.getElementById('student-only-fields').style.display = 'none';
+                    function toggleRoles() {
+                        const alumnoChecked = Array.from(document.querySelectorAll('.role-checkbox:checked'))
+                            .some(cb => cb.value === 'alumno');
+                        document.getElementById('student-only-fields').style.display = alumnoChecked ? 'block' : 'none';
+                        const deptField = document.getElementById('dept-field');
+                        if (deptField) {
+                            deptField.style.display = alumnoChecked ? 'none' : 'block';
                         }
                     }
 
-                    roleSelect.addEventListener('change', toggleCourse);
-                    toggleCourse(); // Initial state
+                    document.querySelectorAll('.role-checkbox').forEach(cb => {
+                        cb.addEventListener('change', toggleRoles);
+                    });
+                    toggleRoles(); // Initial state
                 });
             </script>
 
             <div class="form-group">
-                <label for="role">Rol</label>
-                <select name="role" id="role" required>
-                    <option value="">Seleccionar Rol</option>
+                <label style="font-weight: 600; margin-bottom: 0.5rem; display: block;">Roles Asignados</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 0.75rem; padding: 0.75rem; background: var(--bg-hover); border-radius: 8px; border: 1px solid var(--border);">
                     @foreach($roles as $role)
-                        <option value="{{ $role->name }}" {{ $user->hasRole($role->name) ? 'selected' : '' }}>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; color: var(--text-heading); font-size: 0.9rem;">
+                            <input type="checkbox" name="roles[]" value="{{ $role->name }}" class="role-checkbox"
+                                {{ (is_array(old('roles')) ? in_array($role->name, old('roles')) : $user->hasRole($role->name)) ? 'checked' : '' }}>
                             {{ ucfirst($role->name) }}
-                        </option>
+                        </label>
                     @endforeach
-                </select>
-                @error('role') <span style="color: var(--danger); font-size: 0.8rem;">{{ $message }}</span> @enderror
+                </div>
+                @error('roles') <span style="color: var(--danger); font-size: 0.8rem; display: block; margin-top: 0.25rem;">{{ $message }}</span> @enderror
             </div>
 
             <div class="form-group"
-                style="padding: 1rem; border: 1px solid var(--border); border-radius: 0.5rem; background: rgba(0,0,0,0.1);">
+                style="padding: 1rem; border: 1px solid var(--border); border-radius: 0.5rem; background: var(--bg-hover);">
                 <label for="password" style="margin-bottom: 0;">Cambiar Contraseña (Opcional)</label>
                 <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">Deja en blanco para mantener la
                     actual.</p>

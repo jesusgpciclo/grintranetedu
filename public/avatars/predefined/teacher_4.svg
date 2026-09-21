@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <circle cx="60" cy="60" r="58" fill="#ede9fe" stroke="#8b5cf6" stroke-width="4"/>
+  <!-- Body / Clothes -->
+  <path d="M26 112c2-25 18-36 34-36s32 11 34 36" fill="#7c3aed"/>
+  <circle cx="60" cy="82" r="7" fill="#ddd6fe"/>
+  <!-- Neck & Face -->
+  <rect x="53" y="66" width="14" height="14" rx="3" fill="#ffedd5"/>
+  <circle cx="60" cy="48" r="21" fill="#ffedd5"/>
+  <!-- Hair (Bob style) -->
+  <path d="M36 50 c0-15 10-26 24-26 s24 11 24 26 c0 10-3 16-6 18 c-2-8-4-14-6-16 c-4-3-8-4-12-4 s-8 1-12 4 c-2 2-4 8-6 16 c-3-2-6-8-6-18z" fill="#0f172a"/>
+  <!-- Eyes & Smile -->
+  <circle cx="51" cy="48" r="2.5" fill="#0f172a"/>
+  <circle cx="69" cy="48" r="2.5" fill="#0f172a"/>
+  <path d="M48 43 Q51 41 54 43" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M66 43 Q69 41 72 43" fill="none" stroke="#0f172a" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M55 57 Q60 62 65 57" fill="none" stroke="#db2777" stroke-width="2" stroke-linecap="round"/>
+</svg>

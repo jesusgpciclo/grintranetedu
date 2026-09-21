@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <circle cx="60" cy="60" r="58" fill="#fef9c3" stroke="#eab308" stroke-width="4"/>
+  <!-- Ponytail -->
+  <circle cx="82" cy="40" r="10" fill="#78350f"/>
+  <!-- Body / Clothes -->
+  <path d="M26 112c2-25 18-36 34-36s32 11 34 36" fill="#ca8a04"/>
+  <circle cx="60" cy="80" r="8" fill="#ffffff"/>
+  <!-- Neck & Face -->
+  <rect x="53" y="66" width="14" height="14" rx="3" fill="#ffedd5"/>
+  <circle cx="60" cy="48" r="21" fill="#ffedd5"/>
+  <!-- Hair -->
+  <path d="M38 46 c0-14 10-24 22-24 s22 10 22 24 c-4-6-10-10-22-10 s-18 4-22 10z" fill="#78350f"/>
+  <!-- Glasses -->
+  <rect x="44" y="43" width="13" height="9" rx="2" fill="none" stroke="#78350f" stroke-width="2"/>
+  <rect x="63" y="43" width="13" height="9" rx="2" fill="none" stroke="#78350f" stroke-width="2"/>
+  <line x1="57" y1="47.5" x2="63" y2="47.5" stroke="#78350f" stroke-width="2"/>
+  <!-- Eyes & Smile -->
+  <circle cx="50.5" cy="47.5" r="2" fill="#78350f"/>
+  <circle cx="69.5" cy="47.5" r="2" fill="#78350f"/>
+  <path d="M55 58 Q60 63 65 58" fill="none" stroke="#e11d48" stroke-width="2" stroke-linecap="round"/>
+</svg>

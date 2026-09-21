@@ -25,13 +25,17 @@ class RoleSeeder extends Seeder
         $roleAdministrativo = Role::firstOrCreate(['name'=> 'administrativo']);
         $roleTecnico_tic = Role::firstOrCreate(['name'=> 'tecnico-tic']);
         $roleDirectiva = Role::firstOrCreate(['name' => 'directiva']);
+        $roleControladorPasillo = Role::firstOrCreate(['name' => 'controlador-pasillo']);
+        $roleConserje = Role::firstOrCreate(['name' => 'conserje']);
 
         // Crear Permisos (opcional para ahora, pero bueno tenerlos)
         Permission::firstOrCreate(['name' => 'manage users']);
         Permission::firstOrCreate(['name' => 'manage roles']);
+        $permManageTeacherSchedules = Permission::firstOrCreate(['name' => 'manage teacher schedules']);
 
-        // Asignar permisos a rol admin
+        // Asignar permisos a rol admin y directiva
         $roleAdmin->givePermissionTo(Permission::all());
+        $roleDirectiva->givePermissionTo($permManageTeacherSchedules);
 
         // Crear Usuario Admin
         $admin = User::updateOrCreate(

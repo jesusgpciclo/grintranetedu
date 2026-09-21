@@ -12,9 +12,30 @@ class ScheduleTemplateController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $templates = ScheduleTemplate::all();
+        $query = ScheduleTemplate::query();
+
+        // Search
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        // Sort
+        if ($request->has('sort_by')) {
+            $sortOrder = $request->input('sort_order', 'asc');
+            $sortBy = $request->input('sort_by');
+            
+            // Allow sorting by Valid columns only
+            if (in_array($sortBy, ['name', 'created_at'])) {
+                $query->orderBy($sortBy, $sortOrder);
+            }
+        } else {
+            $query->orderBy('created_at', 'desc'); // Default sort
+        }
+
+        $templates = $query->paginate($request->input('per_page', 25));
         return view('schedule_templates.index', compact('templates'));
     }
 
@@ -148,5 +169,32 @@ class ScheduleTemplateController extends Controller
     {
         $template = ScheduleTemplate::with('timeSlots')->findOrFail($id);
         return view('schedule_templates.preview', compact('template'));
+    }
+
+    public function copy($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $template = ScheduleTemplate::with('timeSlots')->findOrFail($id);
+            
+            $newTemplate = $template->replicate();
+            $newTemplate->name = 'COPIA ' . $template->name;
+            $newTemplate->save();
+
+            foreach ($template->timeSlots as $slot) {
+                $newSlot = $slot->replicate();
+                $newSlot->schedule_template_id = $newTemplate->id;
+                $newSlot->save();
+            }
+
+            DB::commit();
+
+            return redirect()->route('schedule-templates.index')->with('success', 'Plantilla copiada correctamente');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('schedule-templates.index')->with('error', 'Error al copiar la plantilla: ' . $e->getMessage());
+        }
     }
 }

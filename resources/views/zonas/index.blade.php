@@ -35,7 +35,7 @@
     </div>
 
     <div class="card table-container">
-        <table>
+        <table class="smart-table">
             <thead>
                 <tr>
                     <th><x-sort-header column="nombre" label="Nombre" route="zonas.index" /></th>

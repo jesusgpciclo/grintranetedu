@@ -24,6 +24,17 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+            $user = Auth::user();
+
+            // Detect initial/default password or forced change flag
+            if ($credentials['password'] === 'profesor' || $user->must_change_password) {
+                if (!$user->must_change_password) {
+                    $user->update(['must_change_password' => true]);
+                }
+                return redirect()->route('profile.edit')
+                    ->with('warning', 'Por motivos de seguridad, debes cambiar tu contraseña inicial antes de continuar.');
+            }
+
             return redirect()->intended('dashboard');
         }
 

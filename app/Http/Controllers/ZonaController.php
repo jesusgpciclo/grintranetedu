@@ -35,7 +35,7 @@ class ZonaController extends Controller
             $query->orderBy('created_at', 'desc');
         }
 
-        $zonas = $query->paginate(10);
+        $zonas = $query->paginate($request->input('per_page', 25));
         return view('zonas.index', compact('zonas'));
     }
 

@@ -1,0 +1,41 @@
+{
+  "meta": {
+    "description": "Plantilla de importación masiva de horarios de profesores de prueba"
+  },
+  "schedules": [
+    {
+      "profesor_email": "carlos.garcia@example.com",
+      "plantilla_id": 1,
+      "selections": [
+        {
+          "day": "Lunes",
+          "time_slot_id": 1,
+          "type": "clase",
+          "subject": "Matemáticas",
+          "group_id": 1,
+          "value": "Matemáticas (1º ESO A)"
+        },
+        {
+          "day": "Lunes",
+          "time_slot_id": 2,
+          "type": "guardia",
+          "value": "Guardia"
+        }
+      ]
+    },
+    {
+      "profesor_email": "maria.lopez@example.com",
+      "plantilla_id": 1,
+      "selections": [
+        {
+          "day": "Martes",
+          "time_slot_id": 3,
+          "type": "clase",
+          "subject": "Lengua Castellana",
+          "group_id": 2,
+          "value": "Lengua (2º ESO B)"
+        }
+      ]
+    }
+  ]
+}
