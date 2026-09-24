@@ -199,15 +199,53 @@ class TeacherController extends Controller
             } elseif ($extension === 'yaml' || $extension === 'yml') {
                 $data = \Symfony\Component\Yaml\Yaml::parse($content);
             } elseif ($extension === 'csv') {
-                $lines = array_map('str_getcsv', file($file->getRealPath()));
-                if (count($lines) > 0) {
-                    $headers = array_shift($lines);
-                    if (count($headers) > 0) {
-                        $headers[0] = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $headers[0]);
+                // Leer líneas completas
+                $lines = file($file->getRealPath(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+                
+                // Detectar si es el formato de Séneca (Junta de Andalucía)
+                $isSenecaFormat = false;
+                if (count($lines) > 0 && stripos($lines[0], 'PERSONAL DEL CENTRO') !== false) {
+                    $isSenecaFormat = true;
+                    // Eliminar las primeras líneas hasta encontrar los encabezados reales
+                    while (count($lines) > 0) {
+                        $currentLine = array_shift($lines);
+                        if (stripos($currentLine, 'Empleado/a') !== false && stripos($currentLine, 'Cuenta Google/Microsoft') !== false) {
+                            break; // Encontramos la línea de cabecera de Séneca
+                        }
                     }
+                }
+
+                if ($isSenecaFormat) {
+                    // Procesar las líneas de Séneca
                     foreach ($lines as $line) {
-                        if (count($headers) === count($line)) {
-                            $data[] = array_combine($headers, $line);
+                        $parsedLine = str_getcsv($line);
+                        if (count($parsedLine) >= 2) {
+                            $empleado = trim($parsedLine[0]); // "García Pérez, Jesús"
+                            $email = trim($parsedLine[1]);    // "jgarper521@g.educaand.es"
+                            
+                            // Extraer nombre y apellidos
+                            $parts = explode(',', $empleado);
+                            if (count($parts) == 2) {
+                                $data[] = [
+                                    'last_name' => trim($parts[0]),
+                                    'name' => trim($parts[1]),
+                                    'email' => $email
+                                ];
+                            }
+                        }
+                    }
+                } else {
+                    // Formato CSV normal
+                    $parsedLines = array_map('str_getcsv', file($file->getRealPath()));
+                    if (count($parsedLines) > 0) {
+                        $headers = array_shift($parsedLines);
+                        if (count($headers) > 0) {
+                            $headers[0] = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $headers[0]);
+                        }
+                        foreach ($parsedLines as $pLine) {
+                            if (count($headers) === count($pLine)) {
+                                $data[] = array_combine($headers, $pLine);
+                            }
                         }
                     }
                 }
