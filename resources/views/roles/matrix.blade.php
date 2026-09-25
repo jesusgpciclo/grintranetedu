@@ -167,7 +167,7 @@
 
                                 @foreach($roles as $role)
                                     @php
-                                        $hasPerm = $role->hasPermissionTo($permKey);
+                                        $hasPerm = $role->permissions->contains('name', $permKey);
                                         $isAdmin = ($role->name === 'admin');
                                     @endphp
                                     <td class="py-2.5 px-3 text-center">

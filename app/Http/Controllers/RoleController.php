@@ -107,6 +107,8 @@ class RoleController extends Controller
      */
     public function matrix()
     {
+        PermissionManagerService::syncDatabasePermissions();
+
         $roles = Role::with('permissions')->orderBy('name', 'asc')->get();
         $catalog = PermissionManagerService::getCatalog();
         $allPermissions = Permission::all()->keyBy('name');
@@ -119,6 +121,8 @@ class RoleController extends Controller
      */
     public function updateMatrix(Request $request)
     {
+        PermissionManagerService::syncDatabasePermissions();
+
         $matrix = $request->input('matrix', []);
         $roles = Role::all();
 
