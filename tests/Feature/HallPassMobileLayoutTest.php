@@ -47,8 +47,8 @@ class HallPassMobileLayoutTest extends TestCase
         // 1. Stats container has hidden sm:flex so it is hidden on mobile
         $response->assertSee('hidden sm:flex gap-2 sm:gap-3', false);
 
-        // 2. Direct mobile options grid is present with the 4 reasons
-        $response->assertSee('sm:hidden grid grid-cols-4 gap-1.5', false);
+        // 2. Direct mobile options are present with the 4 reasons inline
+        $response->assertSee('sm:hidden flex items-center justify-between gap-1.5 w-full', false);
         $response->assertSee('Baño');
         $response->assertSee('Agua');
         $response->assertSee('Enfermedad');

@@ -50,9 +50,9 @@
         /* Mobile list item styling */
         @media (max-width: 639px) {
             .student-card {
-                padding: 0.85rem 1rem !important;
-                border-radius: 1rem !important;
-                gap: 0.5rem;
+                padding: 0.45rem 0.65rem !important;
+                border-radius: 0.85rem !important;
+                gap: 0 !important;
             }
         }
 
@@ -207,173 +207,216 @@
                         data-last-exit="{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}"
                         data-search="{{ strtolower($student->name . ' ' . $student->last_name) }}" style="display: none;">
 
-                        <!-- Card Header / List Info -->
-                        <div class="flex items-center justify-between mb-2 sm:mb-3">
-                            <div class="flex items-center gap-3 min-w-0 flex-1">
-                                <div
-                                    class="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-400 to-blue-600') }} flex items-center justify-center text-white font-bold text-sm shadow-md">
+                        <!-- Mobile View (sm:hidden): Ultra-compact Single Line Row matching user image -->
+                        <div class="sm:hidden flex items-center justify-between gap-1.5 w-full">
+                            <!-- Left: Avatar + Name + Course -->
+                            <div class="flex items-center gap-2 min-w-0 flex-1">
+                                <div class="h-9 w-9 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-400 to-blue-600') }} flex items-center justify-center text-white font-bold text-xs shadow-xs">
                                     {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
                                 </div>
-                                <div class="overflow-hidden flex-1">
-                                    <h3 class="text-sm font-bold text-[var(--text-heading)] truncate"
-                                        title="{{ $student->name }} {{ $student->last_name }}">
+                                <div class="overflow-hidden min-w-0 flex-1">
+                                    <h3 class="text-xs font-bold text-[var(--text-heading)] truncate leading-tight"
+                                        title="{{ $studentFullName }}">
                                         {{ $student->name }} {{ $student->last_name }}
                                     </h3>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-xs text-[var(--text-muted)] truncate block">
-                                            {{ $student->groupRel?->course ?? '' }} {{ $student->groupRel?->name ?? '' }}
-                                        </span>
+                                    <div class="flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
+                                        <span class="truncate">{{ $student->groupRel?->course ?? '' }} {{ $student->groupRel?->name ?? '' }}</span>
                                         @if($todayCount > 0 && !$activePass)
-                                            <span class="text-[10px] text-[var(--text-muted)] hidden xs:inline">• {{ $todayCount }} {{ $todayCount === 1 ? 'salida' : 'salidas' }}</span>
+                                            <span class="text-[10px] text-amber-500 font-bold shrink-0">({{ $todayCount }})</span>
                                         @endif
                                     </div>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-1.5 shrink-0 ml-2">
-                                @if($todayCount > 0)
-                                    <span class="px-2 py-0.5 rounded-lg text-[11px] font-bold {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : ($todayCount >= 2 ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30' : 'bg-[var(--bg-hover)] text-[var(--text-muted)] border border-[var(--border)]') }}"
-                                        title="Ha salido {{ $todayCount }} {{ $todayCount === 1 ? 'vez' : 'veces' }} hoy">
-                                        {{ $todayCount }} {{ $todayCount === 1 ? 'salida' : 'salidas' }}
-                                    </span>
-                                @endif
-                                @if($activePass)
-                                    <span class="flex h-3 w-3 relative ml-1">
-                                        <span
-                                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
 
-                        <!-- Daily Exit History Info Alert -->
-                        @if($todayCount > 0 && !$activePass)
-                            <div class="mb-2 sm:mb-3 px-2.5 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border)] text-[11px] flex items-center justify-between gap-2 text-[var(--text-muted)]">
-                                <span class="flex items-center gap-1.5">
-                                    <svg class="w-3.5 h-3.5 {{ $todayCount >= 3 ? 'text-rose-500' : 'text-amber-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    <span>Última salida:</span>
-                                </span>
-                                <span class="font-semibold {{ $todayCount >= 3 ? 'text-rose-500 font-bold' : 'text-[var(--text-color)]' }}">
-                                    {{ $lastPass->start_time ? $lastPass->start_time->format('H:i') : '--:--' }} ({{ $lastPass->reason }})
-                                </span>
-                            </div>
-                        @endif
-
-                        <!-- Actions Area -->
-                        <div class="mt-auto">
+                            <!-- Right: Compact Inline Action Buttons -->
                             @if($activePass)
-                                <!-- Active State -->
-                                <div class="space-y-2 sm:space-y-3 pt-1">
-                                    <div
-                                        class="bg-amber-500/10 rounded-xl p-2.5 sm:p-3 border border-amber-500/30">
-                                        <div class="flex justify-between items-center mb-1">
-                                            <span
-                                                class="text-xs font-bold text-amber-500 uppercase tracking-wide">
-                                                {{ $activePass->reason }}
-                                            </span>
-                                            <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                        </div>
-                                        <div class="text-xl sm:text-2xl font-mono font-bold text-amber-500 timer"
-                                            data-start="{{ $activePass->start_time->timestamp }}">
-                                            00:00
-                                        </div>
+                                <div class="flex items-center gap-1.5 shrink-0">
+                                    <div class="px-2 py-0.5 bg-amber-500/15 border border-amber-500/30 rounded-lg text-center">
+                                        <span class="text-[9px] font-bold text-amber-500 uppercase block leading-none">{{ $activePass->reason }}</span>
+                                        <span class="text-[11px] font-mono font-bold text-amber-500 timer" data-start="{{ $activePass->start_time->timestamp }}">00:00</span>
                                     </div>
-                                    <button onclick="endPass({{ $activePass->id }})"
-                                        class="w-full py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 transform active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 13l4 4L19 7"></path>
-                                        </svg>
-                                        Regresar alumno
+                                    <button onclick="endPass({{ $activePass->id }})" class="p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs">
+                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        <span>Regresar</span>
                                     </button>
                                 </div>
                             @else
-                                <!-- Mobile Direct Actions (sm:hidden) -->
-                                <div class="sm:hidden grid grid-cols-4 gap-1.5 pt-1">
-                                    <button type="button" onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/25 transition">
-                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10">
-                                            </path>
+                                <div class="flex items-center gap-1 shrink-0">
+                                    <!-- Baño -->
+                                    <button type="button" 
+                                        onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center p-1 min-w-[32px] rounded-lg bg-blue-500/15 hover:bg-blue-500/25 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/25 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" />
                                         </svg>
-                                        <span class="text-[10px] font-bold leading-tight">Baño</span>
+                                        <span class="text-[8.5px] font-bold leading-tight mt-0.5">Baño</span>
                                     </button>
-                                    <button type="button" onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 transition">
-                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5"></path>
-                                        </svg>
-                                        <span class="text-[10px] font-bold leading-tight">Agua</span>
-                                    </button>
-                                    <button type="button" onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/25 transition">
-                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M3 3h18v18H3zM12 8v8m-4-4h8"></path>
-                                        </svg>
-                                        <span class="text-[10px] font-bold leading-tight">Enfermedad</span>
-                                    </button>
-                                    <button type="button" onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-heading)] border border-[var(--border)] transition">
-                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
-                                            </path>
-                                        </svg>
-                                        <span class="text-[10px] font-bold leading-tight truncate max-w-full">Otro motivo</span>
-                                    </button>
-                                </div>
 
-                                <!-- Desktop Grid Actions -->
-                                <div class="hidden sm:grid grid-cols-2 gap-2">
-                                    <button onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="group/btn p-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-xl border border-blue-500/30 transition-all duration-200 flex flex-col items-center gap-1">
-                                        <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10">
-                                            </path>
+                                    <!-- Agua -->
+                                    <button type="button" 
+                                        onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center p-1 min-w-[32px] rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5" />
                                         </svg>
-                                        <span class="text-xs font-semibold">Baño</span>
+                                        <span class="text-[8.5px] font-bold leading-tight mt-0.5">Agua</span>
                                     </button>
-                                    <button onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="group/btn p-3 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-500 rounded-xl border border-cyan-500/30 transition-all duration-200 flex flex-col items-center gap-1">
-                                        <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5"></path>
+
+                                    <!-- Enfermedad -->
+                                    <button type="button" 
+                                        onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center p-1 min-w-[38px] rounded-lg bg-orange-500/15 hover:bg-orange-500/25 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/25 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3zM12 8v8m-4-4h8" />
                                         </svg>
-                                        <span class="text-xs font-semibold">Agua</span>
+                                        <span class="text-[8px] font-bold leading-tight mt-0.5">Enfermedad</span>
                                     </button>
-                                    <button onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="group/btn p-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-xl border border-orange-500/30 transition-all duration-200 flex flex-col items-center gap-1">
-                                        <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M3 3h18v18H3zM12 8v8m-4-4h8"></path>
+
+                                    <!-- Otro motivo -->
+                                    <button type="button" 
+                                        onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center p-1 min-w-[42px] rounded-lg bg-slate-500/10 hover:bg-slate-500/20 active:scale-95 text-slate-700 dark:text-slate-300 border border-slate-400/25 transition">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                                         </svg>
-                                        <span class="text-xs font-semibold">Enfermedad</span>
-                                    </button>
-                                    <button onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="group/btn p-3 bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] text-[var(--text-muted)] rounded-xl border border-[var(--border)] transition-all duration-200 flex flex-col items-center gap-1">
-                                        <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                            stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
-                                            </path>
-                                        </svg>
-                                        <span class="text-xs font-semibold">Otro</span>
+                                        <span class="text-[7.5px] font-bold leading-tight mt-0.5 whitespace-nowrap">Otro motivo</span>
                                     </button>
                                 </div>
                             @endif
+                        </div>
+
+                        <!-- Desktop View (hidden sm:flex flex-col justify-between h-full) -->
+                        <div class="hidden sm:flex flex-col justify-between h-full">
+                            <!-- Card Header / List Info -->
+                            <div class="flex items-center justify-between mb-2 sm:mb-3">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <div
+                                        class="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-400 to-blue-600') }} flex items-center justify-center text-white font-bold text-sm shadow-md">
+                                        {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
+                                    </div>
+                                    <div class="overflow-hidden flex-1">
+                                        <h3 class="text-sm font-bold text-[var(--text-heading)] truncate"
+                                            title="{{ $studentFullName }}">
+                                            {{ $student->name }} {{ $student->last_name }}
+                                        </h3>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs text-[var(--text-muted)] truncate block">
+                                                {{ $student->groupRel?->course ?? '' }} {{ $student->groupRel?->name ?? '' }}
+                                            </span>
+                                            @if($todayCount > 0 && !$activePass)
+                                                <span class="text-[10px] text-[var(--text-muted)] hidden xs:inline">• {{ $todayCount }} {{ $todayCount === 1 ? 'salida' : 'salidas' }}</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                                    @if($todayCount > 0)
+                                        <span class="px-2 py-0.5 rounded-lg text-[11px] font-bold {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : ($todayCount >= 2 ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30' : 'bg-[var(--bg-hover)] text-[var(--text-muted)] border border-[var(--border)]') }}"
+                                            title="Ha salido {{ $todayCount }} {{ $todayCount === 1 ? 'vez' : 'veces' }} hoy">
+                                            {{ $todayCount }} {{ $todayCount === 1 ? 'salida' : 'salidas' }}
+                                        </span>
+                                    @endif
+                                    @if($activePass)
+                                        <span class="flex h-3 w-3 relative ml-1">
+                                            <span
+                                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                            <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <!-- Daily Exit History Info Alert -->
+                            @if($todayCount > 0 && !$activePass)
+                                <div class="mb-2 sm:mb-3 px-2.5 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border)] text-[11px] flex items-center justify-between gap-2 text-[var(--text-muted)]">
+                                    <span class="flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 {{ $todayCount >= 3 ? 'text-rose-500' : 'text-amber-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        <span>Última salida:</span>
+                                    </span>
+                                    <span class="font-semibold {{ $todayCount >= 3 ? 'text-rose-500 font-bold' : 'text-[var(--text-color)]' }}">
+                                        {{ $lastPass->start_time ? $lastPass->start_time->format('H:i') : '--:--' }} ({{ $lastPass->reason }})
+                                    </span>
+                                </div>
+                            @endif
+
+                            <!-- Desktop Actions Area -->
+                            <div class="mt-auto">
+                                @if($activePass)
+                                    <!-- Active State -->
+                                    <div class="space-y-2 sm:space-y-3 pt-1">
+                                        <div
+                                            class="bg-amber-500/10 rounded-xl p-2.5 sm:p-3 border border-amber-500/30">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span
+                                                    class="text-xs font-bold text-amber-500 uppercase tracking-wide">
+                                                    {{ $activePass->reason }}
+                                                </span>
+                                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="text-xl sm:text-2xl font-mono font-bold text-amber-500 timer"
+                                                data-start="{{ $activePass->start_time->timestamp }}">
+                                                00:00
+                                            </div>
+                                        </div>
+                                        <button onclick="endPass({{ $activePass->id }})"
+                                            class="w-full py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 transform active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7"></path>
+                                            </svg>
+                                            Regresar alumno
+                                        </button>
+                                    </div>
+                                @else
+                                    <!-- Desktop Grid Actions -->
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <button onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                            class="group/btn p-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-xl border border-blue-500/30 transition-all duration-200 flex flex-col items-center gap-1">
+                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10">
+                                                </path>
+                                            </svg>
+                                            <span class="text-xs font-semibold">Baño</span>
+                                        </button>
+                                        <button onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                            class="group/btn p-3 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-500 rounded-xl border border-cyan-500/30 transition-all duration-200 flex flex-col items-center gap-1">
+                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5"></path>
+                                            </svg>
+                                            <span class="text-xs font-semibold">Agua</span>
+                                        </button>
+                                        <button onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                            class="group/btn p-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-xl border border-orange-500/30 transition-all duration-200 flex flex-col items-center gap-1">
+                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M3 3h18v18H3zM12 8v8m-4-4h8"></path>
+                                            </svg>
+                                            <span class="text-xs font-semibold">Enfermedad</span>
+                                        </button>
+                                        <button onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                            class="group/btn p-3 bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] text-[var(--text-muted)] rounded-xl border border-[var(--border)] transition-all duration-200 flex flex-col items-center gap-1">
+                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
+                                                stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                                </path>
+                                            </svg>
+                                            <span class="text-xs font-semibold">Otro</span>
+                                        </button>
+                                    </div>
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach
