@@ -1,7 +1,7 @@
 {
-  "name": "GR Intranet EDU - Sistema de Guardias",
-  "short_name": "Guardia",
-  "description": "Gestión integral de guardias, horarios, partes diarios y ausencias docentes",
+  "name": "GR Intranet EDU",
+  "short_name": "GR Intranet EDU",
+  "description": "Gestión integral del centro educativo",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -16,9 +16,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "/avatars/predefined/teacher_1.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
+      "src": "/app-icon.jpg",
+      "sizes": "1024x1024 512x512 192x192",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
