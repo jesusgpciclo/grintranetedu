@@ -7,9 +7,10 @@
     </div>
     <div class="card" style="max-width: 700px;">
         <div class="alert alert-info">
-            <strong>Formato CSV esperado (Séneca):</strong><br>
-            <code style="font-size: 0.85rem;">Apellidos;Nombre;DNI/NIE;Email</code><br>
-            La primera fila se considera cabecera y se salta. El separador es punto y coma (;).
+            <strong>Formatos CSV soportados (Séneca):</strong><br>
+            • <code style="font-size: 0.85rem;">Alumno/a,Unidad</code> (ej: "Algaba Marín, Francisco",1º GM SMR B)<br>
+            • <code style="font-size: 0.85rem;">Apellidos;Nombre;DNI/NIE;Email</code><br>
+            Se detecta automáticamente el delimitador (, o ;) y la cabecera.
         </div>
         <div style="margin-bottom: 1.5rem;">
             <a href="{{ route('students.csv-template') }}" class="btn btn-sm btn-success">Descargar plantilla CSV</a>

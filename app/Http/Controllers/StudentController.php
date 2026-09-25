@@ -219,6 +219,21 @@ class StudentController extends Controller
 
     public function template($format)
     {
+        if ($format === 'seneca') {
+            $data = [
+                [
+                    'Alumno/a' => 'Algaba Marín, Francisco',
+                    'Unidad' => '1º GM SMR B',
+                ],
+                [
+                    'Alumno/a' => 'Algaba Postigo, Pablo',
+                    'Unidad' => '1º GM SMR B',
+                ]
+            ];
+
+            return $this->downloadFormattedData($data, 'plantilla_alumnos_seneca', 'csv');
+        }
+
         $data = [
             [
                 'name' => 'Juan',
@@ -252,6 +267,11 @@ class StudentController extends Controller
         $file = $request->file('file');
         $extension = strtolower($file->getClientOriginalExtension());
         $content = file_get_contents($file->getRealPath());
+
+        // Strip UTF-8 BOM if present
+        if (str_starts_with($content, "\xEF\xBB\xBF")) {
+            $content = substr($content, 3);
+        }
         
         $data = [];
         
@@ -260,16 +280,49 @@ class StudentController extends Controller
                 $data = json_decode($content, true);
             } elseif ($extension === 'yaml' || $extension === 'yml') {
                 $data = \Symfony\Component\Yaml\Yaml::parse($content);
-            } elseif ($extension === 'csv') {
-                $lines = array_map('str_getcsv', file($file->getRealPath()));
-                if (count($lines) > 0) {
-                    $headers = array_shift($lines);
-                    if (count($headers) > 0) {
-                        $headers[0] = preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $headers[0]);
+            } elseif ($extension === 'csv' || $extension === 'txt') {
+                // Determine delimiter from first non-empty line
+                $firstLine = strtok($content, "\r\n");
+                $delimiter = ',';
+                if ($firstLine !== false) {
+                    if (substr_count($firstLine, ';') > substr_count($firstLine, ',')) {
+                        $delimiter = ';';
+                    } elseif (substr_count($firstLine, "\t") > substr_count($firstLine, ',')) {
+                        $delimiter = "\t";
                     }
+                }
+
+                $rawLines = preg_split('/\r\n|\r|\n/', $content);
+                $rawLines = array_values(array_filter($rawLines, fn($l) => trim($l) !== ''));
+
+                // Find header line (skipping any preceding metadata if present)
+                $startIndex = 0;
+                foreach ($rawLines as $idx => $line) {
+                    if (stripos($line, 'Alumno') !== false || stripos($line, 'Unidad') !== false || stripos($line, 'name') !== false || stripos($line, 'apellidos') !== false) {
+                        $startIndex = $idx;
+                        break;
+                    }
+                }
+
+                $lines = array_slice($rawLines, $startIndex);
+
+                if (count($lines) > 0) {
+                    $headerLine = array_shift($lines);
+                    $headers = str_getcsv($headerLine, $delimiter);
+                    $headers = array_map(function($h) {
+                        return trim($h, " \t\n\r\0\x0B\"'");
+                    }, $headers);
+
                     foreach ($lines as $line) {
-                        if (count($headers) === count($line)) {
-                            $data[] = array_combine($headers, $line);
+                        if (trim($line) === '') continue;
+                        $row = str_getcsv($line, $delimiter);
+                        if (count($headers) === count($row)) {
+                            $data[] = array_combine($headers, $row);
+                        } elseif (count($row) > count($headers)) {
+                            $data[] = array_combine($headers, array_slice($row, 0, count($headers)));
+                        } elseif (count($row) >= 1 && count($headers) >= 1) {
+                            $row = array_pad($row, count($headers), '');
+                            $data[] = array_combine($headers, $row);
                         }
                     }
                 }
@@ -286,61 +339,93 @@ class StudentController extends Controller
 
         $imported = 0;
         foreach ($data as $row) {
-            if (empty($row['name']) || empty($row['last_name']) || empty($row['email'])) {
+            $parsed = $this->parseStudentRow($row);
+
+            $name = $parsed['name'];
+            $lastName = $parsed['last_name'];
+            $email = $parsed['email'];
+            $groupRaw = $parsed['group_raw'];
+            $observaciones = $parsed['observaciones'];
+
+            if (empty($name) && empty($lastName)) {
                 continue;
             }
 
             $groupId = null;
-            if (!empty($row['group'])) {
-                $parts = explode(' ', trim($row['group']));
-                if (count($parts) >= 2) {
-                    $groupName = array_pop($parts);
-                    $groupCourse = implode(' ', $parts);
-                    $group = Group::where('course', $groupCourse)->where('name', $groupName)->first();
-                    if ($group) {
-                        if ($user->hasRole('profesor') && !$user->hasRole('admin') && $group->tutor_id !== $user->id) {
-                            continue;
-                        }
-                        $groupId = $group->id;
-                    }
+            if (!empty($groupRaw)) {
+                $groupId = $this->resolveGroupId($groupRaw, $user);
+                if ($groupId === false) {
+                    continue; // Skip if restricted tutor
                 }
             }
 
-            $student = User::where('email', trim($row['email']))->first();
-            
+            // Find existing student
+            $student = null;
+            if (!empty($email)) {
+                $student = User::where('email', $email)->first();
+            }
+
+            if (!$student && !empty($name) && !empty($lastName)) {
+                $student = User::role('alumno')
+                    ->where('name', $name)
+                    ->where('last_name', $lastName)
+                    ->first();
+                if ($student) {
+                    $email = $student->email;
+                }
+            }
+
+            // Generate clean institutional email if absent
+            if (empty($email)) {
+                $baseSlug = Str::slug($name . '.' . $lastName, '.');
+                if (empty($baseSlug)) {
+                    $baseSlug = 'alumno.' . Str::random(5);
+                }
+                $candidateEmail = $baseSlug . '@alumno.instituto.es';
+                $counter = 1;
+                while (User::where('email', $candidateEmail)->exists()) {
+                    $candidateEmail = $baseSlug . $counter . '@alumno.instituto.es';
+                    $counter++;
+                }
+                $email = $candidateEmail;
+            }
+
             if ($student) {
                 if (!$student->hasRole('alumno')) {
-                    continue; 
+                    continue;
                 }
-                
+
                 if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
                     $tutoredGroupIds = Group::where('tutor_id', $user->id)->pluck('id')->toArray();
                     if ($student->group_id && !in_array($student->group_id, $tutoredGroupIds)) {
-                        continue; 
+                        continue;
                     }
                 }
 
                 $updateData = [
-                    'name' => trim($row['name']),
-                    'last_name' => trim($row['last_name']),
-                    'group_id' => $groupId,
+                    'name' => $name,
+                    'last_name' => $lastName,
                 ];
-                if (isset($row['observaciones'])) {
-                    $updateData['observaciones'] = trim($row['observaciones']);
+                if ($groupId !== null) {
+                    $updateData['group_id'] = $groupId;
+                }
+                if (!empty($observaciones)) {
+                    $updateData['observaciones'] = $observaciones;
                 }
 
                 $student->update($updateData);
             } else {
                 $studentData = [
-                    'name' => trim($row['name']),
-                    'last_name' => trim($row['last_name']),
-                    'email' => trim($row['email']),
-                    'password' => Hash::make(trim($row['email'])),
+                    'name' => $name,
+                    'last_name' => $lastName,
+                    'email' => $email,
+                    'password' => Hash::make('alumno1234'),
                     'group_id' => $groupId,
                 ];
-                if (isset($row['observaciones'])) {
-                    $studentData['observaciones'] = trim($row['observaciones']);
+                if (!empty($observaciones)) {
+                    $studentData['observaciones'] = $observaciones;
                 }
+
                 $student = User::create($studentData);
                 $student->assignRole('alumno');
             }
@@ -348,6 +433,164 @@ class StudentController extends Controller
         }
 
         return back()->with('success', "Se han importado/actualizado $imported alumnos correctamente.");
+    }
+
+    protected function parseStudentRow(array $row)
+    {
+        $cleanRow = [];
+        foreach ($row as $k => $v) {
+            $kClean = mb_strtolower(trim($k, " \t\n\r\0\x0B\"'"));
+            $kClean = preg_replace('/^\xEF\xBB\xBF/', '', $kClean);
+            $cleanRow[$kClean] = is_string($v) ? trim($v) : $v;
+        }
+
+        $name = '';
+        $lastName = '';
+        $email = '';
+        $groupRaw = '';
+        $observaciones = '';
+
+        // 1. Single column full name check ("Alumno/a", "Alumno", "Estudiante", "Apellidos y Nombre", etc.)
+        $fullNameVal = null;
+        $fullNameKey = null;
+        foreach ($cleanRow as $k => $v) {
+            if (in_array($k, [
+                'alumno/a', 'alumno / a', 'alumno', 'alumnos', 'alumna', 'alumno(a)',
+                'estudiante', 'estudiantes', 'apellidos y nombre', 'apellidos y nombres',
+                'apellidos, nombre', 'nombre y apellidos', 'student', 'full_name'
+            ])) {
+                $fullNameVal = $v;
+                $fullNameKey = $k;
+                break;
+            }
+        }
+
+        // Check for separate name & last_name
+        $explicitName = $cleanRow['name'] ?? $cleanRow['nombre'] ?? null;
+        $explicitLastName = $cleanRow['last_name'] ?? $cleanRow['apellidos'] ?? $cleanRow['apellido'] ?? null;
+
+        if (!empty($explicitName) && !empty($explicitLastName)) {
+            $name = $explicitName;
+            $lastName = $explicitLastName;
+        } elseif (!empty($fullNameVal)) {
+            // Séneca format: "Apellidos, Nombre" (e.g. "Algaba Marín, Francisco")
+            if (str_contains($fullNameVal, ',')) {
+                $parts = explode(',', $fullNameVal, 2);
+                $lastName = trim($parts[0]);
+                $name = trim($parts[1]);
+            } else {
+                $parts = preg_split('/\s+/', trim($fullNameVal));
+                if (count($parts) > 1) {
+                    if (str_contains($fullNameKey, 'apellido')) {
+                        $name = array_pop($parts);
+                        $lastName = implode(' ', $parts);
+                    } else {
+                        $name = array_shift($parts);
+                        $lastName = implode(' ', $parts);
+                    }
+                } else {
+                    $name = $fullNameVal;
+                    $lastName = '';
+                }
+            }
+        } elseif (!empty($explicitName)) {
+            $name = $explicitName;
+            $lastName = $explicitLastName ?? '';
+        }
+
+        // 2. Check group / unidad
+        foreach ($cleanRow as $k => $v) {
+            if (in_array($k, ['unidad', 'unidades', 'grupo', 'grupos', 'group', 'curso', 'course', 'clase'])) {
+                $groupRaw = $v;
+                break;
+            }
+        }
+
+        // 3. Check email
+        foreach ($cleanRow as $k => $v) {
+            if (in_array($k, ['email', 'e-mail', 'correo', 'correo electrónico', 'mail'])) {
+                $email = $v;
+                break;
+            }
+        }
+
+        // 4. Check observaciones
+        foreach ($cleanRow as $k => $v) {
+            if (in_array($k, ['observaciones', 'observacion', 'notas', 'notes', 'comments'])) {
+                $observaciones = $v;
+                break;
+            }
+        }
+
+        return [
+            'name' => $name,
+            'last_name' => $lastName,
+            'email' => $email,
+            'group_raw' => $groupRaw,
+            'observaciones' => $observaciones,
+        ];
+    }
+
+    protected function resolveGroupId($groupRaw, $user)
+    {
+        $trimmed = trim($groupRaw);
+        if ($trimmed === '') {
+            return null;
+        }
+
+        // 1. Try matching course and name (splitting last word as group letter/name, e.g. "1º GM SMR B")
+        $parts = preg_split('/\s+/', $trimmed);
+        $group = null;
+
+        if (count($parts) >= 2) {
+            $groupName = array_pop($parts);
+            $groupCourse = implode(' ', $parts);
+            $group = Group::where('course', $groupCourse)->where('name', $groupName)->first();
+        }
+
+        // 2. Try matching course or name alone
+        if (!$group) {
+            $group = Group::where('course', $trimmed)->orWhere('name', $trimmed)->first();
+        }
+
+        // 3. Try matching full concatenated name "course name" in PHP (database-agnostic)
+        if (!$group) {
+            $normalizedTrimmed = mb_strtolower($trimmed);
+            $group = Group::all()->first(function($g) use ($normalizedTrimmed) {
+                return mb_strtolower(trim($g->course . ' ' . $g->name)) === $normalizedTrimmed;
+            });
+        }
+
+        // 4. If group doesn't exist yet, auto-create it if admin or non-profesor
+        if (!$group && ($user->hasRole('admin') || !$user->hasRole('profesor'))) {
+            $parts = preg_split('/\s+/', $trimmed);
+            if (count($parts) >= 2) {
+                $groupName = array_pop($parts);
+                $groupCourse = implode(' ', $parts);
+            } else {
+                $groupCourse = $trimmed;
+                $groupName = 'A';
+            }
+
+            $activeSchoolYearId = session('active_school_year_id')
+                ?? \App\Models\SchoolYear::where('is_active', true)->value('id')
+                ?? \App\Models\SchoolYear::latest('id')->value('id');
+
+            $group = Group::create([
+                'course' => $groupCourse,
+                'name' => $groupName,
+                'school_year_id' => $activeSchoolYearId,
+            ]);
+        }
+
+        // Permission check for profesor role
+        if ($group && $user->hasRole('profesor') && !$user->hasRole('admin')) {
+            if ($group->tutor_id !== $user->id) {
+                return false;
+            }
+        }
+
+        return $group ? $group->id : null;
     }
 
     private function downloadFormattedData($data, $filenameBase, $format)

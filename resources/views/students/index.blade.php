@@ -58,6 +58,7 @@
                 </form>
                 <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">
                     Plantillas: 
+                    <a href="{{ route('students.template', 'seneca') }}" title="Formato oficial Séneca (Alumno/a, Unidad)">Séneca</a> | 
                     <a href="{{ route('students.template', 'csv') }}">CSV</a> | 
                     <a href="{{ route('students.template', 'json') }}">JSON</a> | 
                     <a href="{{ route('students.template', 'yaml') }}">YAML</a>
