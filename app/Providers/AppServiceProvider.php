@@ -26,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     {
         \Illuminate\Pagination\Paginator::useTailwind();
 
+        // El rol 'admin' tiene automáticamente todos los permisos del sistema
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            return $user->hasRole('admin') ? true : null;
+        });
+
         View::composer(['layouts.app', 'components.sidebar', 'layouts.sidebar'], function ($view) {
             if (Auth::check()) {
                 $todayStr = now()->format('Y-m-d');

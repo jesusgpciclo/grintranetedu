@@ -18,7 +18,7 @@
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
         {{-- 1. Acceso Directo: Gestor de Salidas (Primero) --}}
-        @role('admin|profesor|conserje')
+        @canany(['salidas.view', 'salidas.create'])
         <div class="card card-hover" style="border: 2px solid var(--warning-border, #f59e0b); background: var(--warning-light, rgba(245, 158, 11, 0.05));">
             <h3 style="color: #d97706; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 🚪 Gestor de Salidas</h3>
@@ -29,9 +29,10 @@
                 <a href="{{ route('salidas.history') }}" class="btn btn-secondary btn-sm">Historial</a>
             </div>
         </div>
-        @endrole
+        @endcanany
 
         {{-- 2. Servicio de Guardias (Segundo) --}}
+        @canany(['guardias.view', 'ausencias.view', 'ausencias.create'])
         <div class="card card-hover" style="border: 2px solid var(--primary-border); background: var(--primary-light);">
             <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 🛡️ Servicio de Guardias</h3>
@@ -42,8 +43,10 @@
                 <a href="{{ route('ausencias.create') }}" class="btn btn-secondary btn-sm">+ Notificar Ausencia</a>
             </div>
         </div>
+        @endcanany
 
         {{-- Personalización: Mi Horario --}}
+        @can('schedules.view')
         <div class="card card-hover" style="border: 2px dashed var(--primary-border); background: var(--bg-card);">
             <h3 style="color: var(--primary); margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 Personalización</h3>
@@ -53,6 +56,7 @@
                 Ir a mi horario &rarr;
             </a>
         </div>
+        @endcan
 
         {{-- Mi Perfil --}}
         <div class="card card-hover">
@@ -68,8 +72,8 @@
             </div>
         </div>
 
-        {{-- Totales al final (solo para usuarios con rol/permiso) --}}
-        @role('admin')
+        {{-- Totales al final (para usuarios con rol/permiso) --}}
+        @can('users.view')
         <div class="card card-hover">
             <h3 style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 Total Usuarios</h3>
@@ -79,7 +83,9 @@
                 Gestionar Usuarios &rarr;
             </a>
         </div>
+        @endcan
 
+        @can('roles.view')
         <div class="card card-hover">
             <h3 style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 Total Roles</h3>
@@ -89,7 +95,9 @@
                 Gestionar Roles &rarr;
             </a>
         </div>
+        @endcan
 
+        @can('groups.view')
         <div class="card card-hover">
             <h3 style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 Total Grupos</h3>
@@ -99,7 +107,9 @@
                 Gestionar Grupos &rarr;
             </a>
         </div>
+        @endcan
 
+        @canany(['zonas.view', 'zonas.manage', 'aulas.view', 'aulas.manage'])
         <div class="card card-hover">
             <h3 style="color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
                 Total Zonas</h3>
@@ -109,7 +119,7 @@
                 Gestionar Zonas &rarr;
             </a>
         </div>
-        @endrole
+        @endcanany
 
         @role('profesor')
         <div class="card card-hover">

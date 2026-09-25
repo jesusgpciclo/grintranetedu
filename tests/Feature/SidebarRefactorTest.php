@@ -38,6 +38,7 @@ class SidebarRefactorTest extends TestCase
         Role::firstOrCreate(['name' => 'profesor']);
         Role::firstOrCreate(['name' => 'directiva']);
         Role::firstOrCreate(['name' => 'admin']);
+        \App\Services\PermissionManagerService::applyDefaultAssignments();
 
         $this->profesor = User::factory()->create(['name' => 'Docente Claustro']);
         $this->profesor->assignRole('profesor');

@@ -938,20 +938,24 @@
                     <!-- Right: Shortcuts, Theme Switch & Profile -->
                     <div class="flex items-center gap-2 sm:gap-3">
                         <!-- Quick Shortcut to Gestor de Salidas -->
+                        @canany(['salidas.view', 'salidas.create'])
                         <a href="{{ route('salidas.index') }}" 
                            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/80 transition"
                            title="Gestor de Salidas (Pases de Aula)">
                             <span>🚪</span>
                             <span class="hidden md:inline">Salidas</span>
                         </a>
+                        @endcanany
 
                         <!-- Quick Shortcut to Parte de Hoy (Live) -->
+                        @can('guardias.view')
                         <a href="{{ route('guardias.parte') }}" 
                            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-50 dark:bg-sky-950/40 hover:bg-sky-100 dark:hover:bg-sky-900/50 border border-sky-200 dark:border-sky-800/80 transition"
                            title="Ir al Parte de Guardia en vivo">
                             <span>🛡️</span>
                             <span class="hidden md:inline">Parte de Hoy</span>
                         </a>
+                        @endcan
 
                         <!-- Global Theme Toggle Button (Thumb-friendly >= 44px) -->
                         <button type="button" onclick="toggleTheme()" class="topbar-btn" title="Cambiar modo claro / oscuro" aria-label="Alternar tema claro y oscuro">

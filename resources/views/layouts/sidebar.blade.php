@@ -111,6 +111,7 @@
         {{-- ═══════════════════════════════════════════════════════════════ --}}
         {{-- 1. SECCIÓN: MI DÍA A DÍA (Para todo el claustro docente)       --}}
         {{-- ═══════════════════════════════════════════════════════════════ --}}
+        @canany(['guardias.view', 'guardias.sign', 'ausencias.view', 'ausencias.create'])
         <li style="margin-top: 0.75rem; margin-bottom: 0.25rem;">
             <div style="padding: 0.35rem 0.75rem 0.25rem; display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">
@@ -123,6 +124,7 @@
         </li>
 
         <!-- 1.1 Parte de Guardia (En vivo) -->
+        @can('guardias.view')
         <li>
             <a href="{{ route('guardias.parte') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('guardias.parte*') ? 'active' : '' }}"
@@ -148,8 +150,10 @@
                 </div>
             </a>
         </li>
+        @endcan
 
         <!-- 1.2 Mis Guardias Asignadas (con badge numérico si tiene guardia hoy) -->
+        @canany(['guardias.sign', 'guardias.view'])
         <li>
             <a href="{{ route('guardias.asignadas') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('guardias.asignadas*') ? 'active' : '' }}"
@@ -173,8 +177,10 @@
                 </div>
             </a>
         </li>
+        @endcanany
 
         <!-- 1.3 Mis Ausencias (Comunicar falta / Dejar tareas) -->
+        @canany(['ausencias.view', 'ausencias.create'])
         <li>
             <a href="{{ route('ausencias.index') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('ausencias.*') ? 'active' : '' }}">
@@ -189,8 +195,10 @@
                 <span>Mis Ausencias</span>
             </a>
         </li>
+        @endcanany
 
         <!-- 1.4 Mi Horario de Guardias -->
+        @can('guardias.view')
         <li>
             <a href="{{ route('guardias.mis-horas') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('guardias.mis-horas*') ? 'active' : '' }}">
@@ -201,11 +209,13 @@
                 <span>Mi Horario de Guardias</span>
             </a>
         </li>
+        @endcan
+        @endcanany
 
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- 2. SECCIÓN: GESTIÓN Y DIRECCIÓN (Para directivo / admin)          --}}
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
-        @hasanyrole('admin|directiva|directivo')
+        @canany(['guardias.assign', 'guardias.manage', 'ausencias.justify'])
         <li style="margin-top: 1rem; margin-bottom: 0.25rem;">
             <div style="padding: 0.35rem 0.75rem 0.25rem; display: flex; align-items: center; justify-content: space-between;">
                 <span style="font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.05em; color: #a855f7;">
@@ -218,6 +228,7 @@
         </li>
 
         <!-- 2.1 Cuadrante Semanal Completo -->
+        @canany(['guardias.assign', 'guardias.manage'])
         <li>
             <a href="{{ route('guardias.cuadrante') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('guardias.cuadrante*') ? 'active' : '' }}">
@@ -231,8 +242,10 @@
                 <span>Cuadrante Semanal Completo</span>
             </a>
         </li>
+        @endcanany
 
         <!-- 2.2 Control de Justificaciones -->
+        @can('ausencias.justify')
         <li>
             <a href="{{ route('guardias.justificaciones') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('guardias.justificaciones*') ? 'active' : '' }}">
@@ -244,8 +257,10 @@
                 <span>Control de Justificaciones</span>
             </a>
         </li>
+        @endcan
 
         <!-- 2.3 Estadísticas y Equidad del Claustro -->
+        @can('guardias.manage')
         <li>
             <a href="{{ route('guardias.estadisticas') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('guardias.estadisticas*') ? 'active' : '' }}">
@@ -276,7 +291,8 @@
                 <span>Configuración de Tramos y Aulas</span>
             </a>
         </li>
-        @endhasanyrole
+        @endcan
+        @endcanany
 
         {{-- ═══════════════════════════════════════════════════════════════════ --}}
         {{-- 3. MÓDULOS DE GESTIÓN EDUCATIVA Y CENTRO (Resto de la aplicación) --}}
@@ -310,6 +326,7 @@
                         <span>Mi Perfil</span>
                     </a>
                 </li>
+                @can('schedules.view')
                 <li>
                     <a href="{{ route('personal-schedules.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('personal-schedules.*') ? 'active' : '' }}">
@@ -319,6 +336,8 @@
                         <span>Mi Horario Personal</span>
                     </a>
                 </li>
+                @endcan
+                @can('calendars.view')
                 <li>
                     <a href="{{ route('calendar.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
@@ -328,10 +347,12 @@
                         <span>Calendario Escolar</span>
                     </a>
                 </li>
+                @endcan
             </ul>
         </li>
 
         {{-- ═══ Mensajería Interna ═══ --}}
+        @can('messages.view')
         <li>
             <a href="{{ route('messages.index') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('messages.*') ? 'active' : '' }}">
@@ -341,8 +362,10 @@
                 <span>Mensajería</span>
             </a>
         </li>
+        @endcan
 
         {{-- ═══ Centro (Horarios, Aulas, Grupos, Profesores, Alumnos) ═══ --}}
+        @canany(['school_years.manage', 'calendars.manage', 'calendars.view', 'schedules.manage', 'aulas.view', 'aulas.manage', 'zonas.view', 'zonas.manage', 'groups.view', 'teachers.view', 'students.view'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -354,6 +377,7 @@
                 <span class="arrow">▼</span>
             </div>
             <ul class="submenu">
+                @can('school_years.manage')
                 <li>
                     <a href="{{ route('school-years.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('school-years.*') ? 'active' : '' }}">
@@ -363,6 +387,8 @@
                         <span>Cursos</span>
                     </a>
                 </li>
+                @endcan
+                @canany(['calendars.manage', 'calendars.view'])
                 <li>
                     <a href="{{ route('calendar.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('calendar.*') ? 'active' : '' }}">
@@ -372,6 +398,8 @@
                         <span>Calendarios</span>
                     </a>
                 </li>
+                @endcanany
+                @can('schedules.manage')
                 <li>
                     <a href="{{ route('schedule-templates.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('schedule-templates.*') ? 'active' : '' }}">
@@ -381,7 +409,6 @@
                         <span>Plantillas Horarios</span>
                     </a>
                 </li>
-                @if(auth()->check() && (auth()->user()->can('manage teacher schedules') || auth()->user()->hasAnyRole(['admin', 'directiva'])))
                 <li>
                     <a href="{{ route('teacher-schedules.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('teacher-schedules.*') ? 'active' : '' }}">
@@ -391,7 +418,8 @@
                         <span>Horarios</span>
                     </a>
                 </li>
-                @endif
+                @endcan
+                @canany(['aulas.view', 'aulas.manage', 'zonas.view', 'zonas.manage'])
                 <li>
                     <a href="{{ route('aulas.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('aulas.*') ? 'active' : '' }}">
@@ -402,7 +430,8 @@
                         <span>Zonas</span>
                     </a>
                 </li>
-                @role('admin|profesor')
+                @endcanany
+                @can('groups.view')
                 <li>
                     <a href="{{ route('groups.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('groups.*') ? 'active' : '' }}">
@@ -412,6 +441,8 @@
                         <span>Grupos</span>
                     </a>
                 </li>
+                @endcan
+                @can('teachers.view')
                 <li>
                     <a href="{{ route('teachers.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('teachers.*') ? 'active' : '' }}">
@@ -421,6 +452,8 @@
                         <span>Profesores</span>
                     </a>
                 </li>
+                @endcan
+                @can('students.view')
                 <li>
                     <a href="{{ route('students.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('students.*') ? 'active' : '' }}">
@@ -430,11 +463,13 @@
                         <span>Alumnos</span>
                     </a>
                 </li>
-                @endrole
+                @endcan
             </ul>
         </li>
+        @endcanany
 
         {{-- ═══ Salidas (Módulo de Salidas) ═══ --}}
+        @canany(['salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -453,6 +488,7 @@
                 </div>
             </div>
             <ul class="submenu">
+                @can('salidas.create')
                 <li>
                     <a href="{{ route('salidas.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('salidas.index') ? 'active' : '' }}">
@@ -462,6 +498,8 @@
                         <span>Pase de Salida</span>
                     </a>
                 </li>
+                @endcan
+                @can('salidas.manage')
                 <li>
                     <a href="{{ route('salidas.history') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('salidas.history') ? 'active' : '' }}">
@@ -471,6 +509,8 @@
                         <span>Historial</span>
                     </a>
                 </li>
+                @endcan
+                @canany(['salidas.view', 'salidas.return_monitor'])
                 <li>
                     <a href="{{ route('salidas.monitor') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('salidas.monitor') ? 'active' : '' }}" style="display: flex; justify-content: space-between; align-items: center;">
@@ -488,10 +528,13 @@
                         @endif
                     </a>
                 </li>
+                @endcanany
             </ul>
         </li>
+        @endcanany
 
         {{-- ═══ Cuaderno del Profesor ═══ --}}
+        @canany(['cuaderno.view', 'cuaderno.manage', 'modulos.view', 'modulos.manage', 'notas.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -503,6 +546,7 @@
                 <span class="arrow">▼</span>
             </div>
             <ul class="submenu">
+                @canany(['cuaderno.view', 'cuaderno.manage'])
                 <li>
                     <a href="{{ route('cuaderno.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('cuaderno.*') ? 'active' : '' }}">
@@ -512,6 +556,8 @@
                         <span>Mi Cuaderno</span>
                     </a>
                 </li>
+                @endcanany
+                @canany(['modulos.view', 'modulos.manage'])
                 <li>
                     <a href="{{ route('modulos.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('modulos.*') ? 'active' : '' }}">
@@ -521,6 +567,8 @@
                         <span>Módulos Formativos</span>
                     </a>
                 </li>
+                @endcanany
+                @can('cuaderno.manage')
                 <li>
                     <a href="{{ route('sesiones.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('sesiones.*') ? 'active' : '' }}">
@@ -539,6 +587,8 @@
                         <span>Actividades</span>
                     </a>
                 </li>
+                @endcan
+                @can('notas.manage')
                 <li>
                     <a href="{{ route('notas.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('notas.*') ? 'active' : '' }}">
@@ -549,6 +599,8 @@
                         <span>Notas y Calificaciones</span>
                     </a>
                 </li>
+                @endcan
+                @canany(['cuaderno.view', 'cuaderno.manage'])
                 <li>
                     <a href="{{ route('observaciones.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('observaciones.*') ? 'active' : '' }}">
@@ -558,10 +610,13 @@
                         <span>Observaciones Alumnos</span>
                     </a>
                 </li>
+                @endcanany
             </ul>
         </li>
+        @endcanany
 
         {{-- ═══ Recursos e Incidencias ═══ --}}
+        @canany(['tic.view', 'tic.manage', 'incidencias.view', 'incidencias.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -580,6 +635,7 @@
                 </div>
             </div>
             <ul class="submenu">
+                @can('tic.view')
                 <li>
                     <a href="{{ route('tic-bookings.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('tic-bookings.*') ? 'active' : '' }}">
@@ -589,6 +645,8 @@
                         <span>Reservas TIC</span>
                     </a>
                 </li>
+                @endcan
+                @can('tic.manage')
                 <li>
                     <a href="{{ route('recursos.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('recursos.*') ? 'active' : '' }}">
@@ -607,6 +665,8 @@
                         <span>Tipos de Recursos</span>
                     </a>
                 </li>
+                @endcan
+                @canany(['incidencias.view', 'incidencias.manage'])
                 <li>
                     <a href="{{ route('incidencias.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('incidencias.*') ? 'active' : '' }}" style="display: flex; justify-content: space-between; align-items: center;">
@@ -623,10 +683,13 @@
                         @endif
                     </a>
                 </li>
+                @endcanany
             </ul>
         </li>
+        @endcanany
 
         {{-- ═══ Documentación ═══ --}}
+        @canany(['documentos.view', 'documentos.manage', 'tic.manage', 'inventory.view', 'inventory.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -638,6 +701,7 @@
                 <span class="arrow">▼</span>
             </div>
             <ul class="submenu">
+                @can('documentos.view')
                 <li>
                     <a href="{{ route('documentos-institucionales.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('documentos-institucionales.*') ? 'active' : '' }}">
@@ -647,6 +711,8 @@
                         <span>Docs Institucionales</span>
                     </a>
                 </li>
+                @endcan
+                @can('documentos.manage')
                 <li>
                     <a href="{{ route('categorias.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('categorias.*') ? 'active' : '' }}">
@@ -665,6 +731,8 @@
                         <span>Etiquetas</span>
                     </a>
                 </li>
+                @endcan
+                @canany(['inventory.view', 'inventory.manage', 'tic.manage'])
                 <li>
                     <a href="{{ route('inventory.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('inventory.*') ? 'active' : '' }}">
@@ -674,11 +742,13 @@
                         <span>Inventario Centro</span>
                     </a>
                 </li>
+                @endcanany
             </ul>
         </li>
+        @endcanany
 
-        {{-- ═══ Administración (solo admin) ═══ --}}
-        @role('admin')
+        {{-- ═══ Administración ═══ --}}
+        @canany(['users.view', 'roles.view', 'permissions.manage', 'backups.manage', 'actualizaciones.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -691,6 +761,7 @@
                 <span class="arrow">▼</span>
             </div>
             <ul class="submenu">
+                @can('users.view')
                 <li>
                     <a href="{{ route('users.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('users.*') ? 'active' : '' }}">
@@ -700,6 +771,8 @@
                         <span>Usuarios</span>
                     </a>
                 </li>
+                @endcan
+                @can('roles.view')
                 <li>
                     <a href="{{ route('roles.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('roles.*') ? 'active' : '' }}">
@@ -709,6 +782,8 @@
                         <span>Roles</span>
                     </a>
                 </li>
+                @endcan
+                @can('backups.manage')
                 <li>
                     <a href="{{ route('backups.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('backups.*') ? 'active' : '' }}">
@@ -718,6 +793,8 @@
                         <span>Copias de Seguridad</span>
                     </a>
                 </li>
+                @endcan
+                @can('actualizaciones.manage')
                 <li>
                     <a href="{{ route('actualizaciones.index') }}"
                         class="nav-link min-h-[44px] {{ request()->routeIs('actualizaciones.*') ? 'active' : '' }}">
@@ -727,9 +804,10 @@
                         <span>Actualizaciones</span>
                     </a>
                 </li>
+                @endcan
             </ul>
         </li>
-        @endrole
+        @endcanany
 
         {{-- ═══ Política de Privacidad ═══ --}}
         <li>

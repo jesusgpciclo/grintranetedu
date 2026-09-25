@@ -315,6 +315,14 @@ class PermissionManagerService
                         'label' => 'Administrar Recursos TIC',
                         'description' => 'Gestionar inventario, crear categorías y autorizar reservas.'
                     ],
+                    'inventory.view' => [
+                        'label' => 'Ver Inventario del Centro',
+                        'description' => 'Consultar el inventario de bienes, equipos y dependencias.'
+                    ],
+                    'inventory.manage' => [
+                        'label' => 'Administrar Inventario',
+                        'description' => 'Alta, baja y modificación de elementos del inventario escolar.'
+                    ],
                     'backups.manage' => [
                         'label' => 'Copias de Seguridad',
                         'description' => 'Generar y descargar copias de respaldo de la base de datos.'
@@ -379,6 +387,7 @@ class PermissionManagerService
                 'documentos.view', 'documentos.manage',
                 'incidencias.view', 'incidencias.manage',
                 'tic.view',
+                'inventory.view', 'inventory.manage',
             ],
 
             'director' => [
@@ -394,6 +403,7 @@ class PermissionManagerService
                 'messages.view', 'messages.send',
                 'documentos.view', 'documentos.manage',
                 'incidencias.view', 'incidencias.manage',
+                'inventory.view', 'inventory.manage',
             ],
 
             'controlador-pasillo' => [
@@ -447,12 +457,14 @@ class PermissionManagerService
                 'school_years.manage', 'aulas.view', 'calendars.view', 'calendars.manage',
                 'documentos.view', 'documentos.manage',
                 'messages.view', 'messages.send',
+                'inventory.view', 'inventory.manage',
             ],
 
             'tecnico-tic' => [
                 'users.view',
                 'aulas.view',
                 'tic.view', 'tic.manage',
+                'inventory.view', 'inventory.manage',
                 'messages.view', 'messages.send',
                 'documentos.view',
             ],

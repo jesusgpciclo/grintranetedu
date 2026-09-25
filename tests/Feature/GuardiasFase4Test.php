@@ -60,7 +60,7 @@ class GuardiasFase4Test extends TestCase
 
         $response = $this->get('/manifest.json');
         $response->assertOk();
-        $response->assertSee('Guardia');
+        $response->assertSee('GR Intranet EDU');
         $response->assertSee('standalone');
     }
 
@@ -71,7 +71,7 @@ class GuardiasFase4Test extends TestCase
 
         $response = $this->get('/sw.js');
         $response->assertOk();
-        $response->assertSee('guardia-v1');
+        $response->assertSee('gr-intranet-v2');
     }
 
     /** @test */
