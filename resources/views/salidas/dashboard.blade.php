@@ -125,8 +125,8 @@
 
                     <!-- Actions & Stats Section -->
                     <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4">
-                        <!-- Stats -->
-                        <div class="flex gap-2 sm:gap-3">
+                        <!-- Stats (Hidden on mobile, visible on desktop) -->
+                        <div class="hidden sm:flex gap-2 sm:gap-3">
                             <div class="bg-blue-500/10 border border-blue-500/25 rounded-xl px-3 sm:px-4 py-2 flex-1 flex items-center justify-between sm:block">
                                 <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest sm:block mb-0.5">Activos</span>
                                 <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['active_count'] }}</span>
@@ -199,7 +199,7 @@
                         $lastPass = $studentTodayPasses->first();
                         $studentFullName = $student->name . ' ' . ($student->last_name ?? '');
                     @endphp
-                    <div class="student-card group relative rounded-2xl p-4 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-300 border flex flex-col justify-between"
+                    <div class="student-card group relative rounded-2xl p-3 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-300 border flex flex-col justify-between"
                         style="background: var(--bg-card); border-color: {{ $activePass ? 'rgba(245, 158, 11, 0.6)' : ($todayCount >= 3 ? 'rgba(239, 68, 68, 0.5)' : 'var(--border)') }};"
                         data-group-id="{{ $student->group_id }}" data-id="{{ $student->id }}"
                         data-student-name="{{ $studentFullName }}"
@@ -208,8 +208,7 @@
                         data-search="{{ strtolower($student->name . ' ' . $student->last_name) }}" style="display: none;">
 
                         <!-- Card Header / List Info -->
-                        <div class="flex items-center justify-between mb-2 sm:mb-3 {{ !$activePass ? 'cursor-pointer sm:cursor-default' : '' }}"
-                             @if(!$activePass) onclick="openMobileReasonSheet({{ $student->id }}, '{{ addslashes($studentFullName) }}', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')" @endif>
+                        <div class="flex items-center justify-between mb-2 sm:mb-3">
                             <div class="flex items-center gap-3 min-w-0 flex-1">
                                 <div
                                     class="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-400 to-blue-600') }} flex items-center justify-center text-white font-bold text-sm shadow-md">
@@ -243,12 +242,6 @@
                                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                                         <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
                                     </span>
-                                @else
-                                    <div class="student-mobile-tap sm:hidden text-sky-500 p-1 bg-sky-500/10 rounded-lg border border-sky-500/20">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -301,6 +294,44 @@
                                     </button>
                                 </div>
                             @else
+                                <!-- Mobile Direct Actions (sm:hidden) -->
+                                <div class="sm:hidden grid grid-cols-4 gap-1.5 pt-1">
+                                    <button type="button" onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/25 transition">
+                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10">
+                                            </path>
+                                        </svg>
+                                        <span class="text-[10px] font-bold leading-tight">Baño</span>
+                                    </button>
+                                    <button type="button" onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 transition">
+                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5"></path>
+                                        </svg>
+                                        <span class="text-[10px] font-bold leading-tight">Agua</span>
+                                    </button>
+                                    <button type="button" onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-orange-500/10 hover:bg-orange-500/20 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/25 transition">
+                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M3 3h18v18H3zM12 8v8m-4-4h8"></path>
+                                        </svg>
+                                        <span class="text-[10px] font-bold leading-tight">Enfermedad</span>
+                                    </button>
+                                    <button type="button" onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                        class="flex flex-col items-center justify-center py-2 px-1 rounded-xl bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] active:scale-95 text-[var(--text-muted)] hover:text-[var(--text-heading)] border border-[var(--border)] transition">
+                                        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
+                                            </path>
+                                        </svg>
+                                        <span class="text-[10px] font-bold leading-tight truncate max-w-full">Otro motivo</span>
+                                    </button>
+                                </div>
+
                                 <!-- Desktop Grid Actions -->
                                 <div class="hidden sm:grid grid-cols-2 gap-2">
                                     <button onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
