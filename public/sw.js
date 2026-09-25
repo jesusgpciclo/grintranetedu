@@ -1,5 +1,5 @@
 // Service Worker para GR Intranet EDU / Guardia PWA
-const CACHE_NAME = 'guardia-v1';
+const CACHE_NAME = 'gr-intranet-v2';
 const PRECACHE_URLS = [
   '/',
   '/manifest.json',
