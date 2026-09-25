@@ -241,45 +241,45 @@
                                     </button>
                                 </div>
                             @else
-                                <div class="flex items-center gap-1 shrink-0">
+                                <div class="flex items-center gap-1.5 shrink-0">
                                     <!-- Baño -->
                                     <button type="button" 
                                         onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center p-1 min-w-[32px] rounded-lg bg-blue-500/15 hover:bg-blue-500/25 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/25 transition">
+                                        title="Baño" aria-label="Baño"
+                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" />
                                         </svg>
-                                        <span class="text-[8.5px] font-bold leading-tight mt-0.5">Baño</span>
                                     </button>
 
-                                    <!-- Agua -->
+                                    <!-- Agua (Gota de agua) -->
                                     <button type="button" 
                                         onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center p-1 min-w-[32px] rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 transition">
+                                        title="Agua" aria-label="Agua"
+                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 transition">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
                                         </svg>
-                                        <span class="text-[8.5px] font-bold leading-tight mt-0.5">Agua</span>
                                     </button>
 
                                     <!-- Enfermedad -->
                                     <button type="button" 
                                         onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center p-1 min-w-[38px] rounded-lg bg-orange-500/15 hover:bg-orange-500/25 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/25 transition">
+                                        title="Enfermedad" aria-label="Enfermedad"
+                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-orange-500/15 hover:bg-orange-500/25 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/30 transition">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3zM12 8v8m-4-4h8" />
                                         </svg>
-                                        <span class="text-[8px] font-bold leading-tight mt-0.5">Enfermedad</span>
                                     </button>
 
                                     <!-- Otro motivo -->
                                     <button type="button" 
                                         onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        class="flex flex-col items-center justify-center p-1 min-w-[42px] rounded-lg bg-slate-500/10 hover:bg-slate-500/20 active:scale-95 text-slate-700 dark:text-slate-300 border border-slate-400/25 transition">
+                                        title="Otro motivo" aria-label="Otro motivo"
+                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 active:scale-95 text-slate-700 dark:text-slate-300 border border-slate-400/30 transition">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                                         </svg>
-                                        <span class="text-[7.5px] font-bold leading-tight mt-0.5 whitespace-nowrap">Otro motivo</span>
                                     </button>
                                 </div>
                             @endif
@@ -391,7 +391,7 @@
                                             <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
                                                 stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5"></path>
+                                                    d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
                                             </svg>
                                             <span class="text-xs font-semibold">Agua</span>
                                         </button>
@@ -474,7 +474,7 @@
                     <div class="p-2.5 bg-cyan-500/20 rounded-xl">
                         <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M20 14.66V20a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2h2.5"></path>
+                                d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
                         </svg>
                     </div>
                     <span class="text-sm font-bold">Agua</span>
