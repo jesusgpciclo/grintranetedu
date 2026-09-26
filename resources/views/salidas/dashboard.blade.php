@@ -135,15 +135,24 @@ Gestor de <span class="text-blue-500">salidas</span>
                         </div>
 
                         <div class="flex items-center gap-2">
-                            <select id="class-selector"
-                                class="flex-1 sm:w-auto bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] font-semibold focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none min-w-[140px]">
-                                <option value="" selected>Seleccionar clase...</option>
-                                @foreach($groups as $group)
-                                    <option value="{{ $group->id }}">
-                                        {{ $group->course }} {{ $group->name }}
-                                    </option>
-                                @endforeach
-                            </select>
+                            <div class="relative flex-1 sm:w-auto min-w-[150px]">
+                                <select id="class-selector"
+                                    class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 pl-3 pr-10 text-sm text-[var(--text-color)] font-semibold focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none">
+                                    <option value="" selected>Seleccionar clase...</option>
+                                    @foreach($groups as $group)
+                                        <option value="{{ $group->id }}">
+                                            {{ trim(($group->course ? $group->course . ' ' : '') . $group->name) }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <button type="button" id="favorite-class-btn" onclick="toggleCurrentClassFavorite(event)"
+                                    class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:scale-110 active:scale-95 transition-all focus:outline-none z-10"
+                                    title="Marcar o desmarcar como favorita">
+                                    <svg id="favorite-star-icon" class="w-5 h-5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                                    </svg>
+                                </button>
+                            </div>
 
                             <div class="flex gap-1 shrink-0">
                                 <a href="{{ route('salidas.monitor') }}"
@@ -583,6 +592,168 @@ Gestor de <span class="text-blue-500">salidas</span>
             }, 150);
         }
 
+        // Available groups for favorite handling
+        const availableGroups = @json($groups->map(fn($g) => [
+            'id' => (string) $g->id,
+            'name' => trim(($g->course ? $g->course . ' ' : '') . $g->name)
+        ]));
+
+        const FAVORITES_STORAGE_KEY = 'salidas_favorite_groups';
+
+        function getFavoriteGroupIds() {
+            try {
+                const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
+                return stored ? JSON.parse(stored) : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveFavoriteGroupIds(ids) {
+            try {
+                localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(ids));
+            } catch (e) {
+                console.error('Error saving favorite groups:', e);
+            }
+        }
+
+        function isGroupFavorite(groupId) {
+            if (!groupId) return false;
+            return getFavoriteGroupIds().map(String).includes(String(groupId));
+        }
+
+        function updateFavoriteStarState() {
+            const selector = document.getElementById('class-selector');
+            const starBtn = document.getElementById('favorite-class-btn');
+            const starIcon = document.getElementById('favorite-star-icon');
+            if (!selector || !starBtn || !starIcon) return;
+
+            const currentVal = selector.value;
+            if (!currentVal) {
+                starBtn.classList.add('opacity-30', 'cursor-not-allowed');
+                starBtn.classList.remove('cursor-pointer');
+                starBtn.title = 'Selecciona una clase para marcarla como favorita';
+                starIcon.setAttribute('fill', 'none');
+                starIcon.setAttribute('stroke', 'currentColor');
+                starIcon.setAttribute('stroke-width', '2');
+                starIcon.className = 'w-5 h-5 text-slate-400 dark:text-slate-500 transition-all';
+                return;
+            }
+
+            starBtn.classList.remove('opacity-30', 'cursor-not-allowed');
+            starBtn.classList.add('cursor-pointer');
+            const isFav = isGroupFavorite(currentVal);
+
+            if (isFav) {
+                starBtn.title = 'Quitar de favoritos';
+                starIcon.setAttribute('fill', '#facc15');
+                starIcon.setAttribute('stroke', '#0f172a');
+                starIcon.setAttribute('stroke-width', '1.8');
+                starIcon.className = 'w-5 h-5 transition-transform drop-shadow-xs scale-105';
+            } else {
+                starBtn.title = 'Marcar como favorita';
+                starIcon.setAttribute('fill', 'none');
+                starIcon.setAttribute('stroke', 'currentColor');
+                starIcon.setAttribute('stroke-width', '2');
+                starIcon.className = 'w-5 h-5 text-slate-400 dark:text-slate-500 hover:text-amber-500 transition-all';
+            }
+        }
+
+        function renderClassSelector(selectedId = null) {
+            const selector = document.getElementById('class-selector');
+            if (!selector) return;
+
+            const currentVal = selectedId !== null ? String(selectedId) : String(selector.value || '');
+            const favorites = getFavoriteGroupIds().map(String);
+
+            // Separate favorites and other groups
+            const favGroups = availableGroups.filter(g => favorites.includes(String(g.id)));
+            const otherGroups = availableGroups.filter(g => !favorites.includes(String(g.id)));
+
+            selector.innerHTML = '';
+
+            const defaultOpt = document.createElement('option');
+            defaultOpt.value = '';
+            defaultOpt.textContent = 'Seleccionar clase...';
+            selector.appendChild(defaultOpt);
+
+            if (favGroups.length > 0) {
+                const favGroupEl = document.createElement('optgroup');
+                favGroupEl.label = '⭐ Favoritos';
+                favGroups.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.textContent = g.name;
+                    favGroupEl.appendChild(opt);
+                });
+                selector.appendChild(favGroupEl);
+
+                const otherGroupEl = document.createElement('optgroup');
+                otherGroupEl.label = 'Otras clases';
+                otherGroups.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.textContent = g.name;
+                    otherGroupEl.appendChild(opt);
+                });
+                selector.appendChild(otherGroupEl);
+            } else {
+                availableGroups.forEach(g => {
+                    const opt = document.createElement('option');
+                    opt.value = g.id;
+                    opt.textContent = g.name;
+                    selector.appendChild(opt);
+                });
+            }
+
+            if (currentVal && availableGroups.some(g => String(g.id) === currentVal)) {
+                selector.value = currentVal;
+            } else {
+                selector.value = '';
+            }
+
+            updateFavoriteStarState();
+        }
+
+        window.toggleCurrentClassFavorite = function(e) {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            const selector = document.getElementById('class-selector');
+            if (!selector) return;
+
+            const currentVal = selector.value;
+            if (!currentVal) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Selecciona primero una clase para marcarla como favorita', 'info');
+                }
+                return;
+            }
+
+            let favorites = getFavoriteGroupIds().map(String);
+            const index = favorites.indexOf(String(currentVal));
+            const group = availableGroups.find(g => String(g.id) === String(currentVal));
+            const groupName = group ? group.name : 'Clase';
+
+            if (index >= 0) {
+                favorites.splice(index, 1);
+                saveFavoriteGroupIds(favorites);
+                renderClassSelector(currentVal);
+                if (typeof window.showToast === 'function') {
+                    window.showToast(`${groupName} eliminada de favoritos`, 'info');
+                }
+            } else {
+                favorites.push(String(currentVal));
+                saveFavoriteGroupIds(favorites);
+                renderClassSelector(currentVal);
+                if (typeof window.showToast === 'function') {
+                    window.showToast(`⭐ ${groupName} añadida a favoritos`, 'success');
+                }
+            }
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const searchInput = document.getElementById('student-search');
             const selector = document.getElementById('class-selector');
@@ -598,11 +769,14 @@ Gestor de <span class="text-blue-500">salidas</span>
                 });
             }
 
-            // Restore saved class from localStorage
+            // Restore saved class or first favorite if only 1 favorite and no saved class
             const savedClass = localStorage.getItem('selected_class');
-            if (savedClass) {
-                selector.value = savedClass;
+            const favorites = getFavoriteGroupIds().map(String);
+            let initialClass = savedClass;
+            if (!initialClass && favorites.length === 1) {
+                initialClass = favorites[0];
             }
+            renderClassSelector(initialClass);
 
             function applyFilters() {
                 const selectedGroup = selector.value;
@@ -662,12 +836,14 @@ Gestor de <span class="text-blue-500">salidas</span>
 
             selector.addEventListener('change', () => {
                 localStorage.setItem('selected_class', selector.value);
+                updateFavoriteStarState();
                 applyFilters();
             });
             searchInput.addEventListener('input', applyFilters);
 
             // Initial call
             applyFilters();
+            updateFavoriteStarState();
 
             // Premium Modal System
             const modalOverlay = document.getElementById('custom-modal-overlay');

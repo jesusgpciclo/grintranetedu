@@ -57,4 +57,26 @@ class HallPassMobileLayoutTest extends TestCase
         // 3. The old mobile "+" tap button is no longer present
         $response->assertDontSee('student-mobile-tap');
     }
+
+    public function test_salidas_dashboard_contains_favorite_course_star_and_scripts(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $group = Group::create([
+            'course' => '1º GS DAW',
+            'name' => 'A',
+            'academic_year' => '2025/2026',
+        ]);
+
+        $response = $this->actingAs($teacher)->get(route('salidas.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('id="favorite-class-btn"', false);
+        $response->assertSee('id="favorite-star-icon"', false);
+        $response->assertSee('toggleCurrentClassFavorite', false);
+        $response->assertSee('salidas_favorite_groups', false);
+        $response->assertSee('renderClassSelector', false);
+    }
 }
+
