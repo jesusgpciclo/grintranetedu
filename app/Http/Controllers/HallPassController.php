@@ -295,12 +295,17 @@ class HallPassController extends Controller
                 $query->orderBy('reason', $direction);
                 break;
             case 'duracion':
-                $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
+                    $query->orderByRaw('(julianday(end_time) - julianday(start_time)) ' . $direction);
+                } else {
+                    $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                }
                 break;
             case 'profesor':
                 $query->join('users as teachers', 'hall_passes.teacher_id', '=', 'teachers.id')
                     ->select('hall_passes.*')
-                    ->orderBy('teachers.name', $direction);
+                    ->orderBy('teachers.name', $direction)
+                    ->orderBy('teachers.last_name', $direction);
                 break;
             case 'fecha':
             default:
@@ -358,12 +363,17 @@ class HallPassController extends Controller
                 $query->orderBy('reason', $direction);
                 break;
             case 'duracion':
-                $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
+                    $query->orderByRaw('(julianday(end_time) - julianday(start_time)) ' . $direction);
+                } else {
+                    $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                }
                 break;
             case 'profesor':
                 $query->join('users as teachers', 'hall_passes.teacher_id', '=', 'teachers.id')
                     ->select('hall_passes.*')
-                    ->orderBy('teachers.name', $direction);
+                    ->orderBy('teachers.name', $direction)
+                    ->orderBy('teachers.last_name', $direction);
                 break;
             case 'fecha':
             default:
@@ -388,16 +398,15 @@ class HallPassController extends Controller
             fputcsv($file, ['Fecha', 'Hora Inicio', 'Hora Fin', 'Alumno', 'Clase', 'Motivo', 'Duración (min)', 'Autorizado por']);
 
             foreach ($passes as $pass) {
-                $duration = $pass->end_time ? (int) $pass->start_time->diffInMinutes($pass->end_time) : 'Activo';
                 fputcsv($file, [
                     $pass->date->format('d/m/Y'),
-                    $pass->start_time->format('H:i'),
+                    $pass->start_time ? $pass->start_time->format('H:i') : '-',
                     $pass->end_time ? $pass->end_time->format('H:i') : '-',
-                    ($pass->student?->name ?? '') . ' ' . ($pass->student?->last_name ?? ''),
-                    ($pass->student?->groupRel?->course ?? '') . ' ' . ($pass->student?->groupRel?->name ?? ''),
+                    trim(($pass->student?->name ?? '') . ' ' . ($pass->student?->last_name ?? '')),
+                    trim(($pass->student?->groupRel?->course ?? '') . ' ' . ($pass->student?->groupRel?->name ?? '')),
                     $pass->reason,
-                    $duration,
-                    $pass->teacher?->name ?? 'N/A'
+                    $pass->duration_formatted,
+                    $pass->teacher_full_name
                 ]);
             }
             fclose($file);
@@ -450,12 +459,17 @@ class HallPassController extends Controller
                 $query->orderBy('reason', $direction);
                 break;
             case 'duracion':
-                $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
+                    $query->orderByRaw('(julianday(end_time) - julianday(start_time)) ' . $direction);
+                } else {
+                    $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                }
                 break;
             case 'profesor':
                 $query->join('users as teachers', 'hall_passes.teacher_id', '=', 'teachers.id')
                     ->select('hall_passes.*')
-                    ->orderBy('teachers.name', $direction);
+                    ->orderBy('teachers.name', $direction)
+                    ->orderBy('teachers.last_name', $direction);
                 break;
             case 'fecha':
             default:

@@ -142,4 +142,43 @@ class HallPassDeleteTest extends TestCase
         $response->assertSee('pass-checkbox');
         $response->assertSee('confirmDeletePass(' . $pass->id, false);
     }
+
+    public function test_history_displays_teacher_full_name_and_correct_duration(): void
+    {
+        $teacher = User::factory()->create([
+            'name' => 'Jesús',
+            'last_name' => 'García Pérez',
+        ]);
+        $teacher->assignRole('profesor');
+
+        $student = User::factory()->create(['name' => 'Ana', 'last_name' => 'López']);
+        $student->assignRole('alumno');
+
+        $pass1 = HallPass::create([
+            'user_id' => $student->id,
+            'teacher_id' => $teacher->id,
+            'reason' => 'Baño',
+            'date' => now()->toDateString(),
+            'start_time' => now()->subMinutes(12),
+            'end_time' => now(),
+        ]);
+
+        $pass2 = HallPass::create([
+            'user_id' => $student->id,
+            'teacher_id' => $teacher->id,
+            'reason' => 'Agua',
+            'date' => now()->toDateString(),
+            'start_time' => now()->subSeconds(30),
+            'end_time' => now(),
+        ]);
+
+        $response = $this->actingAs($teacher)
+            ->get(route('salidas.history'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Jesús García Pérez');
+        $response->assertSee('12 min');
+        $response->assertSee('&lt; 1 min', false);
+        $response->assertDontSee('-120 min');
+    }
 }

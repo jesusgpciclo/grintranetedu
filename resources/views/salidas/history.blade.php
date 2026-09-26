@@ -214,7 +214,7 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             @if($pass->end_time)
                                                 <span class="text-[var(--text-muted)] font-medium">
-                                                    {{ (int) $pass->start_time->diffInMinutes($pass->end_time) }} min
+                                                    {{ $pass->duration_formatted }}
                                                 </span>
                                             @else
                                                 <span class="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-black animate-pulse">
@@ -224,7 +224,7 @@
                                             @endif
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)] italic">
-                                            {{ $pass->teacher?->name ?? 'N/A' }}
+                                            {{ $pass->teacher_full_name }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
                                             <button onclick="confirmDeletePass({{ $pass->id }}, '{{ addslashes(($pass->student?->name ?? 'Alumno') . ' ' . ($pass->student?->last_name ?? '')) }}')"

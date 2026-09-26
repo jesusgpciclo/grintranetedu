@@ -86,13 +86,13 @@
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-xs text-slate-600">
                             @if($pass->end_time)
-                                {{ (int) $pass->start_time->diffInMinutes($pass->end_time) }} min
+                                {{ $pass->duration_formatted }}
                             @else
                                 <span class="text-emerald-600 font-bold">Activo</span>
                             @endif
                         </td>
                         <td class="px-4 py-3 whitespace-nowrap text-xs text-slate-500 italic">
-                            {{ $pass->teacher?->name ?? 'N/A' }}
+                            {{ $pass->teacher_full_name }}
                         </td>
                     </tr>
                 @empty
