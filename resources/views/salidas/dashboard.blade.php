@@ -104,6 +104,60 @@ Gestor de <span class="text-blue-500">salidas</span>
             width: 100%;
             border-radius: 0 0 0 1rem;
         }
+
+        /* Search & Class Selector Layout (Bulletproof Desktop/Mobile Sizing) */
+        .search-filter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            flex: 1 1 0%;
+            min-width: 0;
+        }
+
+        .student-search-box {
+            width: 100%;
+        }
+
+        .class-selector-box {
+            width: 100%;
+        }
+
+        @media (min-width: 640px) {
+            .search-filter-container {
+                flex-direction: row;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 0.625rem;
+            }
+
+            .student-search-box {
+                width: 200px !important;
+                max-width: 200px !important;
+                flex: 0 0 200px !important;
+            }
+
+            .class-selector-box {
+                width: 320px !important;
+                min-width: 260px !important;
+                max-width: 360px !important;
+                flex: 0 0 320px !important;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .student-search-box {
+                width: 220px !important;
+                max-width: 220px !important;
+                flex: 0 0 220px !important;
+            }
+
+            .class-selector-box {
+                width: 360px !important;
+                min-width: 300px !important;
+                max-width: 420px !important;
+                flex: 0 0 360px !important;
+            }
+        }
     </style>
 
     <div class="py-2 sm:py-4">
@@ -125,8 +179,8 @@ Gestor de <span class="text-blue-500">salidas</span>
                     </div>
 
                     <!-- Search & Filters -->
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 sm:justify-end">
-                        <div class="relative w-full sm:w-48 md:w-56 lg:w-64 shrink-0">
+                    <div class="search-filter-container">
+                        <div class="student-search-box relative">
                             <input type="text" id="student-search" placeholder="Buscar alumno..."
                                 class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 pl-9 pr-4 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,7 +189,7 @@ Gestor de <span class="text-blue-500">salidas</span>
                         </div>
 
                         <div class="flex items-center gap-2 flex-1 sm:flex-initial min-w-0">
-                            <div class="flex-1 sm:w-72 md:w-80 lg:w-96 min-w-0 flex items-center bg-[var(--bg-input)] border border-[var(--border)] rounded-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
+                            <div class="class-selector-box flex-1 min-w-0 flex items-center bg-[var(--bg-input)] border border-[var(--border)] rounded-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                                 <select id="class-selector"
                                     class="w-full min-w-0 bg-transparent border-0 text-sm text-[var(--text-color)] font-semibold py-2 pl-3.5 pr-1 focus:ring-0 focus:outline-none cursor-pointer appearance-none truncate"
                                     style="border: none; outline: none; box-shadow: none; background: transparent;">
