@@ -126,7 +126,7 @@ Gestor de <span class="text-blue-500">salidas</span>
 
                     <!-- Search & Filters -->
                     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 sm:justify-end">
-                        <div class="relative w-full sm:max-w-xs">
+                        <div class="relative w-full sm:w-48 md:w-56 lg:w-64 shrink-0">
                             <input type="text" id="student-search" placeholder="Buscar alumno..."
                                 class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 pl-9 pr-4 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
                             <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,10 +134,11 @@ Gestor de <span class="text-blue-500">salidas</span>
                             </svg>
                         </div>
 
-                        <div class="flex items-center gap-2">
-                            <div class="relative flex-1 sm:w-auto min-w-[150px]">
+                        <div class="flex items-center gap-2 flex-1 sm:flex-initial min-w-0">
+                            <div class="flex-1 sm:w-72 md:w-80 lg:w-96 min-w-0 flex items-center bg-[var(--bg-input)] border border-[var(--border)] rounded-xl focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500 transition-all">
                                 <select id="class-selector"
-                                    class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 pl-3 pr-10 text-sm text-[var(--text-color)] font-semibold focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none">
+                                    class="w-full min-w-0 bg-transparent border-0 text-sm text-[var(--text-color)] font-semibold py-2 pl-3.5 pr-1 focus:ring-0 focus:outline-none cursor-pointer appearance-none truncate"
+                                    style="border: none; outline: none; box-shadow: none; background: transparent;">
                                     <option value="" selected>Seleccionar clase...</option>
                                     @foreach($groups as $group)
                                         <option value="{{ $group->id }}">
@@ -146,7 +147,7 @@ Gestor de <span class="text-blue-500">salidas</span>
                                     @endforeach
                                 </select>
                                 <button type="button" id="favorite-class-btn" onclick="toggleCurrentClassFavorite(event)"
-                                    class="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-lg hover:scale-110 active:scale-95 transition-all focus:outline-none z-10"
+                                    class="p-1.5 mr-1.5 shrink-0 text-slate-400 hover:text-amber-500 hover:scale-110 active:scale-95 transition-all focus:outline-none flex items-center justify-center"
                                     title="Marcar o desmarcar como favorita">
                                     <svg id="favorite-star-icon" class="w-5 h-5 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
