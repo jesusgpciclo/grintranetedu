@@ -58,6 +58,13 @@ Gestor de <span class="text-blue-500">salidas</span>
                 border-radius: 0.85rem !important;
                 gap: 0 !important;
             }
+            .student-card .student-name-mobile {
+                font-size: 0.85rem !important; /* +1 punto respecto a 12px (text-xs) */
+                line-height: 1.25 !important;
+            }
+            .student-card .student-course-mobile {
+                font-size: 0.72rem !important;
+            }
         }
 
         /* Modern Toast Styles */
@@ -265,11 +272,11 @@ Gestor de <span class="text-blue-500">salidas</span>
                                     {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
                                 </div>
                                 <div class="overflow-hidden min-w-0 flex-1">
-                                    <h3 class="text-xs font-bold text-[var(--text-heading)] truncate leading-tight"
+                                    <h3 class="student-name-mobile text-sm font-bold text-[var(--text-heading)] truncate leading-tight"
                                         title="{{ $studentFullName }}">
                                         {{ $student->name }} {{ $student->last_name }}
                                     </h3>
-                                    <div class="flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
+                                    <div class="student-course-mobile flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
                                         <span class="truncate">{{ $student->groupRel?->course ?? '' }} {{ $student->groupRel?->name ?? '' }}</span>
                                         @if($todayCount > 0 && !$activePass)
                                             <span class="text-[10px] text-amber-500 font-bold shrink-0">({{ $todayCount }})</span>
