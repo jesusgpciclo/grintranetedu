@@ -80,7 +80,7 @@ class ProfileController extends Controller
                 'departamento' => ['nullable', 'string', 'max:255'],
                 'titular_user_id' => ['nullable', 'exists:users,id'],
                 'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-                'password' => ['nullable', 'confirmed', Password::defaults()],
+                'password' => [$user->must_change_password ? 'required' : 'nullable', 'confirmed', Password::defaults()],
                 'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
                 'predefined_avatar' => ['nullable', 'string'],
             ]);

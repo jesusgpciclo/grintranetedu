@@ -82,6 +82,7 @@ class TeacherController extends Controller
             'observaciones' => $request->observaciones,
             'email' => $request->email,
             'password' => Hash::make($request->password ?: $request->email),
+            'must_change_password' => true,
         ]);
 
         $teacher->assignRole('profesor');
@@ -288,6 +289,7 @@ class TeacherController extends Controller
                 $teacher = User::create(array_merge($updateData, [
                     'email' => trim($row['email']),
                     'password' => Hash::make(trim($row['email'])),
+                    'must_change_password' => true,
                 ]));
                 $teacher->assignRole('profesor');
             }

@@ -27,7 +27,11 @@ class AuthController extends Controller
             $user = Auth::user();
 
             // Detect initial/default password or forced change flag
-            if ($credentials['password'] === 'profesor' || $user->must_change_password) {
+            $isInitialPassword = ($credentials['password'] === 'profesor')
+                || (strtolower(trim($credentials['password'])) === strtolower(trim($user->email)))
+                || ($credentials['password'] === 'alumno1234');
+
+            if ($isInitialPassword || $user->must_change_password) {
                 if (!$user->must_change_password) {
                     $user->update(['must_change_password' => true]);
                 }

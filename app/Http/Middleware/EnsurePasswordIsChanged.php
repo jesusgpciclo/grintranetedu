@@ -16,7 +16,7 @@ class EnsurePasswordIsChanged
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && Auth::user()->must_change_password) {
+        if (Auth::check() && Auth::user()->must_change_password && empty(Auth::user()->google_id)) {
             $allowedRoutes = ['profile.edit', 'profile.update', 'logout'];
             $currentRoute = $request->route() ? $request->route()->getName() : null;
 

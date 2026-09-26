@@ -81,7 +81,8 @@ class PasswordResetController extends Controller
         }
 
         $user->forceFill([
-            'password' => Hash::make($request->password)
+            'password' => Hash::make($request->password),
+            'must_change_password' => false,
         ])->setRememberToken(Str::random(60));
 
         $user->save();
