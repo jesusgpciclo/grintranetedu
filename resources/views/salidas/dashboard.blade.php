@@ -846,10 +846,11 @@ Gestor de <span class="text-blue-500">salidas</span>
                 let counter = 0;
 
                 cards.forEach(card => {
-                    const matchesGroup = selectedGroup && String(card.dataset.groupId) === String(selectedGroup);
-                    const matchesSearch = searchTerm && card.dataset.search.includes(searchTerm);
+                    const matchesGroup = !selectedGroup || String(card.dataset.groupId) === String(selectedGroup);
+                    const matchesSearch = !searchTerm || card.dataset.search.includes(searchTerm);
+                    const hasActiveFilter = Boolean(selectedGroup || searchTerm);
 
-                    if (matchesGroup || (searchTerm && matchesSearch)) {
+                    if (hasActiveFilter && matchesGroup && matchesSearch) {
                         card.style.display = 'flex';
                         counter++;
                     } else {
