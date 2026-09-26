@@ -2,6 +2,10 @@
 
 @section('title', 'Gestor de salidas - Historial')
 
+@section('module_title')
+Historial de <span class="text-blue-500">salidas</span>
+@endsection
+
 @section('content')
     <style>
         /* Modern Modal Styles */

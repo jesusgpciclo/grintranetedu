@@ -902,6 +902,39 @@
 
             <!-- Main Content Area with Responsive Unified Topbar -->
             <div class="main-wrapper">
+                @php
+                    $currentRouteName = Route::currentRouteName() ?? '';
+                    $defaultModuleTitle = match(true) {
+                        str_starts_with($currentRouteName, 'salidas.history') => 'Historial de <span class="text-blue-500">salidas</span>',
+                        str_starts_with($currentRouteName, 'salidas.monitor') => 'Monitor de <span class="text-blue-500">salidas</span>',
+                        str_starts_with($currentRouteName, 'salidas.') => 'Gestor de <span class="text-blue-500">salidas</span>',
+                        str_starts_with($currentRouteName, 'guardias.parte') => 'Parte de <span class="text-sky-500">guardia</span>',
+                        str_starts_with($currentRouteName, 'guardias.mis-guardias') => 'Mis guardias <span class="text-sky-500">asignadas</span>',
+                        str_starts_with($currentRouteName, 'guardias.') => 'Gestión de <span class="text-sky-500">guardias</span>',
+                        str_starts_with($currentRouteName, 'ausencias.') => 'Gestión de <span class="text-amber-500">ausencias</span>',
+                        str_starts_with($currentRouteName, 'personal_schedules.') => 'Horarios <span class="text-indigo-500">personales</span>',
+                        str_starts_with($currentRouteName, 'sesiones.') => 'Sesiones de <span class="text-indigo-500">clase</span>',
+                        str_starts_with($currentRouteName, 'observaciones.') => 'Observaciones de <span class="text-teal-500">alumnos</span>',
+                        str_starts_with($currentRouteName, 'notas.') => 'Gestión de <span class="text-emerald-500">notas</span>',
+                        str_starts_with($currentRouteName, 'rubricas.') => 'Rúbricas de <span class="text-purple-500">evaluación</span>',
+                        str_starts_with($currentRouteName, 'recursos.') => 'Gestión de <span class="text-violet-500">recursos</span>',
+                        str_starts_with($currentRouteName, 'tic_bookings.') => 'Reservas <span class="text-cyan-500">TIC</span>',
+                        str_starts_with($currentRouteName, 'messages.') => 'Mensajería <span class="text-sky-500">interna</span>',
+                        str_starts_with($currentRouteName, 'students.') => 'Gestión de <span class="text-sky-500">alumnos</span>',
+                        str_starts_with($currentRouteName, 'teachers.') => 'Gestión de <span class="text-sky-500">profesorado</span>',
+                        str_starts_with($currentRouteName, 'teacher_schedules.') => 'Horarios del <span class="text-sky-500">profesorado</span>',
+                        str_starts_with($currentRouteName, 'groups.') => 'Gestión de <span class="text-blue-500">grupos</span>',
+                        str_starts_with($currentRouteName, 'zonas.') => 'Gestión de <span class="text-emerald-500">zonas y aulas</span>',
+                        str_starts_with($currentRouteName, 'schedule_templates.') => 'Plantillas de <span class="text-amber-500">horario</span>',
+                        str_starts_with($currentRouteName, 'school_years.') => 'Cursos <span class="text-indigo-500">escolares</span>',
+                        str_starts_with($currentRouteName, 'roles.') => 'Roles y <span class="text-purple-500">permisos</span>',
+                        str_starts_with($currentRouteName, 'profile.') => 'Mi <span class="text-sky-500">perfil</span>',
+                        str_starts_with($currentRouteName, 'users.') => 'Gestión de <span class="text-sky-500">usuarios</span>',
+                        str_starts_with($currentRouteName, 'modulos.') => 'Módulos <span class="text-indigo-500">educativos</span>',
+                        str_starts_with($currentRouteName, 'dashboard') => 'Panel <span class="text-sky-500">principal</span>',
+                        default => View::hasSection('title') ? View::getSection('title') : 'Panel <span class="text-sky-500">principal</span>',
+                    };
+                @endphp
                 <header class="app-topbar">
                     <!-- Left: Menu Toggle Button (for all screens: Desktop collapse / Mobile drawer) -->
                     <div class="flex items-center gap-3">
@@ -921,18 +954,20 @@
                                 Oculto
                             </span>
                         </button>
-
-                        <div class="hidden sm:flex items-center gap-2">
-                            <span class="text-xs font-bold text-slate-300 dark:text-slate-700">|</span>
-                            <span class="text-sm font-black text-slate-900 dark:text-white tracking-tight">
-                                GR Intranet EDU
-                            </span>
-                        </div>
                     </div>
 
-                    <!-- Center / Mobile Branding -->
-                    <div class="sm:hidden font-black text-xs text-slate-900 dark:text-white tracking-tight">
-                        GR Intranet EDU
+                    <!-- Center: Intranet Branding & Current Module Title -->
+                    <div class="flex-1 flex flex-col items-center justify-center text-center px-2 min-w-0">
+                        <span class="text-[10px] sm:text-xs font-black tracking-tight text-slate-700 dark:text-slate-300 leading-none mb-0.5">
+                            GR Intranet EDU
+                        </span>
+                        <div class="text-base sm:text-lg font-black tracking-tight leading-tight text-slate-900 dark:text-white truncate">
+                            @if(View::hasSection('module_title'))
+                                @yield('module_title')
+                            @else
+                                {!! $defaultModuleTitle !!}
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Right: Shortcuts, Theme Switch & Profile -->

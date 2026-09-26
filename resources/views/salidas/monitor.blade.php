@@ -2,6 +2,10 @@
 
 @section('title', 'Gestor de salidas - Monitor Conserjería')
 
+@section('module_title')
+Monitor de <span class="text-blue-500">salidas</span>
+@endsection
+
 @php
     $canReturn = auth()->user() && (
         auth()->user()->can('salidas.return_monitor') || 

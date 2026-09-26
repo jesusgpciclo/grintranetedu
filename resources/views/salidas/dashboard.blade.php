@@ -2,6 +2,10 @@
 
 @section('title', 'Gestor de salidas - Dashboard')
 
+@section('module_title')
+Gestor de <span class="text-blue-500">salidas</span>
+@endsection
+
 @section('content')
     <style>
         /* Modern Modal Styles */
@@ -105,76 +109,58 @@
     <div class="py-2 sm:py-4">
         <div class="max-w-7xl mx-auto">
 
-            <!-- Header, Statistics & Search -->
-            <div class="card p-4 sm:p-5 mb-6">
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 sm:gap-6">
-                    <!-- Title Section -->
-                    <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="flex p-2.5 sm:p-3 bg-blue-500/15 text-blue-500 rounded-xl">
-                            <svg class="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                            </svg>
+            <!-- Statistics & Search -->
+            <div class="card p-3 sm:p-5 mb-4 sm:mb-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+                    <!-- Stats (Hidden on mobile, visible on desktop) -->
+                    <div class="hidden sm:flex gap-2 sm:gap-3 shrink-0">
+                        <div class="bg-blue-500/10 border border-blue-500/25 rounded-xl px-3 sm:px-4 py-2 flex items-center justify-between sm:block">
+                            <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest sm:block mb-0.5">Activos</span>
+                            <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['active_count'] }}</span>
                         </div>
-                        <div>
-                            <h1 class="text-xl sm:text-3xl font-extrabold text-[var(--text-heading)] tracking-tight leading-none">
-                                Gestor de <span class="text-blue-500">salidas</span>
-                            </h1>
-                            <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Control de pases al pasillo</p>
+                        <div class="bg-indigo-500/10 border border-indigo-500/25 rounded-xl px-3 sm:px-4 py-2 flex items-center justify-between sm:block">
+                            <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest sm:block mb-0.5">Hoy</span>
+                            <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['today_count'] }}</span>
                         </div>
                     </div>
 
-                    <!-- Actions & Stats Section -->
-                    <div class="flex flex-col md:flex-row items-stretch md:items-center gap-3 sm:gap-4">
-                        <!-- Stats (Hidden on mobile, visible on desktop) -->
-                        <div class="hidden sm:flex gap-2 sm:gap-3">
-                            <div class="bg-blue-500/10 border border-blue-500/25 rounded-xl px-3 sm:px-4 py-2 flex-1 flex items-center justify-between sm:block">
-                                <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest sm:block mb-0.5">Activos</span>
-                                <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['active_count'] }}</span>
-                            </div>
-                            <div class="bg-indigo-500/10 border border-indigo-500/25 rounded-xl px-3 sm:px-4 py-2 flex-1 flex items-center justify-between sm:block">
-                                <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest sm:block mb-0.5">Hoy</span>
-                                <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['today_count'] }}</span>
-                            </div>
+                    <!-- Search & Filters -->
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 sm:justify-end">
+                        <div class="relative w-full sm:max-w-xs">
+                            <input type="text" id="student-search" placeholder="Buscar alumno..."
+                                class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 pl-9 pr-4 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
                         </div>
 
-                        <!-- Search & Filters -->
-                        <div class="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
-                            <div class="relative flex-1 min-w-[180px]">
-                                <input type="text" id="student-search" placeholder="Buscar alumno..."
-                                    class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 pl-9 pr-4 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
-                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                            </div>
+                        <div class="flex items-center gap-2">
+                            <select id="class-selector"
+                                class="flex-1 sm:w-auto bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] font-semibold focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none min-w-[140px]">
+                                <option value="" selected>Seleccionar clase...</option>
+                                @foreach($groups as $group)
+                                    <option value="{{ $group->id }}">
+                                        {{ $group->course }} {{ $group->name }}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                            <div class="flex items-center gap-2">
-                                <select id="class-selector"
-                                    class="flex-1 bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] font-semibold focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer appearance-none min-w-[140px]">
-                                    <option value="" selected>Seleccionar clase...</option>
-                                    @foreach($groups as $group)
-                                        <option value="{{ $group->id }}">
-                                            {{ $group->course }} {{ $group->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                <div class="flex gap-1 shrink-0">
-                                    <a href="{{ route('salidas.monitor') }}"
-                                        class="p-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all"
-                                        title="Monitor">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    </a>
-                                    <a href="{{ route('salidas.history') }}"
-                                        class="p-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all"
-                                        title="Historial">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    </a>
-                                </div>
+                            <div class="flex gap-1 shrink-0">
+                                <a href="{{ route('salidas.monitor') }}"
+                                    class="p-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all"
+                                    title="Monitor">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                                    </svg>
+                                </a>
+                                <a href="{{ route('salidas.history') }}"
+                                    class="p-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all"
+                                    title="Historial">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </a>
                             </div>
                         </div>
                     </div>
