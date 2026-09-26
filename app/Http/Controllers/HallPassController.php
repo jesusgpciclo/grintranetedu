@@ -148,9 +148,62 @@ class HallPassController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(HallPass $hallPass)
     {
-        
+        $user = auth()->user();
+        if (!$user) {
+            abort(401);
+        }
+
+        $canDelete = $user->hasRole(['admin', 'directiva', 'director', 'profesor'])
+            || $user->can('salidas.manage')
+            || $hallPass->teacher_id === $user->id;
+
+        if (!$canDelete) {
+            if (request()->expectsJson()) {
+                return response()->json(['error' => 'No tienes permiso para eliminar esta salida.'], 403);
+            }
+            return back()->withErrors('No tienes permiso para eliminar esta salida.');
+        }
+
+        $hallPass->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['message' => 'Salida eliminada correctamente.']);
+        }
+
+        return back()->with('success', 'Salida eliminada correctamente.');
+    }
+
+    public function bulkDelete(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            abort(401);
+        }
+
+        $canDelete = $user->hasRole(['admin', 'directiva', 'director', 'profesor'])
+            || $user->can('salidas.manage');
+
+        if (!$canDelete) {
+            if (request()->expectsJson()) {
+                return response()->json(['error' => 'No tienes permiso para eliminar salidas.'], 403);
+            }
+            return back()->withErrors('No tienes permiso para eliminar salidas.');
+        }
+
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:hall_passes,id',
+        ]);
+
+        $count = HallPass::whereIn('id', $request->ids)->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json(['message' => "Se han eliminado {$count} salidas correctamente."]);
+        }
+
+        return back()->with('success', "Se han eliminado {$count} salidas correctamente.");
     }
 
     public function monitor()

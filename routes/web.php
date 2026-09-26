@@ -151,6 +151,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/salidas/history/export-csv', [\App\Http\Controllers\HallPassController::class, 'exportCsv'])->name('salidas.history.export-csv');
         Route::get('/salidas/history/print', [\App\Http\Controllers\HallPassController::class, 'printHistory'])->name('salidas.history.print');
         Route::delete('/salidas/history/clear', [\App\Http\Controllers\HallPassController::class, 'clearHistory'])->name('salidas.history.clear');
+        Route::delete('/salidas/history/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.history.destroy');
+        Route::delete('/salidas/pass/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.destroy');
+        Route::post('/salidas/history/bulk-delete', [\App\Http\Controllers\HallPassController::class, 'bulkDelete'])->name('salidas.history.bulk-delete');
     });
 
     // --- MÓDULO: Mensajería Interna (Fernández, Raquel) ---

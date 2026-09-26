@@ -114,7 +114,15 @@
                 </div>
 
                 <!-- Danger / Delete actions -->
-                <div>
+                <div class="flex items-center gap-2">
+                    <button id="btn-delete-selected" onclick="confirmDeleteSelected()" 
+                            class="hidden items-center justify-center gap-2 px-4 py-2.5 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold text-sm transition-all shadow-md shadow-rose-500/20">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Eliminar seleccionadas (<span id="selected-count">0</span>)
+                    </button>
+
                     <button onclick="confirmClearHistory()" 
                             class="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 border border-rose-500/30 rounded-xl font-bold text-sm transition-all shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,6 +140,11 @@
                         <table class="min-w-full divide-y divide-[var(--border)]">
                             <thead class="bg-[var(--bg-hover)]">
                                 <tr>
+                                    <th scope="col" class="px-4 py-4 text-center w-10 border-r border-[var(--border)]">
+                                        <input type="checkbox" id="select-all-passes" onchange="toggleSelectAll(this)" 
+                                               class="w-4 h-4 rounded border-[var(--border)] text-rose-600 focus:ring-rose-500 cursor-pointer" 
+                                               title="Seleccionar todas las salidas de la página">
+                                    </th>
                                     @foreach([
                                         'Fecha' => 'fecha',
                                         'Alumno' => 'alumno',
@@ -147,13 +160,13 @@
                                             $nextDir = ($isActive && $currentDir === 'asc') ? 'desc' : 'asc';
                                             $url = request()->fullUrlWithQuery(['sort' => $column, 'direction' => $nextDir]);
                                         @endphp
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider cursor-pointer hover:bg-[var(--bg-active)] hover:text-[var(--primary)] transition-all group/head border-r border-[var(--border)] last:border-0">
+                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider cursor-pointer hover:bg-[var(--bg-active)] hover:text-[var(--primary)] transition-all group/head border-r border-[var(--border)]">
                                             <a href="{{ $url }}" class="flex items-center justify-between gap-2">
                                                 <span>{{ $label }}</span>
                                                 <div class="flex flex-col opacity-50 group-hover/head:opacity-100 transition-opacity bg-[var(--bg-input)] p-1 rounded-md">
                                                     @if($isActive)
                                                         <svg class="w-3.5 h-3.5 text-[var(--primary)] {{ $currentDir === 'asc' ? '' : 'rotate-180' }} transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" />
+                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 15l7-7 7 7" />
                                                         </svg>
                                                     @else
                                                         <svg class="w-3.5 h-3.5 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -164,11 +177,18 @@
                                             </a>
                                         </th>
                                     @endforeach
+                                    <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider w-24">
+                                        Acciones
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[var(--border)]">
                                 @forelse($passes as $pass)
-                                    <tr class="hover:bg-[var(--bg-hover)] transition-colors group">
+                                    <tr id="pass-row-{{ $pass->id }}" class="hover:bg-[var(--bg-hover)] transition-colors group">
+                                        <td class="px-4 py-4 whitespace-nowrap text-center">
+                                            <input type="checkbox" class="pass-checkbox w-4 h-4 rounded border-[var(--border)] text-rose-600 focus:ring-rose-500 cursor-pointer" 
+                                                   value="{{ $pass->id }}" onchange="updateSelectedCount()">
+                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                                             <div class="font-bold text-[var(--text-heading)]">{{ $pass->date->format('d/m/Y') }}</div>
                                             <div class="text-[10px] text-[var(--text-muted)]">{{ $pass->start_time->format('H:i') }}</div>
@@ -206,10 +226,19 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-[var(--text-muted)] italic">
                                             {{ $pass->teacher?->name ?? 'N/A' }}
                                         </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm">
+                                            <button onclick="confirmDeletePass({{ $pass->id }}, '{{ addslashes(($pass->student?->name ?? 'Alumno') . ' ' . ($pass->student?->last_name ?? '')) }}')"
+                                                    class="inline-flex items-center justify-center p-2 text-rose-500 hover:text-white hover:bg-rose-500 rounded-xl transition-all border border-transparent hover:border-rose-600 shadow-sm group/btn"
+                                                    title="Eliminar esta salida">
+                                                <svg class="w-4 h-4 group-hover/btn:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                </svg>
+                                            </button>
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="px-6 py-12 text-center text-[var(--text-muted)]">
+                                        <td colspan="8" class="px-6 py-12 text-center text-[var(--text-muted)]">
                                             <svg class="w-12 h-12 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
@@ -319,6 +348,127 @@
                 setTimeout(() => toast.remove(), 400);
             }, 4000);
         };
+
+        function toggleSelectAll(master) {
+            const checkboxes = document.querySelectorAll('.pass-checkbox');
+            checkboxes.forEach(cb => cb.checked = master.checked);
+            updateSelectedCount();
+        }
+
+        function updateSelectedCount() {
+            const checked = document.querySelectorAll('.pass-checkbox:checked');
+            const count = checked.length;
+            const btn = document.getElementById('btn-delete-selected');
+            const countEl = document.getElementById('selected-count');
+            const master = document.getElementById('select-all-passes');
+
+            if (countEl) countEl.textContent = count;
+
+            if (count > 0) {
+                btn.classList.remove('hidden');
+                btn.classList.add('flex');
+            } else {
+                btn.classList.add('hidden');
+                btn.classList.remove('flex');
+                if (master) master.checked = false;
+            }
+        }
+
+        async function confirmDeletePass(id, studentName) {
+            const confirmed = await customModal({
+                title: '¿Eliminar salida?',
+                description: `¿Estás seguro de que deseas eliminar permanentemente la salida de ${studentName}? Esta acción no se puede deshacer.`,
+                confirmText: 'Sí, eliminar',
+                type: 'warning'
+            });
+
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch(`/salidas/history/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ _method: 'DELETE' })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || 'Error al eliminar la salida.');
+                }
+
+                const data = await res.json();
+                showToast(data.message || 'Salida eliminada correctamente.', 'success');
+
+                const row = document.getElementById(`pass-row-${id}`);
+                if (row) {
+                    row.style.transition = 'all 0.3s ease';
+                    row.style.opacity = '0';
+                    row.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        row.remove();
+                        updateSelectedCount();
+                    }, 300);
+                } else {
+                    setTimeout(() => window.location.reload(), 800);
+                }
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
+
+        async function confirmDeleteSelected() {
+            const checked = Array.from(document.querySelectorAll('.pass-checkbox:checked')).map(cb => cb.value);
+            if (checked.length === 0) return;
+
+            const confirmed = await customModal({
+                title: '¿Eliminar salidas seleccionadas?',
+                description: `¿Estás seguro de que deseas eliminar permanentemente las ${checked.length} salidas seleccionadas? Esta acción no se puede deshacer.`,
+                confirmText: `Sí, eliminar (${checked.length})`,
+                type: 'warning'
+            });
+
+            if (!confirmed) return;
+
+            try {
+                const res = await fetch('{{ route("salidas.history.bulk-delete") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ ids: checked })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.error || 'Error al eliminar las salidas seleccionadas.');
+                }
+
+                const data = await res.json();
+                showToast(data.message || 'Salidas eliminadas correctamente.', 'success');
+
+                checked.forEach(id => {
+                    const row = document.getElementById(`pass-row-${id}`);
+                    if (row) {
+                        row.style.transition = 'all 0.3s ease';
+                        row.style.opacity = '0';
+                        row.style.transform = 'scale(0.95)';
+                        setTimeout(() => row.remove(), 300);
+                    }
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 800);
+            } catch (e) {
+                showToast(e.message, 'error');
+            }
+        }
 
         async function confirmClearHistory() {
             const confirmed = await customModal({
