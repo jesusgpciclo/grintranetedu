@@ -8,11 +8,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 // use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Collection;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable;
+    use HasRoles {
+        hasRole as spatieHasRole;
+        hasPermissionTo as spatieHasPermissionTo;
+        getRoleNames as spatieGetRoleNames;
+        hasAllRoles as spatieHasAllRoles;
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -33,6 +41,7 @@ class User extends Authenticatable
         'avatar',
         'titular_user_id',
         'must_change_password',
+        'active_role',
     ];
 
     public function groupRel()
@@ -156,5 +165,179 @@ class User extends Authenticatable
             return 'salidas.monitor';
         }
         return 'salidas.index';
+    }
+
+    /**
+     * Retorna los roles asignados en base de datos.
+     */
+    public function getAssignedRoles(): Collection
+    {
+        return $this->roles()->orderBy('name')->get();
+    }
+
+    /**
+     * Retorna los roles disponibles para alternar (roles identitarios principales).
+     */
+    public function getSwitchableRoles(): Collection
+    {
+        $all = $this->roles()->orderBy('name')->get();
+        $identityRoles = $all->reject(fn ($r) => in_array($r->name, ['dashboard', 'curso-activo']));
+        return $identityRoles->isNotEmpty() ? $identityRoles : $all;
+    }
+
+    /**
+     * Determina si el usuario tiene más de un rol asignado en la base de datos.
+     */
+    public function hasMultipleRoles(): bool
+    {
+        return $this->getSwitchableRoles()->count() > 1;
+    }
+
+    /**
+     * Retorna el nombre del rol activo actual.
+     * Retorna null si no hay restricción de rol activo (modo todos los roles).
+     */
+    public function getActiveRoleName(): ?string
+    {
+        $active = session('active_role');
+        if ($active === null) {
+            $active = $this->active_role;
+        }
+
+        if ($active === null || $active === '' || $active === 'all') {
+            return null;
+        }
+
+        // Validar que el usuario realmente tiene asignado este rol
+        $hasIt = $this->roles()->where('name', $active)->exists();
+        return $hasIt ? $active : null;
+    }
+
+    /**
+     * Override de hasRole para respetar el rol activo seleccionado.
+     */
+    public function hasRole($roles, ?string $guard = null): bool
+    {
+        $activeRole = $this->getActiveRoleName();
+
+        if ($activeRole === null) {
+            return $this->spatieHasRole($roles, $guard);
+        }
+
+        if (is_string($roles) && strpos($roles, '|') !== false) {
+            $roles = explode('|', $roles);
+        }
+
+        if (is_array($roles)) {
+            foreach ($roles as $role) {
+                if ($this->hasRole($role, $guard)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        // Roles auxiliares / modificadores asignados se mantienen accesibles
+        if (is_string($roles) && in_array($roles, ['dashboard', 'curso-activo'])) {
+            return $this->roles()->where('name', $roles)->exists();
+        }
+
+        if (is_string($roles)) {
+            return $activeRole === $roles;
+        }
+
+        if ($roles instanceof Role) {
+            return $activeRole === $roles->name;
+        }
+
+        if ($roles instanceof Collection) {
+            return $roles->pluck('name')->contains($activeRole);
+        }
+
+        return $activeRole === (string) $roles;
+    }
+
+    /**
+     * Override de hasAnyRole para asegurar consistencia con hasRole y middleware Spatie.
+     */
+    public function hasAnyRole(...$roles): bool
+    {
+        return $this->hasRole($roles);
+    }
+
+    /**
+     * Override de hasAllRoles para respetar el rol activo seleccionado.
+     */
+    public function hasAllRoles($roles, ?string $guard = null): bool
+    {
+        $activeRole = $this->getActiveRoleName();
+        if ($activeRole === null) {
+            return $this->spatieHasAllRoles($roles, $guard);
+        }
+
+        if (is_string($roles) && strpos($roles, '|') !== false) {
+            $roles = explode('|', $roles);
+        }
+
+        if (!is_array($roles) && !$roles instanceof Collection) {
+            $roles = [$roles];
+        }
+
+        foreach ($roles as $role) {
+            if (!$this->hasRole($role, $guard)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Override de hasPermissionTo para respetar los permisos del rol activo seleccionado.
+     */
+    public function hasPermissionTo($permission, $guardName = null): bool
+    {
+        $activeRole = $this->getActiveRoleName();
+
+        if ($activeRole === null) {
+            return $this->spatieHasPermissionTo($permission, $guardName);
+        }
+
+        $role = Role::where('name', $activeRole)->first();
+        if (!$role) {
+            return false;
+        }
+
+        if ($role->name === 'admin') {
+            return true;
+        }
+
+        if ($role->hasPermissionTo($permission, $guardName)) {
+            return true;
+        }
+
+        // Permisos otorgados por roles modificadores asignados
+        if ($permission === 'school_years.select' && $this->roles()->where('name', 'curso-activo')->exists()) {
+            return true;
+        }
+        if ($permission === 'dashboard.view' && $this->roles()->where('name', 'dashboard')->exists()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Override de getRoleNames para mostrar el rol activo en interfaces como la barra lateral.
+     */
+    public function getRoleNames(): Collection
+    {
+        $activeRole = $this->getActiveRoleName();
+
+        if ($activeRole !== null) {
+            return collect([$activeRole]);
+        }
+
+        return $this->spatieGetRoleNames();
     }
 }

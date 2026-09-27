@@ -119,4 +119,36 @@ class ProfileController extends Controller
 
         return back()->with('status', 'Perfil actualizado con éxito.');
     }
+
+    /**
+     * Alterna el rol activo de un usuario que posee múltiples roles.
+     */
+    public function switchRole(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'role' => ['required', 'string'],
+        ]);
+
+        $targetRole = $request->input('role');
+
+        if ($targetRole === 'all') {
+            session(['active_role' => 'all']);
+            $user->update(['active_role' => 'all']);
+            return back()->with('status', 'Has activado el modo completo con todos tus roles combinados.');
+        }
+
+        // Validar que el usuario tiene asignado el rol seleccionado
+        if (!$user->roles()->where('name', $targetRole)->exists()) {
+            return back()->withErrors(['role' => 'No tienes asignado el rol seleccionado.']);
+        }
+
+        session(['active_role' => $targetRole]);
+        $user->update(['active_role' => $targetRole]);
+
+        $roleDisplayName = ucfirst(str_replace('-', ' ', $targetRole));
+
+        return back()->with('status', "Has cambiado tu rol activo a: {$roleDisplayName}.");
+    }
 }

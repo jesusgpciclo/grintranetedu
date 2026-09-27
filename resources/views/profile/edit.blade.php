@@ -133,6 +133,143 @@
         </div>
     @endif
 
+    <!-- SECTION: Selector de Rol Activo (Visible solo cuando el usuario tiene varios roles) -->
+    @if($user->hasMultipleRoles())
+        <div id="role-selector-section" class="bg-white dark:bg-slate-900 border-2 border-sky-500/30 rounded-3xl p-6 shadow-md dark:shadow-2xl transition-colors space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <span class="text-3xl p-2.5 rounded-2xl bg-sky-500/10 text-sky-500">🎭</span>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight flex items-center gap-2">
+                            <span>Cambiar Rol Activo</span>
+                            <span class="text-xs px-2.5 py-0.5 rounded-full font-bold bg-sky-100 dark:bg-sky-950/60 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-800">
+                                {{ $user->getSwitchableRoles()->count() }} roles disponibles
+                            </span>
+                        </h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            Tu cuenta dispone de múltiples perfiles. Elige con qué rol deseas operar actualmente en la intranet.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                    Rol en uso: 
+                    <span class="font-extrabold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
+                        {{ $user->getActiveRoleName() ? ucfirst(str_replace('-', ' ', $user->getActiveRoleName())) : 'Todos los roles' }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
+                @php
+                    $currentActive = $user->getActiveRoleName();
+                @endphp
+
+                @foreach($user->getSwitchableRoles() as $switchRole)
+                    @php
+                        $isActiveThis = ($currentActive === $switchRole->name);
+                        $roleIcon = match($switchRole->name) {
+                            'admin' => '👑',
+                            'director', 'directiva' => '🏛️',
+                            'jefatura' => '📋',
+                            'profesor', 'jefe-de-departamento' => '👨‍🏫',
+                            'conserje', 'controlador-pasillo' => '🚪',
+                            'alumno' => '🎓',
+                            'tecnico-tic' => '💻',
+                            'administrativo' => '📂',
+                            default => '🛡️'
+                        };
+                    @endphp
+                    <form action="{{ route('profile.switch-role') }}" method="POST" class="h-full">
+                        @csrf
+                        <input type="hidden" name="role" value="{{ $switchRole->name }}">
+                        <div class="h-full p-4 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-3
+                            {{ $isActiveThis 
+                                ? 'bg-sky-50 dark:bg-sky-950/40 border-sky-500 shadow-sm ring-2 ring-sky-500/20' 
+                                : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/80' }}">
+                            
+                            <div class="flex items-start justify-between gap-2">
+                                <div class="flex items-center gap-2.5">
+                                    <span class="text-2xl">{{ $roleIcon }}</span>
+                                    <div>
+                                        <div class="text-sm font-extrabold text-slate-900 dark:text-white capitalize">
+                                            {{ str_replace('-', ' ', $switchRole->name) }}
+                                        </div>
+                                        <div class="text-[11px] text-slate-400">
+                                            {{ $switchRole->name === 'admin' ? 'Acceso completo al sistema' : 'Permisos del perfil' }}
+                                        </div>
+                                    </div>
+                                </div>
+                                @if($isActiveThis)
+                                    <span class="shrink-0 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-sky-500 text-white shadow-xs">
+                                        Activo
+                                    </span>
+                                @endif
+                            </div>
+
+                            @if($isActiveThis)
+                                <button type="button" disabled class="w-full py-2 px-3 rounded-xl text-xs font-bold text-sky-700 dark:text-sky-300 bg-sky-100 dark:bg-sky-900/50 cursor-default flex items-center justify-center gap-1.5">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    <span>Rol en uso</span>
+                                </button>
+                            @else
+                                <button type="submit" class="w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-sky-600 dark:bg-slate-700 dark:hover:bg-sky-600 transition shadow-xs flex items-center justify-center gap-1.5">
+                                    <span>Cambiar a este rol</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                </button>
+                            @endif
+                        </div>
+                    </form>
+                @endforeach
+
+                <!-- Opción Modo Completo -->
+                @php
+                    $isAllActive = ($currentActive === null || $currentActive === 'all');
+                @endphp
+                <form action="{{ route('profile.switch-role') }}" method="POST" class="h-full">
+                    @csrf
+                    <input type="hidden" name="role" value="all">
+                    <div class="h-full p-4 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-3
+                        {{ $isAllActive 
+                            ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 shadow-sm ring-2 ring-indigo-500/20' 
+                            : 'bg-slate-50/70 dark:bg-slate-800/40 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/80' }}">
+                        
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-2xl">🌐</span>
+                                <div>
+                                    <div class="text-sm font-extrabold text-slate-900 dark:text-white">
+                                        Modo Completo
+                                    </div>
+                                    <div class="text-[11px] text-slate-400">
+                                        Combinar todos mis roles
+                                    </div>
+                                </div>
+                            </div>
+                            @if($isAllActive)
+                                <span class="shrink-0 text-[10px] font-black uppercase px-2 py-0.5 rounded-full bg-indigo-500 text-white shadow-xs">
+                                    Activo
+                                </span>
+                            @endif
+                        </div>
+
+                        @if($isAllActive)
+                            <button type="button" disabled class="w-full py-2 px-3 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/50 cursor-default flex items-center justify-center gap-1.5">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                <span>Rol en uso</span>
+                            </button>
+                        @else
+                            <button type="submit" class="w-full py-2 px-3 rounded-xl text-xs font-bold text-white bg-slate-800 hover:bg-indigo-600 dark:bg-slate-700 dark:hover:bg-indigo-600 transition shadow-xs flex items-center justify-center gap-1.5">
+                                <span>Activar todos</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                            </button>
+                        @endif
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
     <!-- Profile Form -->
     <div class="profile-card">
         <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-8">

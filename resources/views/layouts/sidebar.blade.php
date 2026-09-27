@@ -56,8 +56,15 @@
                     style="font-weight: 700; font-size: 0.875rem; color: var(--text-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" class="group-hover:text-sky-500 transition-colors">
                     {{ $user->name }}
                 </div>
-                <div style="font-size: 0.725rem; color: var(--text-muted);">
-                    {{ $user->getRoleNames()->map(fn($r) => ucfirst($r))->join(', ') ?: 'Docente' }}
+                <div style="font-size: 0.725rem; color: var(--text-muted); display: flex; align-items: center; gap: 0.25rem;">
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                        {{ $user->getRoleNames()->map(fn($r) => ucfirst(str_replace('-', ' ', $r)))->join(', ') ?: 'Docente' }}
+                    </span>
+                    @if($user->hasMultipleRoles())
+                        <span style="font-size: 0.6rem; font-weight: 800; background: var(--primary-light); color: var(--primary); padding: 0.05rem 0.35rem; border-radius: 4px; text-transform: uppercase;" title="Tienes múltiples roles asignados">
+                            Multi
+                        </span>
+                    @endif
                 </div>
             </div>
         </a>
@@ -71,6 +78,33 @@
             </svg>
         </button>
     </div>
+
+    <!-- Quick Role Switcher (Visible only when user has multiple roles) -->
+    @if($user->hasMultipleRoles())
+    <div class="role-selector-sidebar" style="margin: -0.5rem 0 1rem 0; padding: 0.5rem 0.75rem; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 0.75rem;">
+        <form action="{{ route('profile.switch-role') }}" method="POST" id="sidebar-role-switch-form">
+            @csrf
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;">
+                <label for="sidebar_role_select" style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.68rem; color: var(--text-muted); font-weight: 800; text-transform: uppercase;">
+                    <span>🎭</span> ROL ACTIVO
+                </label>
+                <a href="{{ route('profile.edit') }}#role-selector-section" style="font-size: 0.65rem; color: var(--primary); font-weight: 700; text-decoration: none;">
+                    Perfil →
+                </a>
+            </div>
+            <select name="role" id="sidebar_role_select" onchange="this.form.submit()" style="width: 100%; background: var(--bg-input); color: var(--text-color); border: 1px solid var(--border); border-radius: 0.5rem; padding: 0.35rem 0.5rem; font-size: 0.8rem; font-family: var(--font-main); outline: none;">
+                @foreach($user->getSwitchableRoles() as $sr)
+                    <option value="{{ $sr->name }}" {{ ($user->getActiveRoleName() === $sr->name) ? 'selected' : '' }}>
+                        {{ ucfirst(str_replace('-', ' ', $sr->name)) }}
+                    </option>
+                @endforeach
+                <option value="all" {{ ($user->getActiveRoleName() === null || $user->getActiveRoleName() === 'all') ? 'selected' : '' }}>
+                    Todos mis roles (Modo Completo)
+                </option>
+            </select>
+        </form>
+    </div>
+    @endif
 
     <!-- School Year Selector -->
     @if(isset($allSchoolYears) && count($allSchoolYears) > 0 && auth()->check() && auth()->user()->canSelectSchoolYear())
