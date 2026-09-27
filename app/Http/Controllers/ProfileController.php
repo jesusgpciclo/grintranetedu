@@ -135,7 +135,11 @@ class ProfileController extends Controller
 
         if ($targetRole === 'all') {
             session(['active_role' => 'all']);
-            $user->update(['active_role' => 'all']);
+            try {
+                $user->update(['active_role' => 'all']);
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning("Could not persist active_role to users table: " . $e->getMessage());
+            }
             return back()->with('status', 'Has activado el modo completo con todos tus roles combinados.');
         }
 
@@ -145,7 +149,11 @@ class ProfileController extends Controller
         }
 
         session(['active_role' => $targetRole]);
-        $user->update(['active_role' => $targetRole]);
+        try {
+            $user->update(['active_role' => $targetRole]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Could not persist active_role to users table: " . $e->getMessage());
+        }
 
         $roleDisplayName = ucfirst(str_replace('-', ' ', $targetRole));
 
