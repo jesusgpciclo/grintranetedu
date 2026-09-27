@@ -148,6 +148,7 @@ class StudentImportController extends Controller
                 'email' => $email,
                 'password' => Hash::make('alumno1234'),
                 'group_id' => $group->id,
+                'must_change_password' => true,
             ]);
 
             $newStudent->assignRole('alumno');

@@ -110,7 +110,7 @@ class TeacherInitialPasswordChangeTest extends TestCase
     }
 
     /** @test */
-    public function logging_in_with_google_does_not_require_password_change()
+    public function logging_in_with_google_for_first_time_requires_password_change_if_not_changed_yet()
     {
         // Teacher imported with must_change_password = true
         $teacher = User::factory()->create([
@@ -142,15 +142,159 @@ class TeacherInitialPasswordChangeTest extends TestCase
         Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
 
         $response = $this->get('/auth/google/callback');
+        $response->assertRedirect(route('profile.edit'));
+        $response->assertSessionHas('warning');
+
+        $teacher->refresh();
+        // Since it has not been changed, must_change_password remains true
+        $this->assertTrue($teacher->must_change_password);
+        $this->assertEquals('google-unique-id-12345', $teacher->google_id);
+
+        // Cannot access sorties while must_change_password is true
+        $this->actingAs($teacher);
+        $salidasBlockedResponse = $this->get(route('salidas.index'));
+        $salidasBlockedResponse->assertRedirect(route('profile.edit'));
+
+        // Once password is changed, user is unblocked
+        $updateResponse = $this->patch(route('profile.update'), [
+            'name' => 'Jesús',
+            'last_name' => 'García',
+            'email' => 'jesus.garcia@g.educaand.es',
+            'password' => 'MiClaveSegura2026!',
+            'password_confirmation' => 'MiClaveSegura2026!',
+        ]);
+        $updateResponse->assertSessionHas('status');
+
+        $teacher->refresh();
+        $this->assertFalse($teacher->must_change_password);
+
+        // Can now access sorties without restriction
+        $salidasResponse = $this->get(route('salidas.index'));
+        $salidasResponse->assertOk();
+    }
+
+    /** @test */
+    public function new_user_logging_in_with_google_is_obligated_to_set_password()
+    {
+        $abstractUser = Mockery::mock(SocialiteUser::class);
+        $abstractUser->shouldReceive('getId')->andReturn('google-new-999');
+        $abstractUser->shouldReceive('getEmail')->andReturn('nuevo.alumno@instituto.es');
+        $abstractUser->shouldReceive('getName')->andReturn('Nuevo Alumno');
+        $abstractUser->id = 'google-new-999';
+        $abstractUser->email = 'nuevo.alumno@instituto.es';
+        $abstractUser->name = 'Nuevo Alumno';
+        $abstractUser->avatar = 'https://lh3.googleusercontent.com/avatar_new';
+        $abstractUser->user = [
+            'family_name' => 'Alumno',
+            'given_name' => 'Nuevo',
+        ];
+
+        $provider = Mockery::mock('Laravel\Socialite\Two\GoogleProvider');
+        $provider->shouldReceive('user')->andReturn($abstractUser);
+
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+        $response = $this->get('/auth/google/callback');
+        $response->assertRedirect(route('profile.edit'));
+        $response->assertSessionHas('warning');
+
+        $newUser = User::where('email', 'nuevo.alumno@instituto.es')->first();
+        $this->assertNotNull($newUser);
+        $this->assertTrue($newUser->must_change_password);
+        $this->assertEquals('google-new-999', $newUser->google_id);
+
+        // Cannot navigate elsewhere until password is set
+        $this->actingAs($newUser);
+        $blockedResponse = $this->get(route('dashboard'));
+        $blockedResponse->assertRedirect(route('profile.edit'));
+
+        // Setting password unblocks user
+        $updateResponse = $this->patch(route('profile.update'), [
+            'password' => 'AlumnoSeguro2026!',
+            'password_confirmation' => 'AlumnoSeguro2026!',
+        ]);
+        $updateResponse->assertSessionHas('status');
+
+        $newUser->refresh();
+        $this->assertFalse($newUser->must_change_password);
+    }
+
+    /** @test */
+    public function user_who_already_changed_password_is_not_forced_on_google_login()
+    {
+        $teacher = User::factory()->create([
+            'name' => 'Ana',
+            'last_name' => 'Gómez',
+            'email' => 'ana.gomez@instituto.es',
+            'password' => Hash::make('ClaveYaCambiada2026!'),
+            'must_change_password' => false,
+            'google_id' => 'google-ana-111',
+        ]);
+        $teacher->assignRole('profesor');
+
+        $abstractUser = Mockery::mock(SocialiteUser::class);
+        $abstractUser->shouldReceive('getId')->andReturn('google-ana-111');
+        $abstractUser->shouldReceive('getEmail')->andReturn('ana.gomez@instituto.es');
+        $abstractUser->shouldReceive('getName')->andReturn('Ana Gómez');
+        $abstractUser->id = 'google-ana-111';
+        $abstractUser->email = 'ana.gomez@instituto.es';
+        $abstractUser->name = 'Ana Gómez';
+        $abstractUser->avatar = 'https://lh3.googleusercontent.com/avatar_ana';
+        $abstractUser->user = [
+            'family_name' => 'Gómez',
+            'given_name' => 'Ana',
+        ];
+
+        $provider = Mockery::mock('Laravel\Socialite\Two\GoogleProvider');
+        $provider->shouldReceive('user')->andReturn($abstractUser);
+
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+        $response = $this->get('/auth/google/callback');
+        // Goes directly to home route, not profile.edit
         $response->assertRedirect(route('salidas.index'));
 
         $teacher->refresh();
-        // Since logged in with Google, must_change_password should be false
         $this->assertFalse($teacher->must_change_password);
-        $this->assertEquals('google-unique-id-12345', $teacher->google_id);
+    }
 
-        // Can access sorties without restriction
-        $salidasResponse = $this->get(route('salidas.index'));
-        $salidasResponse->assertOk();
+    /** @test */
+    public function user_who_did_not_change_password_on_first_google_login_is_still_forced_on_subsequent_login()
+    {
+        // User logged in with Google once, but left without changing password
+        $user = User::factory()->create([
+            'name' => 'Marcos',
+            'last_name' => 'Ruiz',
+            'email' => 'marcos.ruiz@instituto.es',
+            'password' => Hash::make('marcos.ruiz@instituto.es'),
+            'google_id' => 'google-marcos-222',
+            'must_change_password' => true,
+        ]);
+        $user->assignRole('profesor');
+
+        $abstractUser = Mockery::mock(SocialiteUser::class);
+        $abstractUser->shouldReceive('getId')->andReturn('google-marcos-222');
+        $abstractUser->shouldReceive('getEmail')->andReturn('marcos.ruiz@instituto.es');
+        $abstractUser->shouldReceive('getName')->andReturn('Marcos Ruiz');
+        $abstractUser->id = 'google-marcos-222';
+        $abstractUser->email = 'marcos.ruiz@instituto.es';
+        $abstractUser->name = 'Marcos Ruiz';
+        $abstractUser->avatar = 'https://lh3.googleusercontent.com/avatar_marcos';
+        $abstractUser->user = [
+            'family_name' => 'Ruiz',
+            'given_name' => 'Marcos',
+        ];
+
+        $provider = Mockery::mock('Laravel\Socialite\Two\GoogleProvider');
+        $provider->shouldReceive('user')->andReturn($abstractUser);
+
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+        $response = $this->get('/auth/google/callback');
+        $response->assertRedirect(route('profile.edit'));
+        $response->assertSessionHas('warning');
+
+        $user->refresh();
+        $this->assertTrue($user->must_change_password);
     }
 }

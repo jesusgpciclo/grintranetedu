@@ -103,6 +103,7 @@ class StudentController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password ?: $request->email),
             'group_id' => $request->group_id,
+            'must_change_password' => true,
         ]);
 
         $student->assignRole('alumno');
@@ -421,6 +422,7 @@ class StudentController extends Controller
                     'email' => $email,
                     'password' => Hash::make('alumno1234'),
                     'group_id' => $groupId,
+                    'must_change_password' => true,
                 ];
                 if (!empty($observaciones)) {
                     $studentData['observaciones'] = $observaciones;

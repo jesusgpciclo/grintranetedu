@@ -76,9 +76,9 @@
         <div class="p-5 rounded-2xl bg-amber-500/15 border-2 border-amber-500/30 flex items-start gap-4 text-amber-900 dark:text-amber-200 shadow-sm animate-pulse">
             <span class="text-3xl">⚠️</span>
             <div>
-                <h3 class="text-base font-extrabold tracking-tight">Cambio de contraseña requerido</h3>
+                <h3 class="text-base font-extrabold tracking-tight">Establecimiento / Cambio de contraseña requerido</h3>
                 <p class="text-xs sm:text-sm mt-0.5 opacity-90">
-                    Has iniciado sesión con una clave inicial o temporal. Por seguridad de tu cuenta y del centro educativo, debes establecer una nueva contraseña a continuación antes de continuar navegando.
+                    Has iniciado sesión con una clave inicial o temporal, o has accedido por primera vez mediante tu cuenta de Google. Por seguridad de tu cuenta y del centro educativo, debes establecer una contraseña a continuación antes de continuar navegando.
                 </p>
             </div>
         </div>
@@ -413,7 +413,7 @@
                         <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Seguridad y Contraseña</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                             @if($user->must_change_password)
-                                <strong class="text-amber-600 dark:text-amber-400">Es obligatorio cambiar tu clave inicial ahora.</strong>
+                                <strong class="text-amber-600 dark:text-amber-400">Es obligatorio establecer o cambiar tu contraseña ahora.</strong>
                             @else
                                 Deja los campos vacíos si no deseas modificar tu clave actual.
                             @endif
