@@ -73,7 +73,7 @@
     </div>
 
     <!-- School Year Selector -->
-    @if(isset($allSchoolYears) && count($allSchoolYears) > 0)
+    @if(isset($allSchoolYears) && count($allSchoolYears) > 0 && auth()->check() && auth()->user()->canSelectSchoolYear())
     <div class="school-year-selector" style="margin: 0 0 1rem 0; padding: 0.75rem; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 0.75rem;">
         <form action="" method="GET" id="school-year-select-form">
             <label for="set_school_year_id" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.725rem; color: var(--text-muted); margin-bottom: 0.35rem; font-weight: 700;">
@@ -366,8 +366,8 @@
         </li>
         @endcan
 
-        {{-- ═══ Centro (Horarios, Aulas, Grupos, Profesores, Alumnos) ═══ --}}
-        @canany(['school_years.manage', 'calendars.manage', 'calendars.view', 'schedules.manage', 'aulas.view', 'aulas.manage', 'zonas.view', 'zonas.manage', 'groups.view', 'teachers.view', 'students.view'])
+        {{-- ═══ Centro (Infraestructura, Cursos, Calendarios, Horarios, Aulas, Zonas) ═══ --}}
+        @canany(['school_years.manage', 'calendars.manage', 'calendars.view', 'schedules.manage', 'aulas.view', 'aulas.manage', 'zonas.view', 'zonas.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
                 <div class="trigger-content">
@@ -433,6 +433,23 @@
                     </a>
                 </li>
                 @endcanany
+            </ul>
+        </li>
+        @endcanany
+
+        {{-- ═══ Alumnos y Grupos (Alumnos, Profesores, Grupos) ═══ --}}
+        @canany(['groups.view', 'teachers.view', 'students.view'])
+        <li class="nav-item-has-submenu">
+            <div class="nav-link submenu-trigger min-h-[44px]">
+                <div class="trigger-content">
+                    <svg class="nav-icon text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                        <path d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                    </svg>
+                    <span>Alumnos y Grupos</span>
+                </div>
+                <span class="arrow">▼</span>
+            </div>
+            <ul class="submenu">
                 @can('groups.view')
                 <li>
                     <a href="{{ route('groups.index') }}"

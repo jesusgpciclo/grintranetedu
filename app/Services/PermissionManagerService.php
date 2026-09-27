@@ -180,6 +180,10 @@ class PermissionManagerService
                         'label' => 'Cursos Escolares',
                         'description' => 'Crear, editar y activar el curso escolar vigente.'
                     ],
+                    'school_years.select' => [
+                        'label' => 'Selector de Curso Activo',
+                        'description' => 'Permite visualizar y cambiar el selector de Curso Activo en la barra lateral.'
+                    ],
                     'aulas.view' => [
                         'label' => 'Ver Aulas y Espacios',
                         'description' => 'Consultar aulas del instituto, capacidades y tipos.'
@@ -411,6 +415,11 @@ class PermissionManagerService
                 'dashboard.view',
             ],
 
+            // Rol específico para habilitar/deshabilitar la visibilidad del Selector de Curso Activo
+            'curso-activo' => [
+                'school_years.select',
+            ],
+
             // Resto de roles desactivados para el despliegue inicial centrado exclusivamente en Salidas
             'administrativo' => [],
 
@@ -432,6 +441,7 @@ class PermissionManagerService
         Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'jefatura', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'dashboard', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'curso-activo', 'guard_name' => 'web']);
 
         // Permisos legacy que conservamos por compatibilidad
         $legacy = ['manage roles', 'manage teacher schedules', 'manage users'];

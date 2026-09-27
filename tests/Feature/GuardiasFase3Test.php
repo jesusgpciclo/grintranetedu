@@ -147,7 +147,8 @@ class GuardiasFase3Test extends TestCase
         $this->teacher->refresh();
         $this->assertFalse($this->teacher->must_change_password);
 
-        // Now dashboard is accessible
+        // Now dashboard is accessible when having dashboard role
+        $this->teacher->assignRole('dashboard');
         $responseAllowed = $this->get(route('dashboard'));
         $responseAllowed->assertOk();
     }

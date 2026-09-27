@@ -145,6 +145,11 @@ class User extends Authenticatable
         return $this->hasRole(['admin', 'dashboard']) || $this->can('dashboard.view');
     }
 
+    public function canSelectSchoolYear(): bool
+    {
+        return $this->hasRole(['admin', 'curso-activo', 'curso_activo']) || $this->can('school_years.select');
+    }
+
     public function getDefaultHomeRoute(): string
     {
         if ($this->hasRole('conserje') && !$this->can('salidas.create') && !$this->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor'])) {

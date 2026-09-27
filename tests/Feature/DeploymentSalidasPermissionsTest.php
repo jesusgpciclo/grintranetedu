@@ -225,4 +225,59 @@ class DeploymentSalidasPermissionsTest extends TestCase
             ->get(route('salidas.history'))
             ->assertStatus(403);
     }
+
+    public function test_curso_activo_role_controls_school_year_selector_visibility(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        // Teacher does NOT see CURSO ACTIVO selector by default
+        $responseTeacher = $this->actingAs($teacher)->get(route('salidas.index'));
+        $responseTeacher->assertStatus(200);
+        $responseTeacher->assertDontSee('CURSO ACTIVO');
+
+        // Assign curso-activo role to teacher
+        $teacher->assignRole('curso-activo');
+        $responseTeacherWithRole = $this->actingAs($teacher)->get(route('salidas.index'));
+        $responseTeacherWithRole->assertStatus(200);
+        $responseTeacherWithRole->assertSee('CURSO ACTIVO');
+
+        // Admin always sees CURSO ACTIVO selector
+        $responseAdmin = $this->actingAs($admin)->get(route('salidas.index'));
+        $responseAdmin->assertStatus(200);
+        $responseAdmin->assertSee('CURSO ACTIVO');
+    }
+
+    public function test_centro_and_alumnos_modules_are_hidden_for_profesor(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $responseTeacher = $this->actingAs($teacher)->get(route('salidas.index'));
+        $responseTeacher->assertStatus(200);
+
+        // Submenus for Centro and Alumnos are completely hidden for Profesor
+        $responseTeacher->assertDontSee('<span>Centro</span>', false);
+        $responseTeacher->assertDontSee('<span>Alumnos y Grupos</span>', false);
+        $responseTeacher->assertDontSee('<span>Grupos</span>', false);
+        $responseTeacher->assertDontSee('<span>Alumnos</span>', false);
+        $responseTeacher->assertDontSee('<span>Profesores</span>', false);
+        $responseTeacher->assertDontSee('<span>Cursos</span>', false);
+        $responseTeacher->assertDontSee('<span>Zonas</span>', false);
+
+        // Admin can see both
+        $responseAdmin = $this->actingAs($admin)->get(route('salidas.index'));
+        $responseAdmin->assertStatus(200);
+        $responseAdmin->assertSee('<span>Centro</span>', false);
+        $responseAdmin->assertSee('<span>Alumnos y Grupos</span>', false);
+        $responseAdmin->assertSee('<span>Grupos</span>', false);
+        $responseAdmin->assertSee('<span>Alumnos</span>', false);
+    }
 }
+

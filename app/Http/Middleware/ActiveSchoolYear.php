@@ -18,11 +18,13 @@ class ActiveSchoolYear
     {
         // Handle explicit switch of school year
         if ($request->has('set_school_year_id')) {
-            $yearId = $request->input('set_school_year_id');
-            $year = SchoolYear::find($yearId);
-            if ($year) {
-                Session::put('active_school_year_id', $year->id);
-                Session::put('active_school_year_name', $year->name);
+            if (!$request->user() || $request->user()->canSelectSchoolYear()) {
+                $yearId = $request->input('set_school_year_id');
+                $year = SchoolYear::find($yearId);
+                if ($year) {
+                    Session::put('active_school_year_id', $year->id);
+                    Session::put('active_school_year_name', $year->name);
+                }
             }
             // Redirect back or to current path without the query parameter to clean the URL
             return redirect($request->url());

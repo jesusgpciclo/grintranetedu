@@ -103,7 +103,8 @@ class TeacherInitialPasswordChangeTest extends TestCase
         $teacher->refresh();
         $this->assertFalse($teacher->must_change_password);
 
-        // Can now access dashboard
+        // Can now access their landing page (salidas or dashboard with role)
+        $teacher->assignRole('dashboard');
         $allowedDashboard = $this->get(route('dashboard'));
         $allowedDashboard->assertOk();
     }
@@ -141,15 +142,15 @@ class TeacherInitialPasswordChangeTest extends TestCase
         Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
 
         $response = $this->get('/auth/google/callback');
-        $response->assertRedirect('dashboard');
+        $response->assertRedirect(route('salidas.index'));
 
         $teacher->refresh();
         // Since logged in with Google, must_change_password should be false
         $this->assertFalse($teacher->must_change_password);
         $this->assertEquals('google-unique-id-12345', $teacher->google_id);
 
-        // Can access dashboard without restriction
-        $dashboardResponse = $this->get(route('dashboard'));
-        $dashboardResponse->assertOk();
+        // Can access sorties without restriction
+        $salidasResponse = $this->get(route('salidas.index'));
+        $salidasResponse->assertOk();
     }
 }

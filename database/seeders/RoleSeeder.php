@@ -29,6 +29,7 @@ class RoleSeeder extends Seeder
         $roleConserje = Role::firstOrCreate(['name' => 'conserje']);
         $roleJefatura = Role::firstOrCreate(['name' => 'jefatura']);
         $roleDashboard = Role::firstOrCreate(['name' => 'dashboard']);
+        $roleCursoActivo = Role::firstOrCreate(['name' => 'curso-activo']);
 
         // Crear Permisos (opcional para ahora, pero bueno tenerlos)
         Permission::firstOrCreate(['name' => 'manage users']);
