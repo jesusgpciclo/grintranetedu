@@ -121,6 +121,9 @@ class HallPassDeleteTest extends TestCase
         $teacher = User::factory()->create();
         $teacher->assignRole('profesor');
 
+        $jefatura = User::factory()->create();
+        $jefatura->assignRole('jefatura');
+
         $student = User::factory()->create(['name' => 'Carlos', 'last_name' => 'García']);
         $student->assignRole('alumno');
 
@@ -133,7 +136,7 @@ class HallPassDeleteTest extends TestCase
             'end_time' => now(),
         ]);
 
-        $response = $this->actingAs($teacher)
+        $response = $this->actingAs($jefatura)
             ->get(route('salidas.history'));
 
         $response->assertStatus(200);
@@ -150,6 +153,9 @@ class HallPassDeleteTest extends TestCase
             'last_name' => 'García Pérez',
         ]);
         $teacher->assignRole('profesor');
+
+        $jefatura = User::factory()->create();
+        $jefatura->assignRole('jefatura');
 
         $student = User::factory()->create(['name' => 'Ana', 'last_name' => 'López']);
         $student->assignRole('alumno');
@@ -172,7 +178,7 @@ class HallPassDeleteTest extends TestCase
             'end_time' => now(),
         ]);
 
-        $response = $this->actingAs($teacher)
+        $response = $this->actingAs($jefatura)
             ->get(route('salidas.history'));
 
         $response->assertStatus(200);
@@ -180,5 +186,22 @@ class HallPassDeleteTest extends TestCase
         $response->assertSee('12 min');
         $response->assertSee('&lt; 1 min', false);
         $response->assertDontSee('-120 min');
+    }
+
+    public function test_profesor_and_conserje_cannot_view_history(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $conserje = User::factory()->create();
+        $conserje->assignRole('conserje');
+
+        $this->actingAs($teacher)
+            ->get(route('salidas.history'))
+            ->assertStatus(403);
+
+        $this->actingAs($conserje)
+            ->get(route('salidas.history'))
+            ->assertStatus(403);
     }
 }

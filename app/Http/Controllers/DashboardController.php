@@ -15,6 +15,10 @@ class DashboardController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = Auth::user();
+
+        if (!$user->canAccessDashboard()) {
+            return redirect()->route($user->getDefaultHomeRoute());
+        }
         
         $data = [
             'usersCount' => 0,

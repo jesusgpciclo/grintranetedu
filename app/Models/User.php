@@ -139,4 +139,17 @@ class User extends Authenticatable
         }
         return asset('storage/' . $this->avatar);
     }
+
+    public function canAccessDashboard(): bool
+    {
+        return $this->hasRole(['admin', 'dashboard']) || $this->can('dashboard.view');
+    }
+
+    public function getDefaultHomeRoute(): string
+    {
+        if ($this->hasRole('conserje') && !$this->can('salidas.create') && !$this->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor'])) {
+            return 'salidas.monitor';
+        }
+        return 'salidas.index';
+    }
 }

@@ -14,6 +14,11 @@ use App\Http\Controllers\AusenciaController;
 use App\Http\Controllers\GuardiaController;
 
 Route::get('/', function () {
+    if (\Illuminate\Support\Facades\Auth::check()) {
+        /** @var \App\Models\User $user */
+        $user = \Illuminate\Support\Facades\Auth::user();
+        return redirect()->route($user->getDefaultHomeRoute());
+    }
     return redirect()->route('login');
 });
 
@@ -139,7 +144,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Salidas Integration
-    Route::middleware(['role:admin|profesor|conserje|directiva|director|controlador-pasillo'])->group(function () {
+    Route::middleware(['role:admin|profesor|conserje|directiva|director|controlador-pasillo|jefatura|jefe-de-departamento'])->group(function () {
         Route::get('/salidas', [\App\Http\Controllers\HallPassController::class, 'index'])->name('salidas.index');
         Route::post('/salidas/pass', [\App\Http\Controllers\HallPassController::class, 'store'])->name('salidas.store');
         Route::post('/salidas/return-all', [\App\Http\Controllers\HallPassController::class, 'returnAll'])->name('salidas.return-all');

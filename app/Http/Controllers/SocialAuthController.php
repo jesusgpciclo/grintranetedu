@@ -59,7 +59,7 @@ class SocialAuthController extends Controller
                 Auth::login($newUser);
             }
 
-            return redirect()->intended('dashboard');
+            return redirect()->intended(route(Auth::user()->getDefaultHomeRoute()));
 
         } catch (Exception $e) {
             return redirect()->route('login')->with('error', 'Algo salió mal al iniciar sesión con Google.');

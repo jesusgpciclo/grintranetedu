@@ -57,7 +57,8 @@ class RoleModuleVisibilityTest extends TestCase
     public function student_role_only_sees_permitted_modules_and_not_forbidden_ones()
     {
         $alumnoUser = User::factory()->create(['name' => 'Alumno Test']);
-        $alumnoUser->assignRole('alumno');
+        $alumnoUser->assignRole(['alumno', 'dashboard']);
+        $alumnoUser->givePermissionTo('salidas.view');
 
         $response = $this->actingAs($alumnoUser)->get(route('dashboard'));
         $response->assertStatus(200);
@@ -78,7 +79,7 @@ class RoleModuleVisibilityTest extends TestCase
     {
         // Create custom role "coordinador-salidas"
         $customRole = Role::create(['name' => 'coordinador-salidas']);
-        $customRole->syncPermissions(['salidas.view', 'salidas.create', 'salidas.manage']);
+        $customRole->syncPermissions(['dashboard.view', 'salidas.view', 'salidas.create', 'salidas.manage']);
 
         $user = User::factory()->create(['name' => 'Coordinador Salidas']);
         $user->assignRole($customRole);
@@ -102,7 +103,7 @@ class RoleModuleVisibilityTest extends TestCase
     public function revoking_module_permission_hides_menu_for_that_role()
     {
         $role = Role::create(['name' => 'personal-tic']);
-        $role->syncPermissions(['tic.view', 'tic.manage']);
+        $role->syncPermissions(['dashboard.view', 'tic.view', 'tic.manage']);
 
         $user = User::factory()->create(['name' => 'Técnico TIC']);
         $user->assignRole($role);
@@ -112,8 +113,8 @@ class RoleModuleVisibilityTest extends TestCase
         $response->assertSee('Recursos e Incidencias');
         $response->assertSee('Reservas TIC');
 
-        // Revoke permissions from this role
-        $role->syncPermissions([]);
+        // Revoke permissions from this role (keep dashboard.view to access page)
+        $role->syncPermissions(['dashboard.view']);
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Now does not see Recursos e Incidencias

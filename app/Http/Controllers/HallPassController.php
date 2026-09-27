@@ -14,6 +14,11 @@ class HallPassController extends Controller
      */
     public function index()
     {
+        $user = auth()->user();
+        if ($user && ($user->hasRole('conserje') || (!$user->can('salidas.create') && !$user->can('salidas.manage') && !$user->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor'])))) {
+            return redirect()->route('salidas.monitor');
+        }
+
         // Teacher Dashboard
         // Get all groups
         $groups = Group::orderBy('name')->get();
@@ -60,6 +65,11 @@ class HallPassController extends Controller
      */
     public function store(Request $request)
     {
+        $user = auth()->user();
+        if (!$user || (!$user->can('salidas.create') && !$user->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))) {
+            return response()->json(['error' => 'No tienes permiso para emitir pases de salida.'], 403);
+        }
+
         $request->validate([
             'student_id' => 'required|exists:users,id', // 'student_id' comes from frontend but maps to 'user_id'
             'reason' => 'required|string|max:255',
@@ -121,21 +131,29 @@ class HallPassController extends Controller
     public function update(Request $request, HallPass $hallPass)
     {
         $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado.'], 401);
+        }
 
-        // Si es el profesor que expidió el pase desde su aula, siempre puede finalizarlo
-        $isTeacherOfPass = ($user && $hallPass->teacher_id === $user->id);
-
-        // Si tiene permiso para regresar alumnos en el monitor o gestionar salidas
-        $canReturnInMonitor = $user && (
-            $user->can('salidas.return_monitor') ||
+        $canReturnInMonitor = $user->can('salidas.return_monitor') ||
             $user->can('salidas.manage') ||
-            $user->hasRole('admin')
-        );
+            $user->hasRole(['admin', 'jefatura', 'directiva', 'director']);
 
-        if (!$isTeacherOfPass && !$canReturnInMonitor) {
-            return response()->json([
-                'error' => 'No tienes permisos para marcar el regreso de alumnos en el monitor de pasillos.'
-            ], 403);
+        // Si la petición se emite desde el monitor de pasillos
+        if ($request->input('source') === 'monitor') {
+            if (!$canReturnInMonitor) {
+                return response()->json([
+                    'error' => 'No tienes permisos para marcar el regreso de alumnos en el monitor de pasillos.'
+                ], 403);
+            }
+        } else {
+            // Regreso desde el gestor de aula (profesor responsable o jefatura/admin/directiva)
+            $isTeacherOfPass = ($hallPass->teacher_id === $user->id);
+            if (!$isTeacherOfPass && !$canReturnInMonitor) {
+                return response()->json([
+                    'error' => 'No tienes permisos para marcar el regreso de alumnos en el monitor de pasillos.'
+                ], 403);
+            }
         }
 
         $hallPass->update([
@@ -143,6 +161,22 @@ class HallPassController extends Controller
         ]);
 
         return response()->json($hallPass);
+    }
+
+    /**
+     * Valida si el usuario tiene permiso para acceder o gestionar el historial de salidas.
+     */
+    protected function authorizeHistory(): void
+    {
+        $user = auth()->user();
+        $canAccessHistory = $user && (
+            $user->can('salidas.manage') ||
+            $user->hasRole(['admin', 'jefatura', 'directiva', 'director'])
+        );
+
+        if (!$canAccessHistory) {
+            abort(403, 'No tienes permiso para consultar o gestionar el historial de salidas.');
+        }
     }
 
     /**
@@ -155,7 +189,7 @@ class HallPassController extends Controller
             abort(401);
         }
 
-        $canDelete = $user->hasRole(['admin', 'directiva', 'director', 'profesor'])
+        $canDelete = $user->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor'])
             || $user->can('salidas.manage')
             || $hallPass->teacher_id === $user->id;
 
@@ -177,20 +211,7 @@ class HallPassController extends Controller
 
     public function bulkDelete(Request $request)
     {
-        $user = auth()->user();
-        if (!$user) {
-            abort(401);
-        }
-
-        $canDelete = $user->hasRole(['admin', 'directiva', 'director', 'profesor'])
-            || $user->can('salidas.manage');
-
-        if (!$canDelete) {
-            if (request()->expectsJson()) {
-                return response()->json(['error' => 'No tienes permiso para eliminar salidas.'], 403);
-            }
-            return back()->withErrors('No tienes permiso para eliminar salidas.');
-        }
+        $this->authorizeHistory();
 
         $request->validate([
             'ids' => 'required|array',
@@ -232,7 +253,7 @@ class HallPassController extends Controller
         $canReturnInMonitor = $user && (
             $user->can('salidas.return_monitor') ||
             $user->can('salidas.manage') ||
-            $user->hasRole('admin')
+            $user->hasRole(['admin', 'jefatura', 'directiva', 'director'])
         );
 
         if (!$canReturnInMonitor && (!$user || !$user->hasRole('profesor'))) {
@@ -252,6 +273,8 @@ class HallPassController extends Controller
 
     public function history(Request $request)
     {
+        $this->authorizeHistory();
+
         $query = HallPass::with(['student.groupRel', 'teacher']);
 
         // Search filter
@@ -321,6 +344,8 @@ class HallPassController extends Controller
 
     public function exportCsv(Request $request)
     {
+        $this->authorizeHistory();
+
         $query = HallPass::with(['student.groupRel', 'teacher']);
 
         // Search filter
@@ -417,6 +442,8 @@ class HallPassController extends Controller
 
     public function printHistory(Request $request)
     {
+        $this->authorizeHistory();
+
         $query = HallPass::with(['student.groupRel', 'teacher']);
 
         // Search filter
@@ -485,6 +512,8 @@ class HallPassController extends Controller
 
     public function clearHistory()
     {
+        $this->authorizeHistory();
+
         HallPass::query()->delete();
 
         return response()->json(['message' => 'Historial vaciado correctamente.']);

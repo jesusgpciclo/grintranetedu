@@ -26,7 +26,9 @@
             <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Gestiona los pases de salida del alumnado y consulta el estado en tiempo real.</p>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
                 <a href="{{ route('salidas.index') }}" class="btn btn-primary btn-sm">Abrir Gestor &rarr;</a>
+                @can('salidas.manage')
                 <a href="{{ route('salidas.history') }}" class="btn btn-secondary btn-sm">Historial</a>
+                @endcan
             </div>
         </div>
         @endcanany

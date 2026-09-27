@@ -10,7 +10,7 @@ class AuthController extends Controller
     public function loginView()
     {
         if (Auth::check()) {
-            return redirect()->route('dashboard');
+            return redirect()->route(Auth::user()->getDefaultHomeRoute());
         }
         return view('auth.login');
     }
@@ -39,7 +39,7 @@ class AuthController extends Controller
                     ->with('warning', 'Por motivos de seguridad, debes cambiar tu contraseña inicial antes de continuar.');
             }
 
-            return redirect()->intended('dashboard');
+            return redirect()->intended(route($user->getDefaultHomeRoute()));
         }
 
         return back()->withErrors([

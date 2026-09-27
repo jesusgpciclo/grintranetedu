@@ -11,7 +11,7 @@
     
     <!-- Sidebar Header / Branding -->
     <div class="sidebar-title flex items-center justify-between gap-2">
-        <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 text-decoration-none group">
+        <a href="{{ $user->canAccessDashboard() ? route('dashboard') : route($user->getDefaultHomeRoute()) }}" class="flex items-center gap-2.5 text-decoration-none group">
             <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-sky-500/25 shrink-0">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
@@ -98,6 +98,7 @@
         <ul class="nav-links space-y-1">
         
         {{-- ═══ Dashboard ═══ --}}
+        @if($user->canAccessDashboard())
         <li>
             <a href="{{ route('dashboard') }}"
                 class="nav-link min-h-[44px] {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -107,6 +108,7 @@
                 <span>Dashboard</span>
             </a>
         </li>
+        @endif
 
         {{-- ═══════════════════════════════════════════════════════════════ --}}
         {{-- 1. SECCIÓN: MI DÍA A DÍA (Para todo el claustro docente)       --}}

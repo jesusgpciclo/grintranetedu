@@ -41,10 +41,12 @@ class SidebarRefactorTest extends TestCase
         \App\Services\PermissionManagerService::applyDefaultAssignments();
 
         $this->profesor = User::factory()->create(['name' => 'Docente Claustro']);
-        $this->profesor->assignRole('profesor');
+        $this->profesor->assignRole(['profesor', 'dashboard']);
+        $this->profesor->givePermissionTo(['guardias.view', 'guardias.sign', 'ausencias.view', 'ausencias.create']);
 
         $this->directivo = User::factory()->create(['name' => 'Jefe de Estudios']);
-        $this->directivo->assignRole('directiva');
+        $this->directivo->assignRole(['directiva', 'dashboard']);
+        $this->directivo->givePermissionTo(['guardias.view', 'guardias.sign', 'guardias.manage', 'guardias.assign', 'ausencias.view', 'ausencias.create']);
 
         $this->admin = User::factory()->create(['name' => 'Administrador']);
         $this->admin->assignRole('admin');

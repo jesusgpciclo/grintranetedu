@@ -221,6 +221,17 @@ class PermissionManagerService
                     ],
                 ],
             ],
+            'dashboard' => [
+                'title' => 'Dashboard Principal',
+                'icon' => '📊',
+                'description' => 'Acceso y visualización del panel de control principal (Dashboard).',
+                'permissions' => [
+                    'dashboard.view' => [
+                        'label' => 'Ver Dashboard',
+                        'description' => 'Permite acceder y visualizar el panel de inicio/dashboard de la intranet.'
+                    ],
+                ],
+            ],
             'salidas' => [
                 'title' => 'Gestor de Salidas (Pases de Aula)',
                 'icon' => '🚪',
@@ -364,118 +375,48 @@ class PermissionManagerService
         return [
             'admin' => $all, // Admin tiene todos los permisos
 
-            'directiva' => [
-                // Guardias y Ausencias completas
-                'guardias.view', 'guardias.assign', 'guardias.sign', 'guardias.manage',
-                'ausencias.view', 'ausencias.create', 'ausencias.edit', 'ausencias.delete', 'ausencias.justify',
-                // Usuarios y Roles de consulta
-                'users.view', 'users.create', 'users.edit', 'roles.view',
-                // Alumnos, Profesores y Grupos
-                'students.view', 'students.create', 'students.edit', 'students.import',
-                'teachers.view', 'teachers.create', 'teachers.edit',
-                'groups.view', 'groups.create', 'groups.edit',
-                // Centro y Horarios
-                'school_years.manage', 'aulas.view', 'aulas.manage', 'zonas.view', 'zonas.manage',
-                'calendars.view', 'calendars.manage',
-                'schedules.view', 'schedules.manage',
-                // Salidas
+            // Jefatura lo ve y puede todo en control de salidas
+            'jefatura' => [
                 'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage',
-                // Evaluación y Módulos
-                'modulos.view', 'cuaderno.view',
-                // Comunicación y Documentos
-                'messages.view', 'messages.send',
-                'documentos.view', 'documentos.manage',
-                'incidencias.view', 'incidencias.manage',
-                'tic.view',
-                'inventory.view', 'inventory.manage',
+            ],
+
+            'directiva' => [
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage',
             ],
 
             'director' => [
-                // Equivalente a directiva con permisos ampliados
-                'guardias.view', 'guardias.assign', 'guardias.sign', 'guardias.manage',
-                'ausencias.view', 'ausencias.create', 'ausencias.edit', 'ausencias.delete', 'ausencias.justify',
-                'users.view', 'roles.view',
-                'students.view', 'teachers.view', 'groups.view',
-                'school_years.manage', 'aulas.view', 'zonas.view', 'calendars.view', 'calendars.manage',
-                'schedules.view', 'schedules.manage',
-                'salidas.view', 'salidas.return_monitor', 'salidas.manage',
-                'modulos.view', 'cuaderno.view',
-                'messages.view', 'messages.send',
-                'documentos.view', 'documentos.manage',
-                'incidencias.view', 'incidencias.manage',
-                'inventory.view', 'inventory.manage',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage',
+            ],
+
+            // Profesor: gestiona salidas y ve el monitor, pero sin historial ni regresar en monitor
+            'profesor' => [
+                'salidas.view', 'salidas.create',
+            ],
+
+            'jefe-de-departamento' => [
+                'salidas.view', 'salidas.create',
+            ],
+
+            // Conserje: solo ve el monitor (sin regresar alumnos ni gestionar salidas)
+            'conserje' => [
+                'salidas.view',
             ],
 
             'controlador-pasillo' => [
                 'salidas.view', 'salidas.return_monitor',
-                'messages.view', 'messages.send',
             ],
 
-            'conserje' => [
-                'salidas.view',
-                'messages.view', 'messages.send',
-                'calendars.view',
+            // Rol específico para habilitar/deshabilitar la visibilidad del Dashboard
+            'dashboard' => [
+                'dashboard.view',
             ],
 
-            'profesor' => [
-                // Guardias y Ausencias operativas del docente
-                'guardias.view', 'guardias.sign',
-                'ausencias.view', 'ausencias.create',
-                // Consulta de alumnos y profesores
-                'students.view', 'teachers.view', 'groups.view',
-                'aulas.view', 'zonas.view', 'calendars.view',
-                'schedules.view',
-                // Gestor de salidas
-                'salidas.view', 'salidas.create',
-                // Cuaderno y notas
-                'modulos.view', 'cuaderno.view', 'cuaderno.manage', 'notas.manage',
-                // Comunicación
-                'messages.view', 'messages.send',
-                'documentos.view',
-                'incidencias.view', 'incidencias.manage',
-                'tic.view',
-            ],
+            // Resto de roles desactivados para el despliegue inicial centrado exclusivamente en Salidas
+            'administrativo' => [],
 
-            'jefe-de-departamento' => [
-                'guardias.view', 'guardias.sign',
-                'ausencias.view', 'ausencias.create',
-                'students.view', 'teachers.view', 'groups.view',
-                'aulas.view', 'zonas.view', 'calendars.view',
-                'schedules.view',
-                'salidas.view', 'salidas.create',
-                'modulos.view', 'modulos.manage', 'cuaderno.view', 'cuaderno.manage', 'notas.manage',
-                'messages.view', 'messages.send',
-                'documentos.view', 'documentos.manage',
-                'incidencias.view', 'incidencias.manage',
-                'tic.view',
-            ],
+            'tecnico-tic' => [],
 
-            'administrativo' => [
-                'users.view', 'users.create', 'users.edit',
-                'students.view', 'students.create', 'students.edit', 'students.import',
-                'teachers.view', 'groups.view',
-                'school_years.manage', 'aulas.view', 'calendars.view', 'calendars.manage',
-                'documentos.view', 'documentos.manage',
-                'messages.view', 'messages.send',
-                'inventory.view', 'inventory.manage',
-            ],
-
-            'tecnico-tic' => [
-                'users.view',
-                'aulas.view',
-                'tic.view', 'tic.manage',
-                'inventory.view', 'inventory.manage',
-                'messages.view', 'messages.send',
-                'documentos.view',
-            ],
-
-            'alumno' => [
-                'modulos.view',
-                'salidas.view',
-                'messages.view', 'messages.send',
-                'calendars.view',
-                'documentos.view',
-            ],
+            'alumno' => [],
         ];
     }
 
@@ -486,6 +427,11 @@ class PermissionManagerService
     public static function syncDatabasePermissions(): int
     {
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
+        // Roles esenciales
+        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'jefatura', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'dashboard', 'guard_name' => 'web']);
 
         // Permisos legacy que conservamos por compatibilidad
         $legacy = ['manage roles', 'manage teacher schedules', 'manage users'];
@@ -512,12 +458,10 @@ class PermissionManagerService
 
         $assignments = self::getDefaultRoleAssignments();
         foreach ($assignments as $roleName => $perms) {
-            $role = Role::where('name', $roleName)->first();
-            if ($role) {
-                // Obtenemos los permisos válidos
-                $validPerms = Permission::whereIn('name', $perms)->get();
-                $role->syncPermissions($validPerms);
-            }
+            $role = Role::firstOrCreate(['name' => $roleName, 'guard_name' => 'web']);
+            // Obtenemos los permisos válidos
+            $validPerms = Permission::whereIn('name', $perms)->get();
+            $role->syncPermissions($validPerms);
         }
 
         // El rol admin debe tener absolutamente todos los permisos

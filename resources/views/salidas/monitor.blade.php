@@ -10,7 +10,7 @@ Monitor de <span class="text-blue-500">salidas</span>
     $canReturn = auth()->user() && (
         auth()->user()->can('salidas.return_monitor') || 
         auth()->user()->can('salidas.manage') || 
-        auth()->user()->hasRole('admin')
+        auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director'])
     );
 @endphp
 
@@ -19,11 +19,13 @@ Monitor de <span class="text-blue-500">salidas</span>
         <div class="max-w-7xl mx-auto">
             <div class="card flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 p-5">
                 <div class="flex items-center gap-4">
+                    @if(auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
                     <a href="{{ route('salidas.index') }}" class="p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group" title="Volver al Gestor">
                         <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </a>
+                    @endif
                     <div>
                         <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Monitor de Pasillo</h1>
                         <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Control de seguridad en tiempo real</p>
@@ -213,7 +215,7 @@ Monitor de <span class="text-blue-500">salidas</span>
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ _method: 'PATCH' })
+                    body: JSON.stringify({ _method: 'PATCH', source: 'monitor' })
                 });
 
                 if (!res.ok) {
