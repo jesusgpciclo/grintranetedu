@@ -13,3 +13,5 @@ Artisan::command('intranet:sync-permissions', function () {
     app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
     $this->info('✓ Permisos sincronizados y caché restablecida correctamente.');
 })->purpose('Sincroniza y restablece los permisos y roles según la configuración del centro.');
+
+\Illuminate\Support\Facades\Schedule::command('salidas:auto-return')->dailyAt('23:59');

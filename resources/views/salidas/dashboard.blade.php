@@ -9,12 +9,12 @@ Gestor de <span class="text-blue-500">salidas</span>
 @section('content')
     <style>
         /* Modern Modal Styles */
-        #custom-modal-overlay, #mobile-reason-sheet-overlay {
+        #custom-modal-overlay, #student-details-modal-overlay {
             backdrop-filter: blur(8px);
             background-color: rgba(15, 23, 42, 0.7);
             transition: all 0.3s ease;
         }
-        .modal-content {
+        .modal-content, .modal-card {
             transform: scale(0.95);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -22,32 +22,19 @@ Gestor de <span class="text-blue-500">salidas</span>
             border-color: var(--border);
             color: var(--text-color);
         }
-        #custom-modal-overlay.active .modal-content {
+        #custom-modal-overlay.active .modal-content,
+        #student-details-modal-overlay.active .modal-card {
             transform: scale(1);
             opacity: 1;
         }
 
         /* Mobile Bottom Sheet Styles */
-        .sheet-content {
-            transform: translateY(100%);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            background-color: var(--bg-card-solid);
-            border-color: var(--border);
-            color: var(--text-color);
-        }
-        #mobile-reason-sheet-overlay.active .sheet-content {
-            transform: translateY(0);
-        }
-
-        @media (min-width: 640px) {
-            .sheet-content {
-                transform: scale(0.95) !important;
-                opacity: 0;
-                transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        @media (max-width: 639px) {
+            .modal-card {
+                transform: translateY(100%);
             }
-            #mobile-reason-sheet-overlay.active .sheet-content {
-                transform: scale(1) !important;
-                opacity: 1 !important;
+            #student-details-modal-overlay.active .modal-card {
+                transform: translateY(0);
             }
         }
 
@@ -248,235 +235,92 @@ Gestor de <span class="text-blue-500">salidas</span>
                 </button>
             </div>
 
-            <!-- Student Grid / List -->
-            <div id="student-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+            <!-- Student Grid / List (Unified for PC and Mobile) -->
+            <div id="student-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2 sm:gap-2.5 w-full">
                 @foreach($students as $student)
                     @php
                         $activePass = $activePasses->firstWhere('user_id', $student->id);
                         $studentTodayPasses = $todayPassesByStudent->get($student->id, collect());
                         $todayCount = $studentTodayPasses->count();
                         $lastPass = $studentTodayPasses->first();
-                        $studentFullName = $student->name . ' ' . ($student->last_name ?? '');
+                        $studentFullName = trim($student->name . ' ' . ($student->last_name ?? ''));
+                        $courseName = trim(($student->groupRel?->course ? $student->groupRel->course . ' ' : '') . ($student->groupRel?->name ?? ''));
                     @endphp
-                    <div class="student-card group relative rounded-2xl p-3 sm:p-5 shadow-sm hover:shadow-xl transition-all duration-300 border flex flex-col justify-between"
-                        style="background: var(--bg-card); border-color: {{ $activePass ? 'rgba(245, 158, 11, 0.6)' : ($todayCount >= 3 ? 'rgba(239, 68, 68, 0.5)' : 'var(--border)') }};"
+                    <div class="student-card group relative rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all duration-200 border flex items-center justify-between gap-2.5 w-full"
+                        style="background: var(--bg-card); border-color: {{ $activePass ? 'rgba(245, 158, 11, 0.6)' : ($todayCount >= 3 ? 'rgba(239, 68, 68, 0.4)' : 'var(--border)') }};"
                         data-group-id="{{ $student->group_id }}" data-id="{{ $student->id }}"
                         data-student-name="{{ $studentFullName }}"
+                        data-student-course="{{ $courseName }}"
                         data-today-count="{{ $todayCount }}"
                         data-last-exit="{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}"
-                        data-search="{{ strtolower($student->name . ' ' . $student->last_name) }}" style="display: none;">
+                        data-search="{{ strtolower($student->name . ' ' . ($student->last_name ?? '')) }}"
+                        style="display: none;">
 
-                        <!-- Mobile View (sm:hidden): Ultra-compact Single Line Row matching user image -->
-                        <div class="sm:hidden flex items-center justify-between gap-1.5 w-full">
-                            <!-- Left: Avatar + Name + Course -->
-                            <div class="flex items-center gap-2 min-w-0 flex-1">
-                                <div class="h-9 w-9 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-400 to-blue-600') }} flex items-center justify-center text-white font-bold text-xs shadow-xs">
-                                    {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
-                                </div>
-                                <div class="overflow-hidden min-w-0 flex-1">
-                                    <h3 class="student-name-mobile text-sm font-bold text-[var(--text-heading)] truncate leading-tight"
+                        <!-- Left: Avatar + Name + Course + Exits Today -->
+                        <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                            <div class="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-500 to-indigo-600') }} flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-xs">
+                                {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
+                            </div>
+                            <div class="overflow-hidden min-w-0 flex-1">
+                                <div class="flex items-center gap-1.5">
+                                    <h3 class="student-name student-name-mobile text-sm sm:text-base font-bold text-[var(--text-heading)] truncate leading-tight"
                                         title="{{ $studentFullName }}">
                                         {{ $student->name }} {{ $student->last_name }}
                                     </h3>
-                                    <div class="student-course-mobile flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
-                                        <span class="truncate">{{ $student->groupRel?->course ?? '' }} {{ $student->groupRel?->name ?? '' }}</span>
-                                        @if($todayCount > 0 && !$activePass)
-                                            <span class="text-[10px] text-amber-500 font-bold shrink-0">({{ $todayCount }})</span>
-                                        @endif
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Right: Compact Inline Action Buttons -->
-                            @if($activePass)
-                                <div class="flex items-center gap-1.5 shrink-0">
-                                    <div class="px-2 py-0.5 bg-amber-500/15 border border-amber-500/30 rounded-lg text-center">
-                                        <span class="text-[9px] font-bold text-amber-500 uppercase block leading-none">{{ $activePass->reason }}</span>
-                                        <span class="text-[11px] font-mono font-bold text-amber-500 timer" data-start="{{ $activePass->start_time->timestamp }}">00:00</span>
-                                    </div>
-                                    <button onclick="endPass({{ $activePass->id }})" class="p-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-bold text-[11px] flex items-center gap-1 shadow-xs">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                        <span>Regresar</span>
-                                    </button>
-                                </div>
-                            @else
-                                <div class="flex items-center gap-1.5 shrink-0">
-                                    <!-- Baño -->
-                                    <button type="button" 
-                                        onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        title="Baño" aria-label="Baño"
-                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" />
-                                        </svg>
-                                    </button>
-
-                                    <!-- Agua (Gota de agua) -->
-                                    <button type="button" 
-                                        onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        title="Agua" aria-label="Agua"
-                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-cyan-500/15 hover:bg-cyan-500/25 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" />
-                                        </svg>
-                                    </button>
-
-                                    <!-- Enfermedad -->
-                                    <button type="button" 
-                                        onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        title="Enfermedad" aria-label="Enfermedad"
-                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-orange-500/15 hover:bg-orange-500/25 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/30 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3zM12 8v8m-4-4h8" />
-                                        </svg>
-                                    </button>
-
-                                    <!-- Otro motivo -->
-                                    <button type="button" 
-                                        onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                        title="Otro motivo" aria-label="Otro motivo"
-                                        class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-500/10 hover:bg-slate-500/20 active:scale-95 text-slate-700 dark:text-slate-300 border border-slate-400/30 transition">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            @endif
-                        </div>
-
-                        <!-- Desktop View (hidden sm:flex flex-col justify-between h-full) -->
-                        <div class="hidden sm:flex flex-col justify-between h-full">
-                            <!-- Card Header / List Info -->
-                            <div class="flex items-center justify-between mb-2 sm:mb-3">
-                                <div class="flex items-center gap-3 min-w-0 flex-1">
-                                    <div
-                                        class="h-10 w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-400 to-blue-600') }} flex items-center justify-center text-white font-bold text-sm shadow-md">
-                                        {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
-                                    </div>
-                                    <div class="overflow-hidden flex-1">
-                                        <h3 class="text-sm font-bold text-[var(--text-heading)] truncate"
-                                            title="{{ $studentFullName }}">
-                                            {{ $student->name }} {{ $student->last_name }}
-                                        </h3>
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-xs text-[var(--text-muted)] truncate block">
-                                                {{ $student->groupRel?->course ?? '' }} {{ $student->groupRel?->name ?? '' }}
-                                            </span>
-                                            @if($todayCount > 0 && !$activePass)
-                                                <span class="text-[10px] text-[var(--text-muted)] hidden xs:inline">• {{ $todayCount }} {{ $todayCount === 1 ? 'salida' : 'salidas' }}</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-1.5 shrink-0 ml-2">
-                                    @if($todayCount > 0)
-                                        <span class="px-2 py-0.5 rounded-lg text-[11px] font-bold {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : ($todayCount >= 2 ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30' : 'bg-[var(--bg-hover)] text-[var(--text-muted)] border border-[var(--border)]') }}"
-                                            title="Ha salido {{ $todayCount }} {{ $todayCount === 1 ? 'vez' : 'veces' }} hoy">
-                                            {{ $todayCount }} {{ $todayCount === 1 ? 'salida' : 'salidas' }}
+                                    @if($todayCount > 0 && !$activePass)
+                                        <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}" title="{{ $todayCount }} salidas hoy">
+                                            {{ $todayCount }}
                                         </span>
                                     @endif
+                                </div>
+                                <div class="student-course-mobile flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
+                                    <span class="truncate">{{ $courseName }}</span>
                                     @if($activePass)
-                                        <span class="flex h-3 w-3 relative ml-1">
-                                            <span
-                                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                                            <span class="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                                        <span class="text-amber-500 font-extrabold flex items-center gap-1 shrink-0 ml-1">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                                            <span>Fuera: {{ $activePass->reason }}</span>
                                         </span>
+                                    @elseif($todayCount > 0)
+                                        <span class="text-[10px] text-[var(--text-muted)] truncate hidden xs:inline">• Última: {{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}</span>
                                     @endif
                                 </div>
                             </div>
-
-                            <!-- Daily Exit History Info Alert -->
-                            @if($todayCount > 0 && !$activePass)
-                                <div class="mb-2 sm:mb-3 px-2.5 py-1.5 rounded-lg bg-[var(--bg-input)] border border-[var(--border)] text-[11px] flex items-center justify-between gap-2 text-[var(--text-muted)]">
-                                    <span class="flex items-center gap-1.5">
-                                        <svg class="w-3.5 h-3.5 {{ $todayCount >= 3 ? 'text-rose-500' : 'text-amber-500' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                        <span>Última salida:</span>
-                                    </span>
-                                    <span class="font-semibold {{ $todayCount >= 3 ? 'text-rose-500 font-bold' : 'text-[var(--text-color)]' }}">
-                                        {{ $lastPass->start_time ? $lastPass->start_time->format('H:i') : '--:--' }} ({{ $lastPass->reason }})
-                                    </span>
-                                </div>
-                            @endif
-
-                            <!-- Desktop Actions Area -->
-                            <div class="mt-auto">
-                                @if($activePass)
-                                    <!-- Active State -->
-                                    <div class="space-y-2 sm:space-y-3 pt-1">
-                                        <div
-                                            class="bg-amber-500/10 rounded-xl p-2.5 sm:p-3 border border-amber-500/30">
-                                            <div class="flex justify-between items-center mb-1">
-                                                <span
-                                                    class="text-xs font-bold text-amber-500 uppercase tracking-wide">
-                                                    {{ $activePass->reason }}
-                                                </span>
-                                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor"
-                                                    viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                </svg>
-                                            </div>
-                                            <div class="text-xl sm:text-2xl font-mono font-bold text-amber-500 timer"
-                                                data-start="{{ $activePass->start_time->timestamp }}">
-                                                00:00
-                                            </div>
-                                        </div>
-                                        <button onclick="endPass({{ $activePass->id }})"
-                                            class="w-full py-2.5 sm:py-3 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 transform active:scale-95 transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M5 13l4 4L19 7"></path>
-                                            </svg>
-                                            Regresar alumno
-                                        </button>
-                                    </div>
-                                @else
-                                    <!-- Desktop Grid Actions -->
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <button onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                            class="group/btn p-3 bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 rounded-xl border border-blue-500/30 transition-all duration-200 flex flex-col items-center gap-1">
-                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10">
-                                                </path>
-                                            </svg>
-                                            <span class="text-xs font-semibold">Baño</span>
-                                        </button>
-                                        <button onclick="createPass({{ $student->id }}, 'Agua', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                            class="group/btn p-3 bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-500 rounded-xl border border-cyan-500/30 transition-all duration-200 flex flex-col items-center gap-1">
-                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                                            </svg>
-                                            <span class="text-xs font-semibold">Agua</span>
-                                        </button>
-                                        <button onclick="createPass({{ $student->id }}, 'Enfermedad', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                            class="group/btn p-3 bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded-xl border border-orange-500/30 transition-all duration-200 flex flex-col items-center gap-1">
-                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M3 3h18v18H3zM12 8v8m-4-4h8"></path>
-                                            </svg>
-                                            <span class="text-xs font-semibold">Enfermedad</span>
-                                        </button>
-                                        <button onclick="promptCustomReason({{ $student->id }}, {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
-                                            class="group/btn p-3 bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] text-[var(--text-muted)] rounded-xl border border-[var(--border)] transition-all duration-200 flex flex-col items-center gap-1">
-                                            <svg class="w-6 h-6 opacity-80 group-hover/btn:scale-110 transition-transform" fill="none"
-                                                stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
-                                                </path>
-                                            </svg>
-                                            <span class="text-xs font-semibold">Otro</span>
-                                        </button>
-                                    </div>
-                                @endif
-                            </div>
                         </div>
+
+                        <!-- Right: Actions (Active state has Timer + Regresar; Inactive state has ONLY Servicio icon and More [+] icon) -->
+                        @if($activePass)
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <div class="px-2 py-1 bg-amber-500/15 border border-amber-500/30 rounded-xl text-center">
+                                    <span class="text-[11px] font-mono font-black text-amber-500 timer block leading-none" data-start="{{ $activePass->start_time->timestamp }}">00:00</span>
+                                </div>
+                                <button onclick="endPass({{ $activePass->id }})" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs transition-all">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span>Regresar</span>
+                                </button>
+                            </div>
+                        @else
+                            <div class="flex items-center gap-1 shrink-0">
+                                <!-- 1. Icono de servicio (Baño / Aseo / WC) -->
+                                <button type="button"
+                                    onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
+                                    title="Salida a servicio / baño" aria-label="Baño"
+                                    class="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition shadow-xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" />
+                                    </svg>
+                                </button>
+
+                                <!-- 2. Icono de más (+) -->
+                                <button type="button"
+                                    onclick="openStudentDetailsModal({{ $student->id }})"
+                                    title="Más opciones de salida y detalles" aria-label="Más opciones"
+                                    class="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-500/15 hover:bg-slate-500/25 active:scale-95 text-slate-700 dark:text-slate-300 border border-slate-500/30 transition shadow-xs">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                                    </svg>
+                                </button>
+                            </div>
+                        @endif
                     </div>
                 @endforeach
             </div>
@@ -495,78 +339,95 @@ Gestor de <span class="text-blue-500">salidas</span>
         </div>
     </div>
 
-    <!-- Mobile Reason Picker Bottom Sheet / Modal -->
-    <div id="mobile-reason-sheet-overlay" class="fixed inset-0 z-[100] hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="sheet-content w-full sm:max-w-md border-t sm:border rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden p-5 sm:p-6">
-            <!-- Sheet Handle for mobile -->
-            <div class="w-12 h-1.5 bg-[var(--border)] rounded-full mx-auto mb-4 sm:hidden"></div>
+    <!-- Student Details Modal (Opened by the Plus [+] icon) -->
+    <div id="student-details-modal-overlay" class="fixed inset-0 z-[100] hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="modal-card w-full sm:max-w-lg border-t sm:border rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden p-5 sm:p-6 bg-[var(--bg-card-solid)] border-[var(--border)] max-h-[90vh] flex flex-col">
+            <!-- Mobile Sheet handle -->
+            <div class="w-12 h-1.5 bg-[var(--border)] rounded-full mx-auto mb-3 sm:hidden"></div>
 
-            <div class="flex items-center justify-between mb-4">
+            <!-- Header: Nombre del alumno en letra más grande -->
+            <div class="flex items-start justify-between gap-3 pb-3 border-b border-[var(--border)]">
                 <div>
-                    <h3 id="sheet-student-name" class="text-lg font-bold text-[var(--text-heading)] leading-tight"></h3>
-                    <p id="sheet-exit-status" class="text-xs text-[var(--text-muted)] mt-0.5"></p>
+                    <h2 id="modal-student-name" class="text-2xl sm:text-3xl font-black text-[var(--text-heading)] leading-tight tracking-tight"></h2>
+                    <p id="modal-student-course" class="text-xs sm:text-sm text-[var(--text-muted)] font-semibold mt-0.5"></p>
                 </div>
-                <button onclick="closeMobileReasonSheet()" class="text-[var(--text-muted)] hover:text-[var(--text-heading)] p-2 rounded-xl bg-[var(--bg-hover)] border border-[var(--border)]">
+                <button type="button" onclick="closeStudentDetailsModal()" class="text-[var(--text-muted)] hover:text-[var(--text-heading)] p-2 rounded-xl bg-[var(--bg-hover)] border border-[var(--border)] transition-colors">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <p class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider mb-3">Selecciona motivo de salida:</p>
-
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <button onclick="selectMobileReason('Baño')"
-                    class="p-4 bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 text-blue-500 rounded-2xl border border-blue-500/30 transition-all flex flex-col items-center justify-center gap-2">
-                    <div class="p-2.5 bg-blue-500/20 rounded-xl">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10">
-                            </path>
-                        </svg>
+            <div class="overflow-y-auto space-y-4 py-3 flex-1 pr-0.5">
+                <!-- 1. Botones de acceso rápido de salida -->
+                <div>
+                    <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Acceso rápido de salida:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" onclick="selectModalReason('Baño')"
+                            class="p-3 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
+                            <div class="p-2 bg-blue-500/20 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" /></svg>
+                            </div>
+                            <span class="text-xs font-bold">Baño</span>
+                        </button>
+                        <button type="button" onclick="selectModalReason('Agua')"
+                            class="p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
+                            <div class="p-2 bg-cyan-500/20 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" /></svg>
+                            </div>
+                            <span class="text-xs font-bold">Agua</span>
+                        </button>
+                        <button type="button" onclick="selectModalReason('Enfermedad')"
+                            class="p-3 rounded-2xl bg-orange-500/10 hover:bg-orange-500/20 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
+                            <div class="p-2 bg-orange-500/20 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3zM12 8v8m-4-4h8" /></svg>
+                            </div>
+                            <span class="text-xs font-bold">Enfermedad</span>
+                        </button>
+                        <button type="button" onclick="selectModalReason('Taquilla/Material')"
+                            class="p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 text-purple-600 dark:text-purple-400 border border-purple-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
+                            <div class="p-2 bg-purple-500/20 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                            </div>
+                            <span class="text-xs font-bold">Material</span>
+                        </button>
                     </div>
-                    <span class="text-sm font-bold">Baño</span>
-                </button>
+                </div>
 
-                <button onclick="selectMobileReason('Agua')"
-                    class="p-4 bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-500 rounded-2xl border border-cyan-500/30 transition-all flex flex-col items-center justify-center gap-2">
-                    <div class="p-2.5 bg-cyan-500/20 rounded-xl">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
-                        </svg>
+                <!-- 2. Cuadro de texto para otro motivo con un botón de otros -->
+                <div>
+                    <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Otro motivo personalizado:</p>
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="modal-custom-reason-input" placeholder="Escribe otro motivo (ej: Taquilla, Biblioteca...)"
+                            class="flex-1 bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2.5 px-3.5 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
+                        <button type="button" onclick="submitModalCustomReason()"
+                            class="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-xs sm:text-sm rounded-xl shrink-0 transition active:scale-95 shadow-xs">
+                            Otro motivo
+                        </button>
                     </div>
-                    <span class="text-sm font-bold">Agua</span>
-                </button>
+                </div>
 
-                <button onclick="selectMobileReason('Enfermedad')"
-                    class="p-4 bg-orange-500/10 hover:bg-orange-500/20 active:scale-95 text-orange-500 rounded-2xl border border-orange-500/30 transition-all flex flex-col items-center justify-center gap-2">
-                    <div class="p-2.5 bg-orange-500/20 rounded-xl">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M3 3h18v18H3zM12 8v8m-4-4h8"></path>
-                        </svg>
+                <!-- 3. Listado de las horas a las que ha salido el alumno en el día y quién les ha dejado salir -->
+                <div class="pt-3 border-t border-[var(--border)]">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Historial de salidas de hoy:</p>
+                        <span id="modal-history-count" class="text-xs font-extrabold text-blue-500"></span>
                     </div>
-                    <span class="text-sm font-bold">Enfermedad</span>
-                </button>
 
-                <button onclick="selectMobileCustomReason()"
-                    class="p-4 bg-[var(--bg-input)] hover:bg-[var(--bg-hover)] active:scale-95 text-[var(--text-color)] rounded-2xl border border-[var(--border)] transition-all flex flex-col items-center justify-center gap-2">
-                    <div class="p-2.5 bg-[var(--bg-hover)] rounded-xl">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z">
-                            </path>
-                        </svg>
+                    <div id="modal-history-list" class="space-y-2 max-h-56 overflow-y-auto">
+                        <!-- Populated dynamically by JavaScript -->
                     </div>
-                    <span class="text-sm font-bold">Otro motivo</span>
-                </button>
+                </div>
             </div>
 
-            <button onclick="closeMobileReasonSheet()" class="w-full py-3 bg-[var(--bg-hover)] hover:bg-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-heading)] font-bold rounded-xl transition-all text-sm">
-                Cancelar
-            </button>
+            <!-- Footer -->
+            <div class="pt-3 border-t border-[var(--border)] flex justify-end">
+                <button type="button" onclick="closeStudentDetailsModal()" class="w-full sm:w-auto px-5 py-2.5 bg-[var(--bg-hover)] hover:bg-[var(--border)] text-[var(--text-heading)] font-bold text-xs rounded-xl transition">
+                    Cerrar
+                </button>
+            </div>
         </div>
+    </div>
     </div>
 
     <!-- Custom Modal -->
@@ -599,61 +460,211 @@ Gestor de <span class="text-blue-500">salidas</span>
     <div id="toast-container" class="toast-container"></div>
 
     <script>
-        // State for mobile reason sheet
-        let currentSheetStudent = null;
+        // Passes history map per student from server
+        let todayPassesMap = @json($todayPassesJson ?? []);
+        const initialDbFavorites = @json($userFavorites ?? []);
 
-        function openMobileReasonSheet(studentId, studentName, todayCount = 0, lastExit = '') {
-            currentSheetStudent = {
+        // State for student details modal
+        let currentModalStudent = null;
+
+        function openStudentDetailsModal(studentId) {
+            const card = document.querySelector(`.student-card[data-id="${studentId}"]`);
+            if (!card) return;
+
+            const studentName = card.dataset.studentName || '';
+            const studentCourse = card.dataset.studentCourse || '';
+            const todayCount = parseInt(card.dataset.todayCount || '0', 10);
+            const lastExit = card.dataset.lastExit || '';
+
+            currentModalStudent = {
                 id: studentId,
                 name: studentName,
+                course: studentCourse,
                 todayCount: todayCount,
                 lastExit: lastExit
             };
 
-            const sheetOverlay = document.getElementById('mobile-reason-sheet-overlay');
-            const nameEl = document.getElementById('sheet-student-name');
-            const statusEl = document.getElementById('sheet-exit-status');
+            const modalOverlay = document.getElementById('student-details-modal-overlay');
+            const nameEl = document.getElementById('modal-student-name');
+            const courseEl = document.getElementById('modal-student-course');
+            const customInput = document.getElementById('modal-custom-reason-input');
 
-            nameEl.textContent = studentName;
-            if (todayCount > 0) {
-                statusEl.textContent = `${todayCount} ${todayCount === 1 ? 'salida hoy' : 'salidas hoy'}${lastExit ? ' (última a las ' + lastExit + ')' : ''}`;
-                statusEl.className = 'text-xs mt-0.5 ' + (todayCount >= 3 ? 'text-rose-500 font-bold' : (todayCount >= 2 ? 'text-amber-500 font-bold' : 'text-[var(--text-muted)]'));
-            } else {
-                statusEl.textContent = 'Sin salidas registradas hoy';
-                statusEl.className = 'text-xs text-[var(--text-muted)] mt-0.5';
+            if (nameEl) nameEl.textContent = studentName;
+            if (courseEl) courseEl.textContent = studentCourse;
+            if (customInput) customInput.value = '';
+
+            renderModalTodayHistory(studentId);
+
+            if (modalOverlay) {
+                modalOverlay.classList.remove('hidden');
+                modalOverlay.classList.add('flex');
+                setTimeout(() => modalOverlay.classList.add('active'), 10);
             }
-
-            sheetOverlay.classList.remove('hidden');
-            sheetOverlay.classList.add('flex');
-            setTimeout(() => sheetOverlay.classList.add('active'), 10);
         }
 
-        function closeMobileReasonSheet() {
-            const sheetOverlay = document.getElementById('mobile-reason-sheet-overlay');
-            sheetOverlay.classList.remove('active');
+        function closeStudentDetailsModal() {
+            const modalOverlay = document.getElementById('student-details-modal-overlay');
+            if (!modalOverlay) return;
+            modalOverlay.classList.remove('active');
             setTimeout(() => {
-                sheetOverlay.classList.add('hidden');
-                sheetOverlay.classList.remove('flex');
-                currentSheetStudent = null;
-            }, 300);
+                modalOverlay.classList.add('hidden');
+                modalOverlay.classList.remove('flex');
+                currentModalStudent = null;
+            }, 200);
         }
 
-        function selectMobileReason(reason) {
-            if (!currentSheetStudent) return;
-            const { id, todayCount, lastExit } = currentSheetStudent;
-            closeMobileReasonSheet();
+        function selectModalReason(reason) {
+            if (!currentModalStudent) return;
+            const { id, todayCount, lastExit } = currentModalStudent;
+            closeStudentDetailsModal();
             setTimeout(() => {
                 createPass(id, reason, todayCount, lastExit);
             }, 150);
         }
 
-        function selectMobileCustomReason() {
-            if (!currentSheetStudent) return;
-            const { id, todayCount, lastExit } = currentSheetStudent;
-            closeMobileReasonSheet();
+        function submitModalCustomReason() {
+            if (!currentModalStudent) return;
+            const input = document.getElementById('modal-custom-reason-input');
+            const reason = input ? input.value.trim() : '';
+            if (!reason) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Por favor, escribe un motivo para la salida', 'info');
+                }
+                if (input) input.focus();
+                return;
+            }
+
+            const { id, todayCount, lastExit } = currentModalStudent;
+            closeStudentDetailsModal();
             setTimeout(() => {
-                promptCustomReason(id, todayCount, lastExit);
+                createPass(id, reason, todayCount, lastExit);
             }, 150);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function renderModalTodayHistory(studentId) {
+            const historyContainer = document.getElementById('modal-history-list');
+            const countBadge = document.getElementById('modal-history-count');
+            if (!historyContainer) return;
+
+            const passes = (todayPassesMap && todayPassesMap[studentId]) ? todayPassesMap[studentId] : [];
+            if (countBadge) {
+                countBadge.textContent = passes.length === 1 ? '1 salida' : `${passes.length} salidas`;
+            }
+
+            if (passes.length === 0) {
+                historyContainer.innerHTML = `
+                    <div class="p-3 text-center rounded-xl bg-[var(--bg-hover)] text-[var(--text-muted)] text-xs italic">
+                        Sin salidas registradas hoy
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            passes.forEach(pass => {
+                const timeDisplay = pass.end_time 
+                    ? `${pass.start_time} - ${pass.end_time} (${pass.duration_minutes ?? '?'} min)`
+                    : `${pass.start_time} - En curso`;
+
+                const editBtnHtml = pass.can_edit_time ? `
+                    <button type="button" onclick="promptEditPassTime(${pass.id}, ${pass.duration_minutes || 5}, '${pass.start_time || ''}', '${pass.end_time || ''}')"
+                        class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition shrink-0 active:scale-95 shadow-xs"
+                        title="Editar duración o tiempo de salida">
+                        ✏️ Editar tiempo
+                    </button>
+                ` : '';
+
+                html += `
+                    <div id="pass-history-row-${pass.id}" class="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-input)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition hover:border-blue-500/30">
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-xs font-mono font-bold text-[var(--text-heading)] bg-[var(--bg-card)] px-1.5 py-0.5 rounded border border-[var(--border)]">
+                                    🕒 ${timeDisplay}
+                                </span>
+                                <span class="text-xs font-bold text-blue-500">
+                                    ${escapeHtml(pass.reason)}
+                                </span>
+                            </div>
+                            <p class="text-[11px] text-[var(--text-muted)] mt-1 truncate">
+                                Autorizado por: <strong class="text-[var(--text-color)]">${escapeHtml(pass.teacher_name)}</strong>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                            ${editBtnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+
+            historyContainer.innerHTML = html;
+        }
+
+        async function promptEditPassTime(passId, currentMinutes, startTime, endTime) {
+            const newDurationStr = await customModal({
+                title: 'Editar Tiempo de Salida',
+                description: `Indica la duración en minutos de la salida (actual: ${currentMinutes || 5} min):`,
+                input: true,
+                confirmText: 'Guardar tiempo',
+                type: 'question'
+            });
+
+            if (newDurationStr === null || String(newDurationStr).trim() === '') return;
+
+            const newMinutes = parseInt(String(newDurationStr).trim(), 10);
+            if (isNaN(newMinutes) || newMinutes <= 0 || newMinutes > 480) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Por favor introduce un número válido de minutos (1 - 480).', 'error');
+                }
+                return;
+            }
+
+            try {
+                const url = "{{ url('/salidas/pass') }}/" + passId + "/time";
+                const res = await fetch(url, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ duration_minutes: newMinutes })
+                });
+
+                const data = await res.json();
+                if (!res.ok) {
+                    throw new Error(data.error || 'Error al actualizar el tiempo');
+                }
+
+                // Update in local todayPassesMap
+                if (currentModalStudent && todayPassesMap[currentModalStudent.id]) {
+                    const p = todayPassesMap[currentModalStudent.id].find(x => x.id === passId);
+                    if (p) {
+                        p.duration_minutes = newMinutes;
+                        if (data.pass && data.pass.end_time) {
+                            const endD = new Date(data.pass.end_time);
+                            const endH = String(endD.getHours()).padStart(2, '0');
+                            const endM = String(endD.getMinutes()).padStart(2, '0');
+                            p.end_time = `${endH}:${endM}`;
+                        }
+                    }
+                    renderModalTodayHistory(currentModalStudent.id);
+                }
+
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Tiempo de salida actualizado correctamente', 'success');
+                }
+            } catch (e) {
+                if (typeof window.showToast === 'function') {
+                    window.showToast(e.message, 'error');
+                }
+            }
         }
 
         // Available groups for favorite handling
@@ -667,9 +678,21 @@ Gestor de <span class="text-blue-500">salidas</span>
         function getFavoriteGroupIds() {
             try {
                 const stored = localStorage.getItem(FAVORITES_STORAGE_KEY);
-                return stored ? JSON.parse(stored) : [];
+                let localFavs = stored ? JSON.parse(stored) : [];
+                if (!Array.isArray(localFavs)) localFavs = [];
+
+                // Sincronizar con favoritos de base de datos del usuario
+                if (Array.isArray(initialDbFavorites) && initialDbFavorites.length > 0) {
+                    initialDbFavorites.forEach(id => {
+                        const strId = String(id);
+                        if (!localFavs.map(String).includes(strId)) {
+                            localFavs.push(strId);
+                        }
+                    });
+                }
+                return localFavs;
             } catch (e) {
-                return [];
+                return (initialDbFavorites || []).map(String);
             }
         }
 
@@ -779,7 +802,7 @@ Gestor de <span class="text-blue-500">salidas</span>
             updateFavoriteStarState();
         }
 
-        window.toggleCurrentClassFavorite = function(e) {
+        window.toggleCurrentClassFavorite = async function(e) {
             if (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -801,20 +824,35 @@ Gestor de <span class="text-blue-500">salidas</span>
             const group = availableGroups.find(g => String(g.id) === String(currentVal));
             const groupName = group ? group.name : 'Clase';
 
+            let isAdding = false;
             if (index >= 0) {
                 favorites.splice(index, 1);
-                saveFavoriteGroupIds(favorites);
-                renderClassSelector(currentVal);
-                if (typeof window.showToast === 'function') {
-                    window.showToast(`${groupName} eliminada de favoritos`, 'info');
-                }
+                isAdding = false;
             } else {
                 favorites.push(String(currentVal));
-                saveFavoriteGroupIds(favorites);
-                renderClassSelector(currentVal);
-                if (typeof window.showToast === 'function') {
-                    window.showToast(`⭐ ${groupName} añadida a favoritos`, 'success');
-                }
+                isAdding = true;
+            }
+
+            saveFavoriteGroupIds(favorites);
+            renderClassSelector(currentVal);
+
+            if (typeof window.showToast === 'function') {
+                window.showToast(isAdding ? `⭐ ${groupName} añadida a favoritos` : `${groupName} eliminada de favoritos`, isAdding ? 'success' : 'info');
+            }
+
+            // Sincronizar en base de datos para persistencia multidispositivo
+            try {
+                await fetch('{{ route("salidas.toggle-favorite") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ group_id: currentVal })
+                });
+            } catch (err) {
+                console.warn('Could not sync favorite to server:', err);
             }
         };
 
@@ -825,13 +863,31 @@ Gestor de <span class="text-blue-500">salidas</span>
             const emptyState = document.getElementById('empty-state');
             const returnAllBtn = document.getElementById('return-all-btn');
 
-            // Close sheet on overlay backdrop click
-            const sheetOverlay = document.getElementById('mobile-reason-sheet-overlay');
-            if (sheetOverlay) {
-                sheetOverlay.addEventListener('click', (e) => {
-                    if (e.target === sheetOverlay) closeMobileReasonSheet();
+            // Close student details modal on backdrop click
+            const studentModalOverlay = document.getElementById('student-details-modal-overlay');
+            if (studentModalOverlay) {
+                studentModalOverlay.addEventListener('click', (e) => {
+                    if (e.target === studentModalOverlay) closeStudentDetailsModal();
                 });
             }
+
+            // Enter key support for modal custom reason input
+            const modalCustomInput = document.getElementById('modal-custom-reason-input');
+            if (modalCustomInput) {
+                modalCustomInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        submitModalCustomReason();
+                    }
+                });
+            }
+
+            // Escape key support
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && studentModalOverlay && !studentModalOverlay.classList.contains('hidden')) {
+                    closeStudentDetailsModal();
+                }
+            });
 
             // Restore saved class or first favorite if only 1 favorite and no saved class
             const savedClass = localStorage.getItem('selected_class');

@@ -57,102 +57,198 @@ Monitor de <span class="text-blue-500">salidas</span>
             </div>
 
             <div class="card overflow-hidden">
-                <div>
-                    @if($activePasses->isEmpty())
-                        <div class="text-center py-12 text-[var(--text-muted)]">
-                            <svg class="w-16 h-16 mx-auto mb-4 opacity-40" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
+                @if($activePasses->isEmpty())
+                    <div class="text-center py-16 text-[var(--text-muted)]">
+                        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
-                            <p class="text-lg font-semibold">No hay alumnos en el pasillo ahora mismo.</p>
                         </div>
-                    @else
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            @foreach($activePasses as $pass)
-                                @php
-                                    $studentTodayPasses = isset($todayPassesByStudent) ? $todayPassesByStudent->get($pass->user_id, collect()) : collect();
-                                    $todayCount = $studentTodayPasses->count();
-                                    // Previous pass if any (excluding this active one)
-                                    $previousPass = $studentTodayPasses->filter(fn($p) => $p->id !== $pass->id)->first();
-                                @endphp
-                                <div id="pass-card-{{ $pass->id }}"
-                                    class="p-5 border rounded-2xl transition-all flex flex-col justify-between gap-4"
-                                    style="background: var(--bg-surface); border-color: {{ $todayCount >= 3 ? 'rgba(239, 68, 68, 0.4)' : 'var(--border)' }};">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-3">
-                                            <span class="flex h-3 w-3 relative shrink-0">
-                                                <span
-                                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                                            </span>
-                                            <div>
-                                                <div class="flex items-center gap-2">
-                                                    <h3 class="text-base sm:text-lg font-bold text-[var(--text-heading)] leading-tight">
-                                                        {{ $pass->student?->name }} {{ $pass->student?->last_name }}
-                                                    </h3>
-                                                    @if($todayCount > 1)
-                                                        <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase tracking-wider {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}"
-                                                            title="Ha salido {{ $todayCount }} veces hoy">
-                                                            {{ $todayCount }}ª salida hoy
-                                                        </span>
-                                                    @endif
-                                                </div>
-                                                <p class="text-sm text-[var(--text-muted)] mt-0.5">
-                                                    {{ $pass->student?->groupRel?->course ?? '' }}
-                                                    {{ $pass->student?->groupRel?->name ?? '' }}
-                                                    &bull; <span class="font-bold text-[var(--text-color)]">{{ $pass->reason }}</span>
-                                                </p>
-                                                @if($pass->teacher)
-                                                    <p class="text-xs text-[var(--text-muted)] mt-0.5">
-                                                        Prof: {{ $pass->teacher->name }} {{ $pass->teacher->last_name ?? '' }}
-                                                    </p>
-                                                @endif
-                                                @if($previousPass)
-                                                    <p class="text-[11px] text-amber-500 mt-1 flex items-center gap-1">
-                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                        <span>Salida anterior hoy: {{ $previousPass->start_time ? $previousPass->start_time->format('H:i') : '' }} ({{ $previousPass->reason }})</span>
-                                                    </p>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="text-right flex flex-col items-end">
-                                            <div class="text-2xl sm:text-3xl font-mono font-bold text-blue-500 timer"
-                                                data-start="{{ $pass->start_time->timestamp }}">
-                                                00:00
-                                            </div>
-                                            <span class="text-xs text-[var(--text-muted)] mt-1">Salida:
-                                                {{ $pass->start_time->format('H:i') }}</span>
-                                        </div>
-                                    </div>
+                        <h3 class="text-lg font-bold text-[var(--text-heading)]">Pasillo despejado</h3>
+                        <p class="text-sm text-[var(--text-muted)] mt-1">No hay alumnos en el pasillo ahora mismo.</p>
+                    </div>
+                @else
+                    <!-- Monitor List View (High Density: more students per screen) -->
+                    <div class="p-3 sm:p-4 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Alumnos fuera actualmente:</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-500 text-white shadow-xs">
+                                {{ $activePasses->count() }}
+                            </span>
+                        </div>
+                        <div class="text-xs text-[var(--text-muted)] hidden sm:block">
+                            Vista en lista de alta capacidad
+                        </div>
+                    </div>
 
-                                    <div class="pt-3 border-t border-[var(--border)] flex justify-end items-center">
-                                        @if($canReturn)
-                                            <button onclick="endPass({{ $pass->id }})" id="btn-return-{{ $pass->id }}"
-                                                class="w-full sm:w-auto px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-500/20 transition-all duration-200 flex items-center justify-center gap-2 group">
-                                                <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                                </svg>
-                                                <span>Regresar alumno</span>
-                                            </button>
-                                        @else
-                                            <div class="w-full flex items-center justify-between text-xs text-[var(--text-muted)] bg-slate-50 dark:bg-slate-800/60 px-3.5 py-2 rounded-xl border border-[var(--border)]">
-                                                <span class="flex items-center gap-1.5 font-semibold text-slate-600 dark:text-slate-300">
-                                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                                                    </svg>
-                                                    <span>En tránsito en pasillo</span>
-                                                </span>
-                                                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-200/60 dark:bg-slate-700/60 px-2 py-0.5 rounded-md">Solo lectura</span>
+                    <!-- Desktop & Tablet Table List -->
+                    <div class="hidden md:block overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-[var(--border)] bg-[var(--bg-card)] text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)]">
+                                    <th class="py-3 px-4">Estado</th>
+                                    <th class="py-3 px-4">Alumno</th>
+                                    <th class="py-3 px-4">Grupo</th>
+                                    <th class="py-3 px-4">Motivo</th>
+                                    <th class="py-3 px-4">Tiempo Fuera</th>
+                                    <th class="py-3 px-4">Profesor Autorizante</th>
+                                    <th class="py-3 px-4 text-right">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-[var(--border)]">
+                                @foreach($activePasses as $pass)
+                                    @php
+                                        $studentTodayPasses = isset($todayPassesByStudent) ? $todayPassesByStudent->get($pass->user_id, collect()) : collect();
+                                        $todayCount = $studentTodayPasses->count();
+                                    @endphp
+                                    <tr id="pass-card-{{ $pass->id }}" class="hover:bg-[var(--bg-hover)] transition-colors {{ $todayCount >= 3 ? 'bg-rose-500/5' : '' }}">
+                                        <!-- Estado (Ping animado) -->
+                                        <td class="py-3.5 px-4 w-12 text-center">
+                                            <span class="flex h-3 w-3 relative mx-auto">
+                                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                            </span>
+                                        </td>
+
+                                        <!-- Alumno -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="flex items-center gap-3">
+                                                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-xs shrink-0">
+                                                    {{ substr($pass->student?->name ?? 'A', 0, 1) }}{{ substr($pass->student?->last_name ?? '', 0, 1) }}
+                                                </div>
+                                                <div>
+                                                    <div class="flex items-center gap-2">
+                                                        <span class="text-sm font-bold text-[var(--text-heading)]">
+                                                            {{ $pass->student?->name }} {{ $pass->student?->last_name }}
+                                                        </span>
+                                                        @if($todayCount > 1)
+                                                            <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold uppercase {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}">
+                                                                {{ $todayCount }}ª salida hoy
+                                                            </span>
+                                                        @endif
+                                                    </div>
+                                                </div>
                                             </div>
-                                        @endif
+                                        </td>
+
+                                        <!-- Grupo -->
+                                        <td class="py-3.5 px-4">
+                                            <span class="text-xs font-semibold text-[var(--text-muted)]">
+                                                {{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}
+                                            </span>
+                                        </td>
+
+                                        <!-- Motivo -->
+                                        <td class="py-3.5 px-4">
+                                            @php
+                                                $reasonLower = strtolower($pass->reason);
+                                                $reasonBadgeClass = match(true) {
+                                                    str_contains($reasonLower, 'baño') || str_contains($reasonLower, 'aseo') || str_contains($reasonLower, 'servicio') => 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30',
+                                                    str_contains($reasonLower, 'agua') => 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/30',
+                                                    str_contains($reasonLower, 'enferm') => 'bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
+                                                    default => 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+                                                };
+                                            @endphp
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border {{ $reasonBadgeClass }}">
+                                                <span>{{ $pass->reason }}</span>
+                                            </span>
+                                        </td>
+
+                                        <!-- Tiempo Fuera -->
+                                        <td class="py-3.5 px-4">
+                                            <div class="flex items-baseline gap-2">
+                                                <span class="text-base font-mono font-black text-blue-600 dark:text-blue-400 timer" data-start="{{ $pass->start_time->timestamp }}">
+                                                    00:00
+                                                </span>
+                                                <span class="text-[11px] text-[var(--text-muted)]">
+                                                    (desde {{ $pass->start_time->format('H:i') }})
+                                                </span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Profesor Autorizante -->
+                                        <td class="py-3.5 px-4">
+                                            <span class="text-xs text-[var(--text-muted)] font-medium">
+                                                {{ $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Sin asignar' }}
+                                            </span>
+                                        </td>
+
+                                        <!-- Acción -->
+                                        <td class="py-3.5 px-4 text-right">
+                                            @if($canReturn)
+                                                <button onclick="endPass({{ $pass->id }})" id="btn-return-{{ $pass->id }}"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                                                    <span>Regresar alumno</span>
+                                                </button>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg border border-[var(--border)]" title="Modo consulta">
+                                                    <span>Solo lectura</span>
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Mobile List Items (compact horizontal cards) -->
+                    <div class="md:hidden divide-y divide-[var(--border)]">
+                        @foreach($activePasses as $pass)
+                            @php
+                                $studentTodayPasses = isset($todayPassesByStudent) ? $todayPassesByStudent->get($pass->user_id, collect()) : collect();
+                                $todayCount = $studentTodayPasses->count();
+                            @endphp
+                            <div id="pass-mobile-card-{{ $pass->id }}" class="p-3 flex items-center justify-between gap-2.5 hover:bg-[var(--bg-hover)] transition-colors {{ $todayCount >= 3 ? 'bg-rose-500/5' : '' }}">
+                                <div class="flex items-center gap-2.5 min-w-0 flex-1">
+                                    <span class="flex h-2.5 w-2.5 relative shrink-0">
+                                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                    </span>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex items-center gap-1.5">
+                                            <h4 class="text-xs font-bold text-[var(--text-heading)] truncate">
+                                                {{ $pass->student?->name }} {{ $pass->student?->last_name }}
+                                            </h4>
+                                            @if($todayCount > 1)
+                                                <span class="text-[9px] font-extrabold text-amber-500 shrink-0">({{ $todayCount }}ª)</span>
+                                            @endif
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-[10px] text-[var(--text-muted)] truncate mt-0.5">
+                                            <span>{{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}</span>
+                                            <span>•</span>
+                                            <span class="font-bold text-blue-500">{{ $pass->reason }}</span>
+                                        </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <div class="text-right">
+                                        <span class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 timer block leading-none" data-start="{{ $pass->start_time->timestamp }}">
+                                            00:00
+                                        </span>
+                                        <span class="text-[9px] text-[var(--text-muted)] leading-none mt-0.5 block">
+                                            {{ $pass->start_time->format('H:i') }}
+                                        </span>
+                                    </div>
+
+                                    @if($canReturn)
+                                        <button onclick="endPass({{ $pass->id }})" id="btn-return-mobile-{{ $pass->id }}"
+                                            class="p-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            <span class="text-[11px]">Regresar</span>
+                                        </button>
+                                    @else
+                                        <span class="text-[10px] text-slate-400 font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">
+                                            Solo lectura
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
             </div>
         </div>
     </div>

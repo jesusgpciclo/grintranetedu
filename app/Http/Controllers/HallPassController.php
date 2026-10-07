@@ -19,29 +19,63 @@ class HallPassController extends Controller
             return redirect()->route('salidas.monitor');
         }
 
+        // Auto-cerrar salidas no regresadas de días anteriores
+        HallPass::whereNull('end_time')
+            ->whereDate('date', '<', now()->toDateString())
+            ->update(['end_time' => now()]);
+
         // Teacher Dashboard
         // Get all groups
         $groups = Group::orderBy('name')->get();
 
-        // Get students (Users with role 'alumno') ordered by Group then Name
-        // We need to eager load groupRel (from User model)
+        // Active passes
+        $activePasses = HallPass::whereNull('end_time')->with(['student.groupRel'])->get();
+        $activeStudentIds = $activePasses->pluck('user_id')->flip();
+
+        // Get students (Users with role 'alumno')
+        // Sorted: 1) Active passes first, 2) Alphabetical order by name and last_name
         $students = User::role('alumno')
             ->with('groupRel')
             ->get()
-            ->sortBy([
-                ['groupRel.course', 'asc'],
-                ['groupRel.name', 'asc'],
-                ['name', 'asc']
-            ]);
+            ->sort(function ($a, $b) use ($activeStudentIds) {
+                $aActive = isset($activeStudentIds[$a->id]) ? 0 : 1;
+                $bActive = isset($activeStudentIds[$b->id]) ? 0 : 1;
+                if ($aActive !== $bActive) {
+                    return $aActive <=> $bActive;
+                }
 
-        // Active passes
-        $activePasses = HallPass::whereNull('end_time')->with(['student.groupRel'])->get();
+                $aName = mb_strtolower(trim($a->name . ' ' . ($a->last_name ?? '')));
+                $bName = mb_strtolower(trim($b->name . ' ' . ($b->last_name ?? '')));
+                return strcoll($aName, $bName);
+            })
+            ->values();
 
-        // Today's passes for history stats per student
+        // Today's passes for history stats per student, eager loading teacher
         $todayPassesByStudent = HallPass::whereDate('date', now()->toDateString())
+            ->with('teacher')
             ->orderBy('start_time', 'desc')
             ->get()
             ->groupBy('user_id');
+
+        $todayPassesJson = $todayPassesByStudent->map(function ($passes) use ($user) {
+            return $passes->map(function ($pass) use ($user) {
+                $start = $pass->start_time ? \Carbon\Carbon::parse($pass->start_time) : null;
+                $end = $pass->end_time ? \Carbon\Carbon::parse($pass->end_time) : null;
+                $duration = ($start && $end) ? max(1, $start->diffInMinutes($end)) : null;
+
+                return [
+                    'id' => $pass->id,
+                    'user_id' => $pass->user_id,
+                    'teacher_id' => $pass->teacher_id,
+                    'teacher_name' => $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Profesor',
+                    'reason' => $pass->reason,
+                    'start_time' => $start ? $start->format('H:i') : '',
+                    'end_time' => $end ? $end->format('H:i') : null,
+                    'duration_minutes' => $duration,
+                    'can_edit_time' => ($user && $pass->teacher_id === $user->id) || ($user && $user->hasRole(['admin', 'jefatura', 'directiva', 'director'])),
+                ];
+            });
+        });
 
         // Statistics
         $stats = [
@@ -49,7 +83,10 @@ class HallPassController extends Controller
             'today_count' => HallPass::whereDate('date', now()->toDateString())->count(),
         ];
 
-        return view('salidas.dashboard', compact('students', 'activePasses', 'groups', 'stats', 'todayPassesByStudent'));
+        // Favorite groups from user profile in DB (if available)
+        $userFavorites = ($user && isset($user->favorite_groups)) ? (array) $user->favorite_groups : [];
+
+        return view('salidas.dashboard', compact('students', 'activePasses', 'groups', 'stats', 'todayPassesByStudent', 'todayPassesJson', 'userFavorites'));
     }
 
     /**
@@ -229,6 +266,11 @@ class HallPassController extends Controller
 
     public function monitor()
     {
+        // Auto-cerrar salidas no regresadas de días anteriores
+        HallPass::whereNull('end_time')
+            ->whereDate('date', '<', now()->toDateString())
+            ->update(['end_time' => now()]);
+
         // Monitor de Pasillo
         $activePasses = HallPass::whereNull('end_time')
             ->with(['student.groupRel', 'teacher'])
@@ -236,6 +278,7 @@ class HallPassController extends Controller
             ->get();
 
         $todayPassesByStudent = HallPass::whereDate('date', now()->toDateString())
+            ->with('teacher')
             ->orderBy('start_time', 'desc')
             ->get()
             ->groupBy('user_id');
@@ -517,5 +560,99 @@ class HallPassController extends Controller
         HallPass::query()->delete();
 
         return response()->json(['message' => 'Historial vaciado correctamente.']);
+    }
+
+    /**
+     * Alterna un grupo como favorito en el perfil del usuario autenticado.
+     */
+    public function toggleFavoriteGroup(Request $request)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado.'], 401);
+        }
+
+        $request->validate([
+            'group_id' => 'required',
+        ]);
+
+        $groupId = (string) $request->input('group_id');
+        $favorites = $user->favorite_groups ?? [];
+        if (!is_array($favorites)) {
+            $favorites = [];
+        }
+        $favorites = array_map('strval', $favorites);
+
+        $index = array_search($groupId, $favorites);
+        if ($index !== false) {
+            array_splice($favorites, $index, 1);
+            $isFavorite = false;
+        } else {
+            $favorites[] = $groupId;
+            $isFavorite = true;
+        }
+
+        try {
+            $user->update(['favorite_groups' => array_values($favorites)]);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning("Could not persist favorite_groups to users table: " . $e->getMessage());
+        }
+
+        return response()->json([
+            'success' => true,
+            'is_favorite' => $isFavorite,
+            'favorites' => array_values($favorites),
+        ]);
+    }
+
+    /**
+     * Edita el tiempo/duración de una salida autorizada por el profesor autenticado o jefatura/admin.
+     */
+    public function updatePassTime(Request $request, HallPass $hallPass)
+    {
+        $user = auth()->user();
+        if (!$user) {
+            return response()->json(['error' => 'No autenticado.'], 401);
+        }
+
+        $canEdit = ($hallPass->teacher_id === $user->id) || $user->hasRole(['admin', 'jefatura', 'directiva', 'director']);
+        if (!$canEdit) {
+            return response()->json(['error' => 'Solo el profesor que autorizó la salida puede editar el tiempo.'], 403);
+        }
+
+        $request->validate([
+            'duration_minutes' => 'nullable|integer|min:1|max:480',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i',
+        ]);
+
+        $passDate = $hallPass->date ? \Carbon\Carbon::parse($hallPass->date)->toDateString() : now()->toDateString();
+
+        if ($request->filled('start_time')) {
+            $hallPass->start_time = \Carbon\Carbon::parse($passDate . ' ' . $request->input('start_time'));
+        }
+
+        if ($request->filled('duration_minutes')) {
+            $minutes = (int) $request->input('duration_minutes');
+            $baseStart = $hallPass->start_time ? \Carbon\Carbon::parse($hallPass->start_time) : now();
+            $hallPass->end_time = (clone $baseStart)->addMinutes($minutes);
+        } elseif ($request->filled('end_time')) {
+            $hallPass->end_time = \Carbon\Carbon::parse($passDate . ' ' . $request->input('end_time'));
+        }
+
+        if ($hallPass->start_time && $hallPass->end_time) {
+            $sTime = \Carbon\Carbon::parse($hallPass->start_time);
+            $eTime = \Carbon\Carbon::parse($hallPass->end_time);
+            if ($eTime->lessThan($sTime)) {
+                return response()->json(['error' => 'La hora de regreso no puede ser anterior a la hora de salida.'], 422);
+            }
+        }
+
+        $hallPass->save();
+
+        return response()->json([
+            'message' => 'Tiempo de salida actualizado correctamente.',
+            'pass' => $hallPass->fresh(['teacher', 'student']),
+        ]);
     }
 }

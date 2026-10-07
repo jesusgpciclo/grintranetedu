@@ -47,15 +47,19 @@ class HallPassMobileLayoutTest extends TestCase
         // 1. Stats container has hidden sm:flex so it is hidden on mobile
         $response->assertSee('hidden sm:flex gap-2 sm:gap-3', false);
 
-        // 2. Direct mobile options are present with the 4 reasons inline
-        $response->assertSee('sm:hidden flex items-center justify-between gap-1.5 w-full', false);
-        $response->assertSee('Baño');
-        $response->assertSee('Agua');
-        $response->assertSee('Enfermedad');
-        $response->assertSee('Otro motivo');
+        // 2. The unified list row contains only the bathroom (service) icon and the more (+) icon
+        $response->assertSee('aria-label="Baño"', false);
+        $response->assertSee('aria-label="Más opciones"', false);
+        $response->assertSee('openStudentDetailsModal(' . $student->id . ')', false);
 
-        // 3. The old mobile "+" tap button is no longer present
-        $response->assertDontSee('student-mobile-tap');
+        // 3. The student details modal is present with larger font, quick reason buttons, custom reason and history
+        $response->assertSee('id="student-details-modal-overlay"', false);
+        $response->assertSee('id="modal-student-name"', false);
+        $response->assertSee('id="modal-custom-reason-input"', false);
+        $response->assertSee('id="modal-history-list"', false);
+        $response->assertSee('selectModalReason', false);
+        $response->assertSee('submitModalCustomReason', false);
+        $response->assertSee('promptEditPassTime', false);
     }
 
     public function test_salidas_dashboard_contains_favorite_course_star_and_scripts(): void

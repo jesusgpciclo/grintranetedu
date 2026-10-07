@@ -42,6 +42,7 @@ class User extends Authenticatable
         'titular_user_id',
         'must_change_password',
         'active_role',
+        'favorite_groups',
     ];
 
     public function groupRel()
@@ -102,6 +103,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'must_change_password' => 'boolean',
+            'favorite_groups' => 'array',
         ];
     }
 

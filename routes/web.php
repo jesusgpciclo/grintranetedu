@@ -160,6 +160,8 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/salidas/history/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.history.destroy');
         Route::delete('/salidas/pass/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.destroy');
         Route::post('/salidas/history/bulk-delete', [\App\Http\Controllers\HallPassController::class, 'bulkDelete'])->name('salidas.history.bulk-delete');
+        Route::post('/salidas/favorites', [\App\Http\Controllers\HallPassController::class, 'toggleFavoriteGroup'])->name('salidas.toggle-favorite');
+        Route::patch('/salidas/pass/{hallPass}/time', [\App\Http\Controllers\HallPassController::class, 'updatePassTime'])->name('salidas.pass.update-time');
     });
 
     // --- MÓDULO: Mensajería Interna (Fernández, Raquel) ---

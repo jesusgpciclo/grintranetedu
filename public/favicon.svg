@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7"/>
+      <stop offset="100%" stop-color="#4f46e5"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  
+  <!-- Rounded Background -->
+  <rect x="2" y="2" width="60" height="60" rx="16" fill="url(#grad)" filter="url(#shadow)"/>
+  
+  <!-- Graduation Cap Top -->
+  <polygon points="32,14 54,25 32,36 10,25" fill="#ffffff"/>
+  
+  <!-- Cap Under/Skullcap -->
+  <path d="M19,30.5 L19,41 C19,47 45,47 45,41 L45,30.5 C40.5,33.5 36.2,34.5 32,34.5 C27.8,34.5 23.5,33.5 19,30.5 Z" fill="#e0f2fe"/>
+  
+  <!-- Tassel / Ribbon -->
+  <path d="M47,26.5 L49,38 C49,39.5 47,43 47,46" stroke="url(#gold)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <circle cx="47" cy="46" r="2.5" fill="url(#gold)"/>
+  
+  <!-- Open Book Base Accent -->
+  <path d="M22,48 C27,46 31,48 32,50 C33,48 37,46 42,48" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.9"/>
+</svg>
