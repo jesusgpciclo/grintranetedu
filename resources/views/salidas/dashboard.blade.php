@@ -41,16 +41,17 @@ Gestor de <span class="text-blue-500">salidas</span>
         /* Mobile list item styling */
         @media (max-width: 639px) {
             .student-card {
-                padding: 0.45rem 0.65rem !important;
-                border-radius: 0.85rem !important;
-                gap: 0 !important;
+                padding: 0.55rem 0.75rem !important;
+                border-radius: 0.95rem !important;
+                gap: 0.5rem !important;
             }
             .student-card .student-name-mobile {
-                font-size: 0.85rem !important; /* +1 punto respecto a 12px (text-xs) */
-                line-height: 1.25 !important;
+                font-size: 1.05rem !important; /* Aumentado para mayor legibilidad en móviles */
+                font-weight: 700 !important;
+                line-height: 1.3 !important;
             }
             .student-card .student-course-mobile {
-                font-size: 0.72rem !important;
+                font-size: 0.80rem !important;
             }
         }
 
@@ -263,7 +264,7 @@ Gestor de <span class="text-blue-500">salidas</span>
                             </div>
                             <div class="overflow-hidden min-w-0 flex-1">
                                 <div class="flex items-center gap-1.5">
-                                    <h3 class="student-name student-name-mobile text-sm sm:text-base font-bold text-[var(--text-heading)] truncate leading-tight"
+                                    <h3 class="student-name student-name-mobile text-base sm:text-lg font-bold text-[var(--text-heading)] truncate leading-tight"
                                         title="{{ $studentFullName }}">
                                         {{ $student->name }} {{ $student->last_name }}
                                     </h3>
@@ -401,8 +402,12 @@ Gestor de <span class="text-blue-500">salidas</span>
                         <input type="text" id="modal-custom-reason-input" placeholder="Escribe otro motivo (ej: Taquilla, Biblioteca...)"
                             class="flex-1 bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2.5 px-3.5 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
                         <button type="button" onclick="submitModalCustomReason()"
-                            class="px-4 py-2.5 bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold text-xs sm:text-sm rounded-xl shrink-0 transition active:scale-95 shadow-xs">
-                            Otro motivo
+                            class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shrink-0 transition shadow-md shadow-blue-500/25 flex items-center gap-1.5"
+                            style="background-color: #2563eb !important; color: #ffffff !important;">
+                            <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                            <span>Otro motivo</span>
                         </button>
                     </div>
                 </div>
