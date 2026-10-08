@@ -244,29 +244,30 @@ Gestor de <span class="text-blue-500">salidas</span>
                         $studentTodayPasses = $todayPassesByStudent->get($student->id, collect());
                         $todayCount = $studentTodayPasses->count();
                         $lastPass = $studentTodayPasses->first();
+                        $studentDisplayName = $student->last_name ? trim($student->last_name . ', ' . $student->name) : $student->name;
                         $studentFullName = trim($student->name . ' ' . ($student->last_name ?? ''));
                         $courseName = trim(($student->groupRel?->course ? $student->groupRel->course . ' ' : '') . ($student->groupRel?->name ?? ''));
                     @endphp
                     <div class="student-card group relative rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all duration-200 border flex items-center justify-between gap-2.5 w-full"
                         style="background: var(--bg-card); border-color: {{ $activePass ? 'rgba(245, 158, 11, 0.6)' : ($todayCount >= 3 ? 'rgba(239, 68, 68, 0.4)' : 'var(--border)') }};"
                         data-group-id="{{ $student->group_id }}" data-id="{{ $student->id }}"
-                        data-student-name="{{ $studentFullName }}"
+                        data-student-name="{{ $studentDisplayName }}"
                         data-student-course="{{ $courseName }}"
                         data-today-count="{{ $todayCount }}"
                         data-last-exit="{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}"
-                        data-search="{{ strtolower($student->name . ' ' . ($student->last_name ?? '')) }}"
+                        data-search="{{ strtolower(($student->last_name ?? '') . ' ' . $student->name . ' ' . $student->name . ' ' . ($student->last_name ?? '')) }}"
                         style="display: none;">
 
                         <!-- Left: Avatar + Name + Course + Exits Today -->
                         <div class="flex items-center gap-2.5 min-w-0 flex-1">
                             <div class="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-500 to-indigo-600') }} flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-xs">
-                                {{ substr($student->name, 0, 1) }}{{ substr($student->last_name ?? '', 0, 1) }}
+                                {{ substr($student->last_name ?? $student->name, 0, 1) }}{{ substr($student->name, 0, 1) }}
                             </div>
                             <div class="overflow-hidden min-w-0 flex-1">
                                 <div class="flex items-center gap-1.5">
                                     <h3 class="student-name student-name-mobile text-base sm:text-lg font-bold text-[var(--text-heading)] truncate leading-tight"
-                                        title="{{ $studentFullName }}">
-                                        {{ $student->name }} {{ $student->last_name }}
+                                        title="{{ $studentDisplayName }}">
+                                        {{ $studentDisplayName }}
                                     </h3>
                                     @if($todayCount > 0 && !$activePass)
                                         <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}" title="{{ $todayCount }} salidas hoy">

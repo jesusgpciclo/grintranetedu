@@ -76,9 +76,9 @@ class HallPassTodoImprovementsTest extends TestCase
 
         // Active Zacarias appears before Alberto
         $content = $response->getContent();
-        $posZ = strpos($content, 'Zacarias Zapata');
-        $posA = strpos($content, 'Alberto Alvarez');
-        $posB = strpos($content, 'Beatriz Bernal');
+        $posZ = strpos($content, 'Zapata, Zacarias');
+        $posA = strpos($content, 'Alvarez, Alberto');
+        $posB = strpos($content, 'Bernal, Beatriz');
 
         $this->assertNotFalse($posZ);
         $this->assertNotFalse($posA);
@@ -236,9 +236,9 @@ class HallPassTodoImprovementsTest extends TestCase
         $response->assertSee('Alumno', false);
         $response->assertSee('Grupo', false);
         $response->assertSee('Motivo', false);
-        $response->assertSee('Tiempo Fuera', false);
-        $response->assertSee('Carmen Delgado');
+        $response->assertSee('Delgado, Carmen');
         $response->assertSee('Enfermería');
+        $response->assertSee($conserje->name);
     }
 
     public function test_favicon_is_present_in_html(): void

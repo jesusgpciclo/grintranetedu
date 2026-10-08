@@ -33,7 +33,7 @@ class HallPassController extends Controller
         $activeStudentIds = $activePasses->pluck('user_id')->flip();
 
         // Get students (Users with role 'alumno')
-        // Sorted: 1) Active passes first, 2) Alphabetical order by name and last_name
+        // Sorted: 1) Active passes first, 2) Alphabetical order by last_name (apellidos), then name
         $students = User::role('alumno')
             ->with('groupRel')
             ->get()
@@ -44,8 +44,15 @@ class HallPassController extends Controller
                     return $aActive <=> $bActive;
                 }
 
-                $aName = mb_strtolower(trim($a->name . ' ' . ($a->last_name ?? '')));
-                $bName = mb_strtolower(trim($b->name . ' ' . ($b->last_name ?? '')));
+                $aLastName = mb_strtolower(trim($a->last_name ?? ''));
+                $bLastName = mb_strtolower(trim($b->last_name ?? ''));
+                $cmpLast = strcoll($aLastName, $bLastName);
+                if ($cmpLast !== 0) {
+                    return $cmpLast;
+                }
+
+                $aName = mb_strtolower(trim($a->name));
+                $bName = mb_strtolower(trim($b->name));
                 return strcoll($aName, $bName);
             })
             ->values();

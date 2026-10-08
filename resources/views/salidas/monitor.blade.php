@@ -113,13 +113,13 @@ Monitor de <span class="text-blue-500">salidas</span>
                                         <!-- Alumno -->
                                         <td class="py-3.5 px-4">
                                             <div class="flex items-center gap-3">
-                                                <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-xs shadow-xs shrink-0">
-                                                    {{ substr($pass->student?->name ?? 'A', 0, 1) }}{{ substr($pass->student?->last_name ?? '', 0, 1) }}
+                                                <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-xs shrink-0">
+                                                    {{ substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1) }}{{ substr($pass->student?->name ?? '', 0, 1) }}
                                                 </div>
                                                 <div>
                                                     <div class="flex items-center gap-2">
-                                                        <span class="text-sm font-bold text-[var(--text-heading)]">
-                                                            {{ $pass->student?->name }} {{ $pass->student?->last_name }}
+                                                        <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] tracking-tight">
+                                                            {{ $pass->student?->last_name ? trim($pass->student->last_name . ', ' . $pass->student->name) : ($pass->student?->name ?? 'Alumno') }}
                                                         </span>
                                                         @if($todayCount > 1)
                                                             <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold uppercase {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}">
@@ -168,9 +168,14 @@ Monitor de <span class="text-blue-500">salidas</span>
 
                                         <!-- Profesor Autorizante -->
                                         <td class="py-3.5 px-4">
-                                            <span class="text-xs text-[var(--text-muted)] font-medium">
-                                                {{ $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Sin asignar' }}
-                                            </span>
+                                            <div class="flex items-center gap-2">
+                                                <div class="p-1 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                                </div>
+                                                <span class="text-xs sm:text-sm font-bold text-[var(--text-heading)]">
+                                                    {{ $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Sin asignar' }}
+                                                </span>
+                                            </div>
                                         </td>
 
                                         <!-- Acción -->
@@ -200,25 +205,31 @@ Monitor de <span class="text-blue-500">salidas</span>
                                 $studentTodayPasses = isset($todayPassesByStudent) ? $todayPassesByStudent->get($pass->user_id, collect()) : collect();
                                 $todayCount = $studentTodayPasses->count();
                             @endphp
-                            <div id="pass-mobile-card-{{ $pass->id }}" class="p-3 flex items-center justify-between gap-2.5 hover:bg-[var(--bg-hover)] transition-colors {{ $todayCount >= 3 ? 'bg-rose-500/5' : '' }}">
+                            <div id="pass-mobile-card-{{ $pass->id }}" class="p-3.5 flex items-center justify-between gap-2.5 hover:bg-[var(--bg-hover)] transition-colors {{ $todayCount >= 3 ? 'bg-rose-500/5' : '' }}">
                                 <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                    <span class="flex h-2.5 w-2.5 relative shrink-0">
+                                    <span class="flex h-3 w-3 relative shrink-0">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                                     </span>
                                     <div class="min-w-0 flex-1">
                                         <div class="flex items-center gap-1.5">
-                                            <h4 class="text-xs font-bold text-[var(--text-heading)] truncate">
-                                                {{ $pass->student?->name }} {{ $pass->student?->last_name }}
+                                            <h4 class="text-base sm:text-lg font-black text-[var(--text-heading)] truncate">
+                                                {{ $pass->student?->last_name ? trim($pass->student->last_name . ', ' . $pass->student->name) : ($pass->student?->name ?? 'Alumno') }}
                                             </h4>
                                             @if($todayCount > 1)
                                                 <span class="text-[9px] font-extrabold text-amber-500 shrink-0">({{ $todayCount }}ª)</span>
                                             @endif
                                         </div>
-                                        <div class="flex items-center gap-1.5 text-[10px] text-[var(--text-muted)] truncate mt-0.5">
-                                            <span>{{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}</span>
+                                        <div class="flex items-center gap-1.5 text-xs text-[var(--text-muted)] truncate mt-0.5">
+                                            <span class="font-semibold">{{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}</span>
                                             <span>•</span>
                                             <span class="font-bold text-blue-500">{{ $pass->reason }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 text-xs text-[var(--text-muted)] truncate mt-1">
+                                            <span class="font-medium">Autorizado por:</span>
+                                            <span class="font-bold text-[var(--text-heading)]">
+                                                {{ $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Sin asignar' }}
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -235,7 +246,7 @@ Monitor de <span class="text-blue-500">salidas</span>
 
                                     @if($canReturn)
                                         <button onclick="endPass({{ $pass->id }})" id="btn-return-mobile-{{ $pass->id }}"
-                                            class="p-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-lg text-xs font-bold shadow-xs transition-all flex items-center gap-1">
+                                            class="p-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1">
                                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                             <span class="text-[11px]">Regresar</span>
                                         </button>
