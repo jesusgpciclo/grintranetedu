@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reporte de Historial de Salidas - {{ now()->format('d/m/Y') }}</title>
+    <title>Reporte de Historial de Pasillos - {{ now()->format('d/m/Y') }}</title>
     <!-- Outfit Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +33,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center border-b-2 border-slate-200 pb-6 mb-8">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-800">Historial de Salidas</h1>
+            <h1 class="text-3xl font-extrabold text-slate-800">Historial de Pasillos</h1>
             <p class="text-sm font-semibold text-slate-500 mt-1">Control de pases al pasillo - GrIntranet</p>
         </div>
         <div class="text-right text-sm text-slate-500">

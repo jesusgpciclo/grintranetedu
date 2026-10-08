@@ -17,15 +17,15 @@
     </div>
 
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
-        {{-- 1. Acceso Directo: Gestor de Salidas (Primero) --}}
+        {{-- 1. Acceso Directo: Pasillos (Primero) --}}
         @canany(['salidas.view', 'salidas.create'])
         <div class="card card-hover" style="border: 2px solid var(--warning-border, #f59e0b); background: var(--warning-light, rgba(245, 158, 11, 0.05));">
             <h3 style="color: #d97706; margin-bottom: 0.5rem; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">
-                🚪 Gestor de Salidas</h3>
-            <div style="font-size: 1.35rem; font-weight: 800; color: var(--text-heading); margin-bottom: 0.35rem;">Pases de Salida</div>
-            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Gestiona los pases de salida del alumnado y consulta el estado en tiempo real.</p>
+                🚪 Pasillos</h3>
+            <div style="font-size: 1.35rem; font-weight: 800; color: var(--text-heading); margin-bottom: 0.35rem;">Control de Pasillos</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Gestiona los pases de pasillo del alumnado y consulta el estado en tiempo real.</p>
             <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                <a href="{{ route('salidas.index') }}" class="btn btn-primary btn-sm">Abrir Gestor &rarr;</a>
+                <a href="{{ route('salidas.index') }}" class="btn btn-primary btn-sm">Abrir Pasillos &rarr;</a>
                 @can('salidas.manage')
                 <a href="{{ route('salidas.history') }}" class="btn btn-secondary btn-sm">Historial</a>
                 @endcan

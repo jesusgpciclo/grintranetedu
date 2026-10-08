@@ -33,7 +33,7 @@ class LayoutTopbarTitleTest extends TestCase
 
         // Header displays GR Intranet EDU and module title
         $response->assertSee('GR Intranet EDU');
-        $response->assertSee('Gestor de <span class="text-blue-500">salidas</span>', false);
+        $response->assertSee('Gestor de <span class="text-blue-500">pasillos</span>', false);
 
         // Body card no longer displays the old duplicate title section with the subtitle
         $response->assertDontSee('Control de pases al pasillo');

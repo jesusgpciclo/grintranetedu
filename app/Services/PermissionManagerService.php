@@ -237,12 +237,12 @@ class PermissionManagerService
                 ],
             ],
             'salidas' => [
-                'title' => 'Gestor de Salidas (Pases de Aula)',
+                'title' => 'Pasillos (Pases de Aula)',
                 'icon' => '🚪',
                 'description' => 'Pases digitales de salida del aula (baño, enfermería, jefatura).',
                 'permissions' => [
                     'salidas.view' => [
-                        'label' => 'Monitor de Salidas en Vivo',
+                        'label' => 'Monitor de Pasillos en Vivo',
                         'description' => 'Visualizar los alumnos que están fuera del aula en tiempo real.'
                     ],
                     'salidas.create' => [

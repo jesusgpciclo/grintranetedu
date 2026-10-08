@@ -113,7 +113,7 @@ class UsabilityPhase2Test extends TestCase
         $response = $this->actingAs($this->admin)->get(route('dashboard'));
 
         $response->assertStatus(200);
-        $response->assertSee('Salidas');
+        $response->assertSee('Pasillos');
         $response->assertSee('Incidencias');
     }
 }

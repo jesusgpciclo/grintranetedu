@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Gestor de salidas - Monitor Conserjería')
+@section('title', 'Monitor de pasillos - Conserjería')
 
 @section('module_title')
-Monitor de <span class="text-blue-500">salidas</span>
+Monitor de <span class="text-blue-500">pasillos</span>
 @endsection
 
 @php
@@ -22,7 +22,7 @@ Monitor de <span class="text-blue-500">salidas</span>
                 <div class="p-3 sm:p-4 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-3">
                     <div class="flex items-center gap-2.5 sm:gap-3">
                         @if(auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
-                        <a href="{{ route('salidas.index') }}" class="p-1.5 sm:p-2 bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group shrink-0 shadow-xs" title="Volver al Gestor">
+                        <a href="{{ route('salidas.index') }}" class="p-1.5 sm:p-2 bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group shrink-0 shadow-xs" title="Volver a Pasillos">
                             <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
                             </svg>

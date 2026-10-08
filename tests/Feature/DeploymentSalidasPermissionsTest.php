@@ -90,12 +90,12 @@ class DeploymentSalidasPermissionsTest extends TestCase
         $responseTeacher->assertDontSee('Reservas TIC');
         $responseTeacher->assertDontSee('Inventario Centro');
         $responseTeacher->assertDontSee('Gestionar Usuarios');
-        $responseTeacher->assertSee('Salidas');
+        $responseTeacher->assertSee('Pasillos');
 
         $responseAdmin = $this->actingAs($admin)->get(route('salidas.index'));
         $responseAdmin->assertStatus(200);
         $responseAdmin->assertSee('Parte de Guardia');
-        $responseAdmin->assertSee('Salidas');
+        $responseAdmin->assertSee('Pasillos');
         $responseAdmin->assertSee('Administración');
     }
 

@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Gestor de salidas - Dashboard')
+@section('title', 'Gestor de pasillos - Panel')
 
 @section('module_title')
-Gestor de <span class="text-blue-500">salidas</span>
+Gestor de <span class="text-blue-500">pasillos</span>
 @endsection
 
 @section('content')

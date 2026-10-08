@@ -44,7 +44,7 @@ class RoleModuleVisibilityTest extends TestCase
         $response->assertSee('Mi Día a Día');
         $response->assertSee('Gestión y Dirección');
         $response->assertSee('Centro');
-        $response->assertSee('Salidas');
+        $response->assertSee('Pasillos');
         $response->assertSee('Cuaderno del Profesor');
         $response->assertSee('Recursos e Incidencias');
         $response->assertSee('Documentación');
@@ -70,8 +70,8 @@ class RoleModuleVisibilityTest extends TestCase
         $response->assertDontSee('Cuadrante Semanal Completo');
         $response->assertDontSee('Control de Justificaciones');
 
-        // Alumno has salidas.view, so sees Salidas (monitor/live)
-        $response->assertSee('Salidas');
+        // Alumno has salidas.view, so sees Pasillos (monitor/live)
+        $response->assertSee('Pasillos');
     }
 
     /** @test */
@@ -87,8 +87,8 @@ class RoleModuleVisibilityTest extends TestCase
         $response = $this->actingAs($user)->get(route('dashboard'));
         $response->assertStatus(200);
 
-        // Sees Salidas module and submenus
-        $response->assertSee('Salidas');
+        // Sees Pasillos module and submenus
+        $response->assertSee('Pasillos');
         $response->assertSee('Pase de Salida');
         $response->assertSee('Historial');
 

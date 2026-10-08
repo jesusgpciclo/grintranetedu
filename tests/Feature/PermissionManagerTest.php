@@ -55,7 +55,7 @@ class PermissionManagerTest extends TestCase
         $response->assertStatus(200);
         $response->assertSee('Matriz de Permisos por Rol');
         $response->assertSee('Guardias del Centro');
-        $response->assertSee('Gestor de Salidas');
+        $response->assertSee('Pasillos');
     }
 
     public function test_regular_teacher_cannot_access_permission_matrix(): void

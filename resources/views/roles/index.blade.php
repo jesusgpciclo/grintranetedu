@@ -70,7 +70,7 @@
             <span class="text-base">💡</span>
             <div>
                 <span class="font-extrabold uppercase tracking-wide">Control de Módulos y Menús:</span>
-                Los permisos asignados a cada rol definen con exactitud qué módulos y menús (Guardias, Ausencias, Salidas, Centro, Cuaderno, TIC, Documentación, etc.) puede ver y utilizar cada usuario en la barra de navegación.
+                Los permisos asignados a cada rol definen con exactitud qué módulos y menús (Guardias, Ausencias, Pasillos, Centro, Cuaderno, TIC, Documentación, etc.) puede ver y utilizar cada usuario en la barra de navegación.
             </div>
         </div>
         <a href="{{ route('roles.matrix') }}" class="shrink-0 px-3 py-1.5 rounded-xl font-bold bg-sky-600 hover:bg-sky-500 text-white text-xs transition">

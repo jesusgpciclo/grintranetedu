@@ -521,7 +521,7 @@
         </li>
         @endcanany
 
-        {{-- ═══ Salidas (Módulo de Salidas) ═══ --}}
+        {{-- ═══ Pasillos (Módulo de Pasillos) ═══ --}}
         @canany(['salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage'])
         <li class="nav-item-has-submenu">
             <div class="nav-link submenu-trigger min-h-[44px]">
@@ -529,7 +529,7 @@
                     <svg class="nav-icon text-amber-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                         <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    <span>Salidas</span>
+                    <span>Pasillos</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 0.4rem;">
                     @if(!empty($sidebarBadgeSalidas) && $sidebarBadgeSalidas > 0)

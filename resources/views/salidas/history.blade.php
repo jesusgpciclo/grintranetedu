@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
-@section('title', 'Gestor de salidas - Historial')
+@section('title', 'Historial de Pasillos')
 
 @section('module_title')
-Historial de <span class="text-blue-500">salidas</span>
+Historial de <span class="text-blue-500">pasillos</span>
 @endsection
 
 @section('content')
@@ -64,13 +64,13 @@ Historial de <span class="text-blue-500">salidas</span>
             <!-- Header Section -->
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 bg-[var(--bg-card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm">
                 <div class="flex items-center gap-6">
-                    <a href="{{ route('salidas.index') }}" class="p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group" title="Volver al Gestor">
+                    <a href="{{ route('salidas.index') }}" class="p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group" title="Volver a Pasillos">
                         <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Historial de Salidas</h1>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Historial de Pasillos</h1>
                         <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Registro completo de movimientos</p>
                     </div>
                 </div>
@@ -477,7 +477,7 @@ Historial de <span class="text-blue-500">salidas</span>
         async function confirmClearHistory() {
             const confirmed = await customModal({
                 title: '¿Eliminar todo el historial?',
-                description: '¿Estás seguro de que deseas eliminar permanentemente TODO el historial de salidas de alumnos? Esta acción no se puede deshacer.',
+                description: '¿Estás seguro de que deseas eliminar permanentemente TODO el historial de pasillos de alumnos? Esta acción no se puede deshacer.',
                 confirmText: 'Sí, eliminar permanentemente',
                 type: 'warning'
             });

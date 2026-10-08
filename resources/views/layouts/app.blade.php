@@ -907,9 +907,9 @@
                 @php
                     $currentRouteName = Route::currentRouteName() ?? '';
                     $defaultModuleTitle = match(true) {
-                        str_starts_with($currentRouteName, 'salidas.history') => 'Historial de <span class="text-blue-500">salidas</span>',
-                        str_starts_with($currentRouteName, 'salidas.monitor') => 'Monitor de <span class="text-blue-500">salidas</span>',
-                        str_starts_with($currentRouteName, 'salidas.') => 'Gestor de <span class="text-blue-500">salidas</span>',
+                        str_starts_with($currentRouteName, 'salidas.history') => 'Historial de <span class="text-blue-500">pasillos</span>',
+                        str_starts_with($currentRouteName, 'salidas.monitor') => 'Monitor de <span class="text-blue-500">pasillos</span>',
+                        str_starts_with($currentRouteName, 'salidas.') => 'Gestor de <span class="text-blue-500">pasillos</span>',
                         str_starts_with($currentRouteName, 'guardias.parte') => 'Parte de <span class="text-sky-500">guardia</span>',
                         str_starts_with($currentRouteName, 'guardias.mis-guardias') => 'Mis guardias <span class="text-sky-500">asignadas</span>',
                         str_starts_with($currentRouteName, 'guardias.') => 'Gestión de <span class="text-sky-500">guardias</span>',
@@ -974,13 +974,13 @@
 
                     <!-- Right: Shortcuts, Theme Switch & Profile -->
                     <div class="flex items-center gap-2 sm:gap-3">
-                        <!-- Quick Shortcut to Gestor de Salidas -->
+                        <!-- Quick Shortcut to Gestor de Pasillos -->
                         @canany(['salidas.view', 'salidas.create'])
                         <a href="{{ route('salidas.index') }}" 
                            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/50 border border-emerald-200 dark:border-emerald-800/80 transition"
-                           title="Gestor de Salidas (Pases de Aula)">
+                           title="Gestor de Pasillos (Pases de Aula)">
                             <span>🚪</span>
-                            <span class="hidden md:inline">Salidas</span>
+                            <span class="hidden md:inline">Pasillos</span>
                         </a>
                         @endcanany
 
