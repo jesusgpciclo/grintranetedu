@@ -17,30 +17,38 @@ Monitor de <span class="text-blue-500">salidas</span>
 @section('content')
     <div class="py-1 sm:py-2">
         <div class="max-w-7xl mx-auto">
-            <!-- Header Ultra Compacto: Solo botón de regresar y título -->
-            <div class="flex items-center gap-2.5 sm:gap-3 mb-2 sm:mb-3 px-1">
-                @if(auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
-                <a href="{{ route('salidas.index') }}" class="p-1.5 sm:p-2 bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group shrink-0 shadow-xs" title="Volver al Gestor">
-                    <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </a>
-                @endif
-                <h1 class="text-lg sm:text-2xl font-black text-[var(--text-heading)] leading-none">
-                    Monitor de Pasillo
-                </h1>
-
-                <!-- Indicador de accesibilidad para modo de supervisión/control -->
-                <span class="sr-only">
-                    @if($canReturn)
-                        Control de Pasillo Activo
-                    @else
-                        Modo Supervisión (Solo Lectura)
-                    @endif
-                </span>
-            </div>
-
             <div class="card overflow-hidden">
+                <!-- Header de la tarjeta con botón de volver y contador de alumnos fuera -->
+                <div class="p-3 sm:p-4 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 sm:gap-3">
+                        @if(auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
+                        <a href="{{ route('salidas.index') }}" class="p-1.5 sm:p-2 bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group shrink-0 shadow-xs" title="Volver al Gestor">
+                            <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </a>
+                        @endif
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-[var(--text-muted)]">Alumnos fuera actualmente:</span>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs sm:text-sm font-extrabold bg-blue-500 text-white shadow-xs">
+                                {{ $activePasses->count() }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="text-xs text-[var(--text-muted)] hidden sm:block">
+                        Vista en lista de alta capacidad
+                    </div>
+
+                    <!-- Indicador de accesibilidad para modo de supervisión/control -->
+                    <span class="sr-only">
+                        @if($canReturn)
+                            Control de Pasillo Activo
+                        @else
+                            Modo Supervisión (Solo Lectura)
+                        @endif
+                    </span>
+                </div>
+
                 @if($activePasses->isEmpty())
                     <div class="text-center py-16 text-[var(--text-muted)]">
                         <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-500">
@@ -52,19 +60,6 @@ Monitor de <span class="text-blue-500">salidas</span>
                         <p class="text-sm text-[var(--text-muted)] mt-1">No hay alumnos en el pasillo ahora mismo.</p>
                     </div>
                 @else
-                    <!-- Monitor List View (High Density: more students per screen) -->
-                    <div class="p-3 sm:p-4 bg-[var(--bg-surface)] border-b border-[var(--border)] flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-muted)]">Alumnos fuera actualmente:</span>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-blue-500 text-white shadow-xs">
-                                {{ $activePasses->count() }}
-                            </span>
-                        </div>
-                        <div class="text-xs text-[var(--text-muted)] hidden sm:block">
-                            Vista en lista de alta capacidad
-                        </div>
-                    </div>
-
                     <!-- Desktop & Tablet Table List -->
                     <div class="hidden md:block overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -171,9 +166,7 @@ Monitor de <span class="text-blue-500">salidas</span>
                                                     <span>Regresar alumno</span>
                                                 </button>
                                             @else
-                                                <span class="inline-flex items-center gap-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded-lg border border-[var(--border)]" title="Modo consulta">
-                                                    <span>Solo lectura</span>
-                                                </span>
+                                                <span class="sr-only">Solo lectura</span>
                                             @endif
                                         </td>
                                     </tr>
@@ -189,55 +182,50 @@ Monitor de <span class="text-blue-500">salidas</span>
                                 $studentTodayPasses = isset($todayPassesByStudent) ? $todayPassesByStudent->get($pass->user_id, collect()) : collect();
                                 $todayCount = $studentTodayPasses->count();
                             @endphp
-                            <div id="pass-mobile-card-{{ $pass->id }}" class="p-3.5 flex items-center justify-between gap-2.5 hover:bg-[var(--bg-hover)] transition-colors {{ $todayCount >= 3 ? 'bg-rose-500/5' : '' }}">
-                                <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                                    <span class="flex h-3 w-3 relative shrink-0">
+                            <div id="pass-mobile-card-{{ $pass->id }}" class="p-3.5 sm:p-4 flex items-center justify-between gap-3 hover:bg-[var(--bg-hover)] transition-colors {{ $todayCount >= 3 ? 'bg-rose-500/5' : '' }}">
+                                <div class="flex items-center gap-3 min-w-0 flex-1">
+                                    <span class="flex h-3.5 w-3.5 relative shrink-0">
                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                                        <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
                                     </span>
                                     <div class="min-w-0 flex-1">
-                                        <div class="flex items-center gap-1.5">
-                                            <h4 class="text-base sm:text-lg font-black text-[var(--text-heading)] truncate">
+                                        <div class="flex items-center gap-2">
+                                            <h4 class="text-lg sm:text-xl font-black text-[var(--text-heading)] truncate leading-tight">
                                                 {{ $pass->student?->last_name ? trim($pass->student->last_name . ', ' . $pass->student->name) : ($pass->student?->name ?? 'Alumno') }}
                                             </h4>
                                             @if($todayCount > 1)
-                                                <span class="text-[9px] font-extrabold text-amber-500 shrink-0">({{ $todayCount }}ª)</span>
+                                                <span class="text-[10px] font-extrabold text-amber-500 shrink-0">({{ $todayCount }}ª)</span>
                                             @endif
                                         </div>
-                                        <div class="flex items-center gap-1.5 text-xs text-[var(--text-muted)] truncate mt-0.5">
-                                            <span class="font-semibold">{{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}</span>
-                                            <span>•</span>
-                                            <span class="font-bold text-blue-500">{{ $pass->reason }}</span>
+                                        <div class="flex items-center gap-2 text-sm sm:text-base text-[var(--text-muted)] truncate mt-1">
+                                            <span class="font-bold text-[var(--text-heading)]">{{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}</span>
+                                            <span class="text-[var(--text-muted)]">•</span>
+                                            <span class="font-extrabold text-blue-600 dark:text-blue-400">{{ $pass->reason }}</span>
                                         </div>
-                                        <div class="flex items-center gap-1.5 text-xs text-[var(--text-muted)] truncate mt-1">
-                                            <span class="font-medium">Autorizado por:</span>
-                                            <span class="font-bold text-[var(--text-heading)]">
-                                                {{ $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Sin asignar' }}
-                                            </span>
+                                        <div class="text-sm sm:text-base font-bold text-[var(--text-heading)] truncate mt-1">
+                                            {{ $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Sin asignar' }}
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="flex items-center gap-2 shrink-0">
                                     <div class="text-right">
-                                        <span class="text-xs font-mono font-bold text-blue-600 dark:text-blue-400 timer block leading-none" data-start="{{ $pass->start_time->timestamp }}">
+                                        <span class="text-base sm:text-lg font-mono font-black text-blue-600 dark:text-blue-400 timer block leading-none" data-start="{{ $pass->start_time->timestamp }}">
                                             00:00
                                         </span>
-                                        <span class="text-[9px] text-[var(--text-muted)] leading-none mt-0.5 block">
+                                        <span class="text-xs font-semibold text-[var(--text-muted)] leading-none mt-1 block">
                                             {{ $pass->start_time->format('H:i') }}
                                         </span>
                                     </div>
 
                                     @if($canReturn)
                                         <button onclick="endPass({{ $pass->id }})" id="btn-return-mobile-{{ $pass->id }}"
-                                            class="p-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-bold shadow-xs transition-all flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                            <span class="text-[11px]">Regresar</span>
+                                            class="p-2 sm:px-3 sm:py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all flex items-center gap-1.5">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                            <span>Regresar</span>
                                         </button>
                                     @else
-                                        <span class="text-[10px] text-slate-400 font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">
-                                            Solo lectura
-                                        </span>
+                                        <span class="sr-only">Solo lectura</span>
                                     @endif
                                 </div>
                             </div>
@@ -286,15 +274,21 @@ Monitor de <span class="text-blue-500">salidas</span>
         // Return single student pass
         async function endPass(passId) {
             const btn = document.getElementById(`btn-return-${passId}`);
+            const btnMobile = document.getElementById(`btn-return-mobile-${passId}`);
+            const loadingHtml = `
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Guardando...</span>
+            `;
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    <span>Guardando...</span>
-                `;
+                btn.innerHTML = loadingHtml;
+            }
+            if (btnMobile) {
+                btnMobile.disabled = true;
+                btnMobile.innerHTML = loadingHtml;
             }
 
             try {
@@ -321,24 +315,39 @@ Monitor de <span class="text-blue-500">salidas</span>
                     card.style.transition = 'all 0.4s ease';
                     card.style.opacity = '0';
                     card.style.transform = 'scale(0.95)';
-                    setTimeout(() => {
-                        card.remove();
-                        const remaining = document.querySelectorAll('[id^="pass-card-"]');
-                        if (remaining.length === 0) {
-                            window.location.reload();
-                        }
-                    }, 400);
+                    setTimeout(() => card.remove(), 400);
                 }
+                const mobileCard = document.getElementById(`pass-mobile-card-${passId}`);
+                if (mobileCard) {
+                    mobileCard.style.transition = 'all 0.4s ease';
+                    mobileCard.style.opacity = '0';
+                    mobileCard.style.transform = 'scale(0.95)';
+                    setTimeout(() => mobileCard.remove(), 400);
+                }
+                setTimeout(() => {
+                    const remaining = document.querySelectorAll('[id^="pass-card-"], [id^="pass-mobile-card-"]');
+                    if (remaining.length === 0) {
+                        window.location.reload();
+                    }
+                }, 450);
             } catch (e) {
                 console.error(e);
                 showToast(e.message || 'Error al finalizar pase', 'error');
+                const resetBtnHtml = `
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    <span>Regresar alumno</span>
+                `;
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        <span>Regresar alumno</span>
+                    btn.innerHTML = resetBtnHtml;
+                }
+                if (btnMobile) {
+                    btnMobile.disabled = false;
+                    btnMobile.innerHTML = `
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        <span>Regresar</span>
                     `;
                 }
             }
