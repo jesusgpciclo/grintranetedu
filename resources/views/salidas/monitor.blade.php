@@ -15,45 +15,29 @@ Monitor de <span class="text-blue-500">salidas</span>
 @endphp
 
 @section('content')
-    <div class="py-2 sm:py-4">
+    <div class="py-1 sm:py-2">
         <div class="max-w-7xl mx-auto">
-            <div class="card flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 p-5">
-                <div class="flex items-center gap-4">
-                    @if(auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
-                    <a href="{{ route('salidas.index') }}" class="p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group" title="Volver al Gestor">
-                        <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </a>
-                    @endif
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Monitor de Pasillo</h1>
-                        <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Control de seguridad en tiempo real</p>
-                    </div>
-                </div>
-                <div class="flex flex-wrap items-center gap-3">
+            <!-- Header Ultra Compacto: Solo botón de regresar y título -->
+            <div class="flex items-center gap-2.5 sm:gap-3 mb-2 sm:mb-3 px-1">
+                @if(auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
+                <a href="{{ route('salidas.index') }}" class="p-1.5 sm:p-2 bg-[var(--bg-card)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group shrink-0 shadow-xs" title="Volver al Gestor">
+                    <svg class="w-5 h-5 group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+                    </svg>
+                </a>
+                @endif
+                <h1 class="text-lg sm:text-2xl font-black text-[var(--text-heading)] leading-none">
+                    Monitor de Pasillo
+                </h1>
+
+                <!-- Indicador de accesibilidad para modo de supervisión/control -->
+                <span class="sr-only">
                     @if($canReturn)
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-xs">
-                            <span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span>Control de Pasillo Activo</span>
-                        </span>
+                        Control de Pasillo Activo
                     @else
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700" title="Conserjería y usuarios sin rol de control tienen acceso en modo solo consulta">
-                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
-                            <span>Modo Supervisión (Solo Lectura)</span>
-                        </span>
+                        Modo Supervisión (Solo Lectura)
                     @endif
-                    <span class="flex h-2 w-2 ml-1">
-                        <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-blue-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                    </span>
-                    <span class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-widest">
-                        Auto: 30s
-                    </span>
-                </div>
+                </span>
             </div>
 
             <div class="card overflow-hidden">
