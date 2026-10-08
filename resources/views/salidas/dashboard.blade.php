@@ -343,67 +343,67 @@ Gestor de <span class="text-blue-500">salidas</span>
 
     <!-- Student Details Modal (Opened by the Plus [+] icon) -->
     <div id="student-details-modal-overlay" class="fixed inset-0 z-[100] hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="modal-card w-full sm:max-w-lg border-t sm:border rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden p-5 sm:p-6 bg-[var(--bg-card-solid)] border-[var(--border)] max-h-[90vh] flex flex-col">
+        <div class="modal-card w-full sm:max-w-xl border-t sm:border rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden p-5 sm:p-7 bg-[var(--bg-card-solid)] border-[var(--border)] max-h-[92vh] flex flex-col">
             <!-- Mobile Sheet handle -->
             <div class="w-12 h-1.5 bg-[var(--border)] rounded-full mx-auto mb-3 sm:hidden"></div>
 
             <!-- Header: Nombre del alumno en letra más grande -->
-            <div class="flex items-start justify-between gap-3 pb-3 border-b border-[var(--border)]">
+            <div class="flex items-start justify-between gap-3 pb-3.5 border-b border-[var(--border)]">
                 <div>
                     <h2 id="modal-student-name" class="text-2xl sm:text-3xl font-black text-[var(--text-heading)] leading-tight tracking-tight"></h2>
-                    <p id="modal-student-course" class="text-xs sm:text-sm text-[var(--text-muted)] font-semibold mt-0.5"></p>
+                    <p id="modal-student-course" class="text-sm sm:text-base text-[var(--text-muted)] font-bold mt-1"></p>
                 </div>
-                <button type="button" onclick="closeStudentDetailsModal()" class="text-[var(--text-muted)] hover:text-[var(--text-heading)] p-2 rounded-xl bg-[var(--bg-hover)] border border-[var(--border)] transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button type="button" onclick="closeStudentDetailsModal()" class="text-[var(--text-muted)] hover:text-[var(--text-heading)] p-2.5 rounded-2xl bg-[var(--bg-hover)] border border-[var(--border)] transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <div class="overflow-y-auto space-y-4 py-3 flex-1 pr-0.5">
+            <div class="overflow-y-auto space-y-5 py-4 flex-1 pr-0.5">
                 <!-- 1. Botones de acceso rápido de salida -->
                 <div>
-                    <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Acceso rápido de salida:</p>
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <p class="text-sm font-extrabold text-[var(--text-muted)] uppercase tracking-wider mb-2.5">Acceso rápido de salida:</p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                         <button type="button" onclick="selectModalReason('Baño')"
-                            class="p-3 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
-                            <div class="p-2 bg-blue-500/20 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" /></svg>
+                            class="p-3.5 sm:p-4 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition flex flex-col items-center justify-center gap-2 shadow-xs">
+                            <div class="p-2.5 bg-blue-500/20 rounded-2xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" /></svg>
                             </div>
-                            <span class="text-xs font-bold">Baño</span>
+                            <span class="text-sm sm:text-base font-extrabold">Baño</span>
                         </button>
                         <button type="button" onclick="selectModalReason('Agua')"
-                            class="p-3 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
-                            <div class="p-2 bg-cyan-500/20 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" /></svg>
+                            class="p-3.5 sm:p-4 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 active:scale-95 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 transition flex flex-col items-center justify-center gap-2 shadow-xs">
+                            <div class="p-2.5 bg-cyan-500/20 rounded-2xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z" /></svg>
                             </div>
-                            <span class="text-xs font-bold">Agua</span>
+                            <span class="text-sm sm:text-base font-extrabold">Agua</span>
                         </button>
                         <button type="button" onclick="selectModalReason('Enfermedad')"
-                            class="p-3 rounded-2xl bg-orange-500/10 hover:bg-orange-500/20 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
-                            <div class="p-2 bg-orange-500/20 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3zM12 8v8m-4-4h8" /></svg>
+                            class="p-3.5 sm:p-4 rounded-2xl bg-orange-500/10 hover:bg-orange-500/20 active:scale-95 text-orange-600 dark:text-orange-400 border border-orange-500/30 transition flex flex-col items-center justify-center gap-2 shadow-xs">
+                            <div class="p-2.5 bg-orange-500/20 rounded-2xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3zM12 8v8m-4-4h8" /></svg>
                             </div>
-                            <span class="text-xs font-bold">Enfermedad</span>
+                            <span class="text-sm sm:text-base font-extrabold">Enfermedad</span>
                         </button>
                         <button type="button" onclick="selectModalReason('Taquilla/Material')"
-                            class="p-3 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 text-purple-600 dark:text-purple-400 border border-purple-500/30 transition flex flex-col items-center justify-center gap-1.5 shadow-xs">
-                            <div class="p-2 bg-purple-500/20 rounded-xl">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
+                            class="p-3.5 sm:p-4 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 active:scale-95 text-purple-600 dark:text-purple-400 border border-purple-500/30 transition flex flex-col items-center justify-center gap-2 shadow-xs">
+                            <div class="p-2.5 bg-purple-500/20 rounded-2xl">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
                             </div>
-                            <span class="text-xs font-bold">Material</span>
+                            <span class="text-sm sm:text-base font-extrabold">Material</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- 2. Cuadro de texto para otro motivo con un botón de otros -->
                 <div>
-                    <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2">Otro motivo personalizado:</p>
-                    <div class="flex items-center gap-2">
+                    <p class="text-sm font-extrabold text-[var(--text-muted)] uppercase tracking-wider mb-2.5">Otro motivo personalizado:</p>
+                    <div class="flex items-center gap-2.5">
                         <input type="text" id="modal-custom-reason-input" placeholder="Escribe otro motivo (ej: Taquilla, Biblioteca...)"
-                            class="flex-1 bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2.5 px-3.5 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-[var(--text-muted)]">
+                            class="flex-1 bg-[var(--bg-input)] border border-[var(--border)] rounded-2xl py-3 px-4 text-sm sm:text-base font-semibold text-[var(--text-color)] focus:ring-2 focus:ring-blue-500 transition-all placeholder:text-sm placeholder:text-[var(--text-muted)]">
                         <button type="button" onclick="submitModalCustomReason()"
-                            class="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shrink-0 transition shadow-md shadow-blue-500/25 flex items-center gap-1.5"
+                            class="px-5 py-3 bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-extrabold text-sm sm:text-base rounded-2xl shrink-0 transition shadow-md shadow-blue-500/25 flex items-center gap-2"
                             style="background-color: #2563eb !important; color: #ffffff !important;">
                             <svg class="w-4 h-4 text-white shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
@@ -414,21 +414,21 @@ Gestor de <span class="text-blue-500">salidas</span>
                 </div>
 
                 <!-- 3. Listado de las horas a las que ha salido el alumno en el día y quién les ha dejado salir -->
-                <div class="pt-3 border-t border-[var(--border)]">
-                    <div class="flex items-center justify-between mb-2">
-                        <p class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider">Historial de salidas de hoy:</p>
-                        <span id="modal-history-count" class="text-xs font-extrabold text-blue-500"></span>
+                <div class="pt-4 border-t border-[var(--border)]">
+                    <div class="flex items-center justify-between mb-2.5">
+                        <p class="text-sm font-extrabold text-[var(--text-muted)] uppercase tracking-wider">Historial de salidas de hoy:</p>
+                        <span id="modal-history-count" class="text-sm font-black text-blue-600 dark:text-blue-400"></span>
                     </div>
 
-                    <div id="modal-history-list" class="space-y-2 max-h-56 overflow-y-auto">
+                    <div id="modal-history-list" class="space-y-2.5 max-h-60 overflow-y-auto">
                         <!-- Populated dynamically by JavaScript -->
                     </div>
                 </div>
             </div>
 
             <!-- Footer -->
-            <div class="pt-3 border-t border-[var(--border)] flex justify-end">
-                <button type="button" onclick="closeStudentDetailsModal()" class="w-full sm:w-auto px-5 py-2.5 bg-[var(--bg-hover)] hover:bg-[var(--border)] text-[var(--text-heading)] font-bold text-xs rounded-xl transition">
+            <div class="pt-3.5 border-t border-[var(--border)] flex justify-end">
+                <button type="button" onclick="closeStudentDetailsModal()" class="w-full sm:w-auto px-6 py-3 bg-[var(--bg-hover)] hover:bg-[var(--border)] text-[var(--text-heading)] font-extrabold text-sm sm:text-base rounded-2xl transition">
                     Cerrar
                 </button>
             </div>
@@ -576,30 +576,30 @@ Gestor de <span class="text-blue-500">salidas</span>
             let html = '';
             passes.forEach(pass => {
                 const timeDisplay = pass.end_time 
-                    ? `${pass.start_time} - ${pass.end_time} (${pass.duration_minutes ?? '?'} min)`
+                    ? `${pass.start_time} - ${pass.end_time}`
                     : `${pass.start_time} - En curso`;
 
                 const editBtnHtml = pass.can_edit_time ? `
                     <button type="button" onclick="promptEditPassTime(${pass.id}, ${pass.duration_minutes || 5}, '${pass.start_time || ''}', '${pass.end_time || ''}')"
-                        class="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition shrink-0 active:scale-95 shadow-xs"
+                        class="px-3 py-1.5 text-xs sm:text-sm font-bold rounded-xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition shrink-0 active:scale-95 shadow-xs flex items-center gap-1"
                         title="Editar duración o tiempo de salida">
                         ✏️ Editar tiempo
                     </button>
                 ` : '';
 
                 html += `
-                    <div id="pass-history-row-${pass.id}" class="p-2.5 rounded-xl border border-[var(--border)] bg-[var(--bg-input)] flex flex-col sm:flex-row sm:items-center justify-between gap-2 transition hover:border-blue-500/30">
+                    <div id="pass-history-row-${pass.id}" class="p-3 sm:p-3.5 rounded-2xl border border-[var(--border)] bg-[var(--bg-input)] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition hover:border-blue-500/30">
                         <div class="min-w-0 flex-1">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="text-xs font-mono font-bold text-[var(--text-heading)] bg-[var(--bg-card)] px-1.5 py-0.5 rounded border border-[var(--border)]">
+                            <div class="flex items-center gap-2.5 flex-wrap">
+                                <span class="text-sm sm:text-base font-mono font-bold text-[var(--text-heading)] bg-[var(--bg-card)] px-2.5 py-1 rounded-xl border border-[var(--border)] shadow-xs">
                                     🕒 ${timeDisplay}
                                 </span>
-                                <span class="text-xs font-bold text-blue-500">
+                                <span class="text-sm sm:text-base font-extrabold text-blue-600 dark:text-blue-400">
                                     ${escapeHtml(pass.reason)}
                                 </span>
                             </div>
-                            <p class="text-[11px] text-[var(--text-muted)] mt-1 truncate">
-                                Autorizado por: <strong class="text-[var(--text-color)]">${escapeHtml(pass.teacher_name)}</strong>
+                            <p class="text-xs sm:text-sm text-[var(--text-muted)] mt-1.5 truncate">
+                                Autorizado por: <strong class="text-[var(--text-heading)] font-bold">${escapeHtml(pass.teacher_name)}</strong>
                             </p>
                         </div>
                         <div class="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
