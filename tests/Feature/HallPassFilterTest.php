@@ -205,4 +205,16 @@ class HallPassFilterTest extends TestCase
         $response->assertSee('11:35');
         $response->assertSee('Raul Sanchez');
     }
+
+    public function test_datetime_filters_panel_is_hidden_by_default(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('admin');
+
+        $response = $this->actingAs($admin)->get(route('salidas.history'));
+
+        $response->assertStatus(200);
+        $response->assertSee('id="btn-toggle-datetime"', false);
+        $response->assertSee('id="datetime-filters-panel" class="hidden', false);
+    }
 }
