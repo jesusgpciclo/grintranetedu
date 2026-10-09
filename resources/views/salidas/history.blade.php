@@ -62,37 +62,113 @@ Historial de <span class="text-blue-500">pasillos</span>
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header Section -->
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 mb-8 bg-[var(--bg-card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm">
-                <div class="flex items-center gap-6">
-                    <a href="{{ route('salidas.index') }}" class="p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group" title="Volver a Pasillos">
-                        <svg class="w-6 h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-[var(--bg-card)] p-5 rounded-2xl border border-[var(--border)] shadow-sm">
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <a href="{{ route('salidas.index') }}" class="p-2 sm:p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all group shrink-0" title="Volver a Pasillos">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Historial de Pasillos</h1>
-                        <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Registro completo de movimientos</p>
+                        <h1 class="text-xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Historial de Pasillos</h1>
+                        <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Registro completo de movimientos y pases</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Search Filter -->
-                <form action="{{ route('salidas.history') }}" method="GET" class="flex-1 max-w-md w-full">
-                    <div class="relative">
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Buscar por alumno, clase o motivo..."
-                            class="w-full bg-[var(--bg-input)] border-[var(--border)] rounded-xl py-2.5 pl-10 pr-4 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all placeholder:text-[var(--text-muted)]">
-                        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                        @if(request('search'))
-                            <a href="{{ route('salidas.history') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-heading)] transition-colors">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </a>
-                        @endif
-                    </div>
+            <!-- Filters Card: Búsqueda, Fechas (una fecha o entre fechas) y Horas (entre horas) -->
+            <div class="bg-[var(--bg-card)] p-4 sm:p-5 rounded-2xl border border-[var(--border)] shadow-sm mb-6">
+                <form action="{{ route('salidas.history') }}" method="GET" id="history-filter-form" class="space-y-4">
                     @if(request('sort')) <input type="hidden" name="sort" value="{{ request('sort') }}"> @endif
                     @if(request('direction')) <input type="hidden" name="direction" value="{{ request('direction') }}"> @endif
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 items-end">
+                        <!-- Búsqueda rápida de texto -->
+                        <div class="sm:col-span-2 lg:col-span-4">
+                            <label for="search" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">
+                                Buscar
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="search" name="search" value="{{ request('search') }}" placeholder="Alumno, clase o motivo..."
+                                    class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2.5 pl-9 pr-3 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all placeholder:text-[var(--text-muted)]">
+                                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Fecha Desde -->
+                        <div class="lg:col-span-2">
+                            <label for="date_from" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">
+                                Fecha Desde
+                            </label>
+                            <input type="date" id="date_from" name="date_from" value="{{ request('date_from') }}"
+                                class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] transition-all">
+                        </div>
+
+                        <!-- Fecha Hasta -->
+                        <div class="lg:col-span-2">
+                            <label for="date_to" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">
+                                Fecha Hasta <span class="text-[10px] lowercase text-[var(--text-muted)] font-normal">(opcional)</span>
+                            </label>
+                            <input type="date" id="date_to" name="date_to" value="{{ request('date_to') }}"
+                                class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] transition-all">
+                        </div>
+
+                        <!-- Hora Desde -->
+                        <div class="lg:col-span-2">
+                            <label for="time_from" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">
+                                Hora Desde
+                            </label>
+                            <input type="time" id="time_from" name="time_from" value="{{ request('time_from') }}"
+                                class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] transition-all">
+                        </div>
+
+                        <!-- Hora Hasta -->
+                        <div class="lg:col-span-2">
+                            <label for="time_to" class="block text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">
+                                Hora Hasta
+                            </label>
+                            <input type="time" id="time_to" name="time_to" value="{{ request('time_to') }}"
+                                class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2 px-3 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción de Filtros -->
+                    <div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border)]">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button type="submit"
+                                class="px-4 py-2 bg-[var(--primary)] hover:bg-[var(--primary-hover,var(--primary))] text-white rounded-xl text-xs sm:text-sm font-bold shadow-xs transition-all flex items-center gap-1.5">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                </svg>
+                                <span>Filtrar</span>
+                            </button>
+
+                            <button type="button" onclick="filterToday()"
+                                class="px-3.5 py-2 bg-[var(--bg-surface)] hover:bg-[var(--bg-hover)] text-[var(--text-heading)] border border-[var(--border)] rounded-xl text-xs sm:text-sm font-semibold transition-all">
+                                📅 Solo Hoy
+                            </button>
+
+                            @if(request()->hasAny(['search', 'date_from', 'date_to', 'time_from', 'time_to']))
+                            <a href="{{ route('salidas.history') }}"
+                                class="px-3 py-2 text-rose-500 hover:text-rose-600 bg-rose-500/10 hover:bg-rose-500/15 border border-rose-500/20 rounded-xl text-xs sm:text-sm font-semibold transition-all flex items-center gap-1">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span>Limpiar filtros</span>
+                            </a>
+                            @endif
+                        </div>
+
+                        <div class="text-xs text-[var(--text-muted)] font-medium">
+                            @if(request()->hasAny(['search', 'date_from', 'date_to', 'time_from', 'time_to']))
+                                <span>Filtros activos: <strong>{{ $passes->total() }}</strong> salidas encontradas</span>
+                            @else
+                                <span>Total registros: <strong>{{ $passes->total() }}</strong></span>
+                            @endif
+                        </div>
+                    </div>
                 </form>
             </div>
 
@@ -137,10 +213,19 @@ Historial de <span class="text-blue-500">pasillos</span>
                 </div>
             </div>
 
-            <!-- Main Table Card -->
+            <!-- Main Content Card -->
             <div class="card p-0 overflow-hidden shadow-sm">
-                <div class="p-4 sm:p-6">
-                    <div class="overflow-x-auto">
+                @if($passes->isEmpty())
+                    <div class="p-8 sm:p-12 text-center text-[var(--text-muted)]">
+                        <svg class="w-12 h-12 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="text-base font-bold text-[var(--text-heading)]">No se han encontrado registros</h3>
+                        <p class="text-xs text-[var(--text-muted)] mt-1">Prueba a cambiar o limpiar los filtros seleccionados.</p>
+                    </div>
+                @else
+                    <!-- Desktop & Tablet Table List -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="min-w-full divide-y divide-[var(--border)]">
                             <thead class="bg-[var(--bg-hover)]">
                                 <tr>
@@ -174,7 +259,7 @@ Historial de <span class="text-blue-500">pasillos</span>
                                                         </svg>
                                                     @else
                                                         <svg class="w-3.5 h-3.5 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
                                                         </svg>
                                                     @endif
                                                 </div>
@@ -187,7 +272,7 @@ Historial de <span class="text-blue-500">pasillos</span>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-[var(--border)]">
-                                @forelse($passes as $pass)
+                                @foreach($passes as $pass)
                                     <tr id="pass-row-{{ $pass->id }}" class="hover:bg-[var(--bg-hover)] transition-colors group">
                                         <td class="px-4 py-4 whitespace-nowrap text-center">
                                             <input type="checkbox" class="pass-checkbox w-4 h-4 rounded border-[var(--border)] text-rose-600 focus:ring-rose-500 cursor-pointer" 
@@ -200,10 +285,10 @@ Historial de <span class="text-blue-500">pasillos</span>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-8 h-8 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/20">
-                                                    {{ strtoupper(substr($pass->student?->name, 0, 1)) }}
+                                                    {{ strtoupper(substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1)) }}
                                                 </div>
                                                 <span class="text-sm font-semibold text-[var(--text-heading)] group-hover:text-[var(--primary)] transition-colors">
-                                                    {{ $pass->student?->name }} {{ $pass->student?->last_name }}
+                                                    {{ $pass->student?->last_name ? trim($pass->student->last_name . ', ' . $pass->student->name) : ($pass->student?->name ?? 'Alumno') }}
                                                 </span>
                                             </div>
                                         </td>
@@ -240,22 +325,98 @@ Historial de <span class="text-blue-500">pasillos</span>
                                             </button>
                                         </td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8" class="px-6 py-12 text-center text-[var(--text-muted)]">
-                                            <svg class="w-12 h-12 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 9.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                            No se han encontrado registros.
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
-                    <div class="mt-8 pagination-custom">
-                        {{ $passes->links() }}
+
+                    <!-- Mobile Cards List (Optimized for mobile screens - full student info) -->
+                    <div class="md:hidden divide-y divide-[var(--border)]">
+                        @foreach($passes as $pass)
+                            <div id="pass-card-{{ $pass->id }}" class="p-4 hover:bg-[var(--bg-hover)] transition-colors">
+                                <!-- Fila 1: Checkbox + Avatar + Nombre Alumno + Botón Eliminar -->
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                                        <input type="checkbox" class="pass-checkbox w-5 h-5 rounded border-[var(--border)] text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0" 
+                                               value="{{ $pass->id }}" onchange="updateSelectedCount()">
+                                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
+                                            {{ strtoupper(substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1)) }}{{ strtoupper(substr($pass->student?->name ?? '', 0, 1)) }}
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <h3 class="text-base font-black text-[var(--text-heading)] leading-snug truncate">
+                                                {{ $pass->student?->last_name ? trim($pass->student->last_name . ', ' . $pass->student->name) : ($pass->student?->name ?? 'Alumno') }}
+                                            </h3>
+                                            <div class="flex items-center gap-1.5 text-xs text-[var(--text-muted)] mt-0.5">
+                                                <span class="font-bold text-[var(--text-heading)]">
+                                                    {{ $pass->student?->groupRel?->course ?? '' }} {{ $pass->student?->groupRel?->name ?? '' }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="confirmDeletePass({{ $pass->id }}, '{{ addslashes(($pass->student?->name ?? 'Alumno') . ' ' . ($pass->student?->last_name ?? '')) }}')"
+                                            class="p-2 text-rose-500 hover:text-white hover:bg-rose-500 rounded-xl transition-all shrink-0 active:scale-95 border border-transparent hover:border-rose-600"
+                                            title="Eliminar esta salida" aria-label="Eliminar salida">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <!-- Fila 2: Badges de Motivo y Duración -->
+                                <div class="flex flex-wrap items-center gap-2 mt-3 pl-8">
+                                    @php
+                                        $reasonLower = strtolower($pass->reason);
+                                        $reasonBadgeClass = match(true) {
+                                            str_contains($reasonLower, 'baño') || str_contains($reasonLower, 'aseo') || str_contains($reasonLower, 'servicio') => 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30',
+                                            str_contains($reasonLower, 'agua') => 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/30',
+                                            str_contains($reasonLower, 'enferm') => 'bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
+                                            default => 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold border {{ $reasonBadgeClass }}">
+                                        {{ $pass->reason }}
+                                    </span>
+
+                                    @if($pass->end_time)
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-[var(--bg-hover)] text-[var(--text-heading)] border border-[var(--border)]">
+                                            <svg class="w-3.5 h-3.5 text-[var(--text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            <span>{{ $pass->duration_formatted }}</span>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-black bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 animate-pulse">
+                                            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                                            <span>Activo</span>
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <!-- Fila 3: Detalles completos (Fecha, Horas y Profesor) en grid adaptado a móvil -->
+                                <div class="grid grid-cols-2 gap-2 mt-3 pt-2.5 border-t border-[var(--border)] text-xs pl-8">
+                                    <div>
+                                        <span class="font-bold text-[var(--text-heading)] block">
+                                            📅 {{ $pass->date->format('d/m/Y') }}
+                                        </span>
+                                        <span class="text-[11px] font-medium text-[var(--text-muted)] block mt-0.5">
+                                            ⏰ {{ $pass->start_time ? $pass->start_time->format('H:i') : '--:--' }} &rarr; {{ $pass->end_time ? $pass->end_time->format('H:i') : 'Activo' }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-[var(--text-muted)] block">Profesor:</span>
+                                        <span class="font-bold text-[var(--text-heading)] truncate block mt-0.5">
+                                            👨‍🏫 {{ $pass->teacher_full_name }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
+                @endif
+
+                <div class="p-4 sm:p-6 border-t border-[var(--border)] pagination-custom">
+                    {{ $passes->links() }}
                 </div>
             </div>
         </div>
@@ -360,8 +521,9 @@ Historial de <span class="text-blue-500">pasillos</span>
         }
 
         function updateSelectedCount() {
-            const checked = document.querySelectorAll('.pass-checkbox:checked');
-            const count = checked.length;
+            const checkedBoxes = document.querySelectorAll('.pass-checkbox:checked');
+            const uniqueIds = new Set(Array.from(checkedBoxes).map(cb => cb.value));
+            const count = uniqueIds.size;
             const btn = document.getElementById('btn-delete-selected');
             const countEl = document.getElementById('selected-count');
             const master = document.getElementById('select-all-passes');
@@ -376,6 +538,15 @@ Historial de <span class="text-blue-500">pasillos</span>
                 btn.classList.remove('flex');
                 if (master) master.checked = false;
             }
+        }
+
+        function filterToday() {
+            const today = new Date().toISOString().split('T')[0];
+            const df = document.getElementById('date_from');
+            const dt = document.getElementById('date_to');
+            if (df) df.value = today;
+            if (dt) dt.value = '';
+            document.getElementById('history-filter-form').submit();
         }
 
         async function confirmDeletePass(id, studentName) {
@@ -408,6 +579,7 @@ Historial de <span class="text-blue-500">pasillos</span>
                 showToast(data.message || 'Salida eliminada correctamente.', 'success');
 
                 const row = document.getElementById(`pass-row-${id}`);
+                const card = document.getElementById(`pass-card-${id}`);
                 if (row) {
                     row.style.transition = 'all 0.3s ease';
                     row.style.opacity = '0';
@@ -416,7 +588,17 @@ Historial de <span class="text-blue-500">pasillos</span>
                         row.remove();
                         updateSelectedCount();
                     }, 300);
-                } else {
+                }
+                if (card) {
+                    card.style.transition = 'all 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        card.remove();
+                        updateSelectedCount();
+                    }, 300);
+                }
+                if (!row && !card) {
                     setTimeout(() => window.location.reload(), 800);
                 }
             } catch (e) {
@@ -425,7 +607,8 @@ Historial de <span class="text-blue-500">pasillos</span>
         }
 
         async function confirmDeleteSelected() {
-            const checked = Array.from(document.querySelectorAll('.pass-checkbox:checked')).map(cb => cb.value);
+            const checkedBoxes = document.querySelectorAll('.pass-checkbox:checked');
+            const checked = Array.from(new Set(Array.from(checkedBoxes).map(cb => cb.value)));
             if (checked.length === 0) return;
 
             const confirmed = await customModal({
@@ -458,11 +641,18 @@ Historial de <span class="text-blue-500">pasillos</span>
 
                 checked.forEach(id => {
                     const row = document.getElementById(`pass-row-${id}`);
+                    const card = document.getElementById(`pass-card-${id}`);
                     if (row) {
                         row.style.transition = 'all 0.3s ease';
                         row.style.opacity = '0';
                         row.style.transform = 'scale(0.95)';
                         setTimeout(() => row.remove(), 300);
+                    }
+                    if (card) {
+                        card.style.transition = 'all 0.3s ease';
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.95)';
+                        setTimeout(() => card.remove(), 300);
                     }
                 });
 

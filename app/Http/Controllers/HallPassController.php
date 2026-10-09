@@ -321,13 +321,14 @@ class HallPassController extends Controller
         return response()->json(['message' => "Finalizados $affected pases."]);
     }
 
-    public function history(Request $request)
+    /**
+     * Construye la consulta del historial aplicando filtros de búsqueda, fechas, horas y ordenación.
+     */
+    protected function buildHistoryQuery(Request $request)
     {
-        $this->authorizeHistory();
-
         $query = HallPass::with(['student.groupRel', 'teacher']);
 
-        // Search filter
+        // Search filter (texto)
         if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
@@ -341,6 +342,27 @@ class HallPassController extends Controller
                         });
                   });
             });
+        }
+
+        // Filtro por fecha o entre fechas
+        if ($request->filled('date_from') && $request->filled('date_to')) {
+            $dateFrom = min($request->date_from, $request->date_to);
+            $dateTo = max($request->date_from, $request->date_to);
+            $query->whereBetween('date', [$dateFrom, $dateTo]);
+        } elseif ($request->filled('date_from')) {
+            $query->whereDate('date', $request->date_from);
+        } elseif ($request->filled('date_to')) {
+            $query->whereDate('date', '<=', $request->date_to);
+        }
+
+        // Filtro entre horas (sobre hora de inicio)
+        if ($request->filled('time_from')) {
+            $timeFrom = strlen($request->time_from) === 5 ? $request->time_from . ':00' : $request->time_from;
+            $query->whereTime('start_time', '>=', $timeFrom);
+        }
+        if ($request->filled('time_to')) {
+            $timeTo = strlen($request->time_to) === 5 ? $request->time_to . ':59' : $request->time_to;
+            $query->whereTime('start_time', '<=', $timeTo);
         }
 
         // Sorting
@@ -387,6 +409,15 @@ class HallPassController extends Controller
                 break;
         }
 
+        return $query;
+    }
+
+    public function history(Request $request)
+    {
+        $this->authorizeHistory();
+
+        $query = $this->buildHistoryQuery($request);
+
         $passes = $query->paginate(20)->withQueryString();
 
         return view('salidas.history', compact('passes'));
@@ -396,66 +427,7 @@ class HallPassController extends Controller
     {
         $this->authorizeHistory();
 
-        $query = HallPass::with(['student.groupRel', 'teacher']);
-
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('reason', 'like', "%{$search}%")
-                  ->orWhereHas('student', function ($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhereHas('groupRel', function ($gq) use ($search) {
-                            $gq->where('name', 'like', "%{$search}%")
-                              ->orWhere('course', 'like', "%{$search}%");
-                        });
-                  });
-            });
-        }
-
-        // Sorting
-        $sort = $request->input('sort', 'fecha');
-        $direction = $request->input('direction', 'desc');
-        if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'desc';
-        }
-
-        switch ($sort) {
-            case 'alumno':
-                $query->join('users as students', 'hall_passes.user_id', '=', 'students.id')
-                    ->select('hall_passes.*')
-                    ->orderBy('students.name', $direction);
-                break;
-            case 'clase':
-                $query->join('users as students', 'hall_passes.user_id', '=', 'students.id')
-                    ->leftJoin('groups', 'students.group_id', '=', 'groups.id')
-                    ->select('hall_passes.*')
-                    ->orderBy('groups.course', $direction)
-                    ->orderBy('groups.name', $direction);
-                break;
-            case 'motivo':
-                $query->orderBy('reason', $direction);
-                break;
-            case 'duracion':
-                if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
-                    $query->orderByRaw('(julianday(end_time) - julianday(start_time)) ' . $direction);
-                } else {
-                    $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
-                }
-                break;
-            case 'profesor':
-                $query->join('users as teachers', 'hall_passes.teacher_id', '=', 'teachers.id')
-                    ->select('hall_passes.*')
-                    ->orderBy('teachers.name', $direction)
-                    ->orderBy('teachers.last_name', $direction);
-                break;
-            case 'fecha':
-            default:
-                $query->orderBy('date', $direction)
-                    ->orderBy('start_time', $direction);
-                break;
-        }
+        $query = $this->buildHistoryQuery($request);
 
         $passes = $query->get();
 
@@ -494,66 +466,7 @@ class HallPassController extends Controller
     {
         $this->authorizeHistory();
 
-        $query = HallPass::with(['student.groupRel', 'teacher']);
-
-        // Search filter
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->where('reason', 'like', "%{$search}%")
-                  ->orWhereHas('student', function ($sq) use ($search) {
-                      $sq->where('name', 'like', "%{$search}%")
-                        ->orWhere('last_name', 'like', "%{$search}%")
-                        ->orWhereHas('groupRel', function ($gq) use ($search) {
-                            $gq->where('name', 'like', "%{$search}%")
-                              ->orWhere('course', 'like', "%{$search}%");
-                        });
-                  });
-            });
-        }
-
-        // Sorting
-        $sort = $request->input('sort', 'fecha');
-        $direction = $request->input('direction', 'desc');
-        if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'desc';
-        }
-
-        switch ($sort) {
-            case 'alumno':
-                $query->join('users as students', 'hall_passes.user_id', '=', 'students.id')
-                    ->select('hall_passes.*')
-                    ->orderBy('students.name', $direction);
-                break;
-            case 'clase':
-                $query->join('users as students', 'hall_passes.user_id', '=', 'students.id')
-                    ->leftJoin('groups', 'students.group_id', '=', 'groups.id')
-                    ->select('hall_passes.*')
-                    ->orderBy('groups.course', $direction)
-                    ->orderBy('groups.name', $direction);
-                break;
-            case 'motivo':
-                $query->orderBy('reason', $direction);
-                break;
-            case 'duracion':
-                if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
-                    $query->orderByRaw('(julianday(end_time) - julianday(start_time)) ' . $direction);
-                } else {
-                    $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
-                }
-                break;
-            case 'profesor':
-                $query->join('users as teachers', 'hall_passes.teacher_id', '=', 'teachers.id')
-                    ->select('hall_passes.*')
-                    ->orderBy('teachers.name', $direction)
-                    ->orderBy('teachers.last_name', $direction);
-                break;
-            case 'fecha':
-            default:
-                $query->orderBy('date', $direction)
-                    ->orderBy('start_time', $direction);
-                break;
-        }
+        $query = $this->buildHistoryQuery($request);
 
         $passes = $query->get();
 

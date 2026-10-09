@@ -35,6 +35,31 @@
         <div>
             <h1 class="text-3xl font-extrabold text-slate-800">Historial de Pasillos</h1>
             <p class="text-sm font-semibold text-slate-500 mt-1">Control de pases al pasillo - GrIntranet</p>
+            @php
+                $activeFilterTexts = [];
+                if(request('date_from') && request('date_to')) {
+                    $activeFilterTexts[] = 'Fechas: ' . request('date_from') . ' a ' . request('date_to');
+                } elseif(request('date_from')) {
+                    $activeFilterTexts[] = 'Fecha: ' . request('date_from');
+                } elseif(request('date_to')) {
+                    $activeFilterTexts[] = 'Hasta fecha: ' . request('date_to');
+                }
+                if(request('time_from') && request('time_to')) {
+                    $activeFilterTexts[] = 'Horas: ' . request('time_from') . ' a ' . request('time_to');
+                } elseif(request('time_from')) {
+                    $activeFilterTexts[] = 'Desde hora: ' . request('time_from');
+                } elseif(request('time_to')) {
+                    $activeFilterTexts[] = 'Hasta hora: ' . request('time_to');
+                }
+                if(request('search')) {
+                    $activeFilterTexts[] = 'Búsqueda: "' . request('search') . '"';
+                }
+            @endphp
+            @if(!empty($activeFilterTexts))
+                <p class="text-xs font-semibold text-blue-600 mt-1">
+                    Filtros aplicados: {{ implode(' | ', $activeFilterTexts) }}
+                </p>
+            @endif
         </div>
         <div class="text-right text-sm text-slate-500">
             <div><strong>Fecha de reporte:</strong> {{ now()->format('d/m/Y H:i') }}</div>
