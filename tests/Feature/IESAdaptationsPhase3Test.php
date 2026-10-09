@@ -128,13 +128,30 @@ class IESAdaptationsPhase3Test extends TestCase
             'start_time' => now(),
         ]);
 
-        // Attempting pass 3 for student 3 in the same group
+        // Attempting pass 3 for student 3 in the same group without force -> returns warning
         $response = $this->actingAs($this->teacher)->post(route('salidas.store'), [
             'student_id' => $student3->id,
             'reason' => 'Enfermería',
         ]);
 
         $response->assertStatus(422);
-        $response->assertJsonFragment(['error' => 'Ya hay 2 alumnos fuera de clase en este grupo. Finaliza un pase antes de autorizar otro.']);
+        $response->assertJsonFragment([
+            'warning' => true,
+            'needs_confirmation' => true,
+            'error' => 'Ya hay 2 alumnos fuera de clase en este grupo. Finaliza un pase antes de autorizar otro.'
+        ]);
+
+        // Attempting pass 3 with force=true -> authorizes the pass without blocking
+        $forcedResponse = $this->actingAs($this->teacher)->post(route('salidas.store'), [
+            'student_id' => $student3->id,
+            'reason' => 'Enfermería',
+            'force' => true,
+        ]);
+
+        $forcedResponse->assertStatus(200);
+        $this->assertDatabaseHas('hall_passes', [
+            'user_id' => $student3->id,
+            'end_time' => null,
+        ]);
     }
 }

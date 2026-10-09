@@ -138,7 +138,13 @@ class HallPassController extends Controller
                 ->count();
 
             if ($activeGroupPassesCount >= 2) {
-                return response()->json(['error' => 'Ya hay 2 alumnos fuera de clase en este grupo. Finaliza un pase antes de autorizar otro.'], 422);
+                return response()->json([
+                    'warning' => true,
+                    'needs_confirmation' => true,
+                    'active_count' => $activeGroupPassesCount,
+                    'message' => "Ya hay {$activeGroupPassesCount} alumnos de este grupo fuera de clase. ¿Deseas autorizar la salida de todos modos?",
+                    'error' => 'Ya hay 2 alumnos fuera de clase en este grupo. Finaliza un pase antes de autorizar otro.'
+                ], 422);
             }
         }
 

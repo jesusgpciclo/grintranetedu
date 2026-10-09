@@ -1071,8 +1071,8 @@ Gestor de <span class="text-blue-500">pasillos</span>
         // API Calls
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
-        async function createPass(studentId, reason, todayCount = 0, lastExitTime = '') {
-            if (todayCount >= 2) {
+        async function createPass(studentId, reason, todayCount = 0, lastExitTime = '', force = false) {
+            if (todayCount >= 2 && !force) {
                 const confirmed = await customModal({
                     title: 'Aviso de Salidas Frecuentes',
                     description: `Este alumno ya ha salido ${todayCount} veces hoy${lastExitTime ? ' (última salida a las ' + lastExitTime + ')' : ''}. ¿Deseas autorizar una nueva salida?`,
@@ -1090,12 +1090,33 @@ Gestor de <span class="text-blue-500">pasillos</span>
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ student_id: studentId, reason: reason })
+                    body: JSON.stringify({ student_id: studentId, reason: reason, force: force })
                 });
+
+                let data = {};
+                try {
+                    data = await res.json();
+                } catch (jsonErr) {}
+
                 if (!res.ok) {
-                    const data = await res.json();
-                    throw new Error(data.error || 'Error creating pass');
+                    // Si el sistema avisa de que ya hay 2 o más alumnos fuera en este grupo, se da un aviso sin impedir dejar salir
+                    if (res.status === 422 && (data.needs_confirmation || data.warning || (data.error && data.error.toLowerCase().includes('alumnos fuera')))) {
+                        const allowMore = await customModal({
+                            title: 'Aviso: Alumnos fuera en este grupo',
+                            description: data.message || 'Ya hay 2 alumnos fuera de clase en este grupo. ¿Deseas autorizar la salida de este alumno de todos modos?',
+                            confirmText: 'Sí, autorizar salida',
+                            type: 'warning'
+                        });
+
+                        if (allowMore) {
+                            return createPass(studentId, reason, todayCount, lastExitTime, true);
+                        }
+                        return;
+                    }
+
+                    throw new Error(data.error || 'Error al crear el pase de salida');
                 }
+
                 showToast('Pase creado correctamente', 'success');
                 setTimeout(() => window.location.reload(), 500);
             } catch (e) {
