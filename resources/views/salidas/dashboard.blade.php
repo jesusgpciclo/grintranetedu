@@ -229,7 +229,6 @@ Gestor de <span class="text-blue-500">pasillos</span>
 
                 <!-- Chips de nivel: filtran el desplegable de grupos (se recuerdan en localStorage) -->
                 <div id="level-chips-wrapper" class="hidden mt-3 flex items-center gap-2">
-                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] shrink-0">Nivel</span>
                     <div id="level-chips" class="flex items-center gap-1.5 overflow-x-auto pb-0.5" role="group" aria-label="Filtrar grupos por nivel"></div>
                 </div>
 
