@@ -227,6 +227,12 @@ Gestor de <span class="text-blue-500">pasillos</span>
                     </div>
                 </div>
 
+                <!-- Chips de nivel: filtran el desplegable de grupos (se recuerdan en localStorage) -->
+                <div id="level-chips-wrapper" class="hidden mt-3 flex items-center gap-2">
+                    <span class="text-[11px] font-extrabold uppercase tracking-wider text-[var(--text-muted)] shrink-0">Nivel</span>
+                    <div id="level-chips" class="flex items-center gap-1.5 overflow-x-auto pb-0.5" role="group" aria-label="Filtrar grupos por nivel"></div>
+                </div>
+
                 <button id="return-all-btn" onclick="returnAll()"
                     class="hidden w-full mt-4 sm:mt-6 py-3.5 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white rounded-xl font-bold shadow-lg shadow-red-500/20 transform hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -674,10 +680,84 @@ Gestor de <span class="text-blue-500">pasillos</span>
         }
 
         // Available groups for favorite handling
-        const availableGroups = @json($groups->map(fn($g) => [
-            'id' => (string) $g->id,
-            'name' => trim(($g->course ? $g->course . ' ' : '') . $g->name)
-        ]));
+        @php
+            $availableGroupsData = $groups->map(function ($g) {
+                $levelSource = (string) ($g->course ?: $g->name);
+                return [
+                    'id' => (string) $g->id,
+                    'name' => trim(($g->course ? $g->course . ' ' : '') . $g->name),
+                    'level' => preg_match('/\d+/', $levelSource, $levelMatch) ? $levelMatch[0] : '',
+                ];
+            })->values();
+        @endphp
+        const availableGroups = @json($availableGroupsData);
+
+        // Filtro por nivel (1, 2, 3, 4...) recordado en localStorage
+        const LEVEL_STORAGE_KEY = 'salidas_selected_level';
+        let currentLevel = localStorage.getItem(LEVEL_STORAGE_KEY) || 'all';
+
+        function getAvailableLevels() {
+            return [...new Set(availableGroups.map(g => g.level).filter(Boolean))]
+                .sort((a, b) => Number(a) - Number(b));
+        }
+
+        function getVisibleGroups() {
+            return currentLevel === 'all'
+                ? availableGroups
+                : availableGroups.filter(g => g.level === currentLevel);
+        }
+
+        function renderLevelChips() {
+            const wrapper = document.getElementById('level-chips-wrapper');
+            const container = document.getElementById('level-chips');
+            if (!wrapper || !container) return;
+
+            const levels = getAvailableLevels();
+            if (levels.length < 2) {
+                wrapper.classList.add('hidden');
+                return;
+            }
+            wrapper.classList.remove('hidden');
+            container.innerHTML = '';
+
+            [['all', 'Todos'], ...levels.map(l => [l, l + 'º'])].forEach(([value, label]) => {
+                const active = currentLevel === value;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = label;
+                btn.dataset.level = value;
+                btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+                btn.className = 'px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-extrabold border transition active:scale-95 shrink-0 ' + (active
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                    : 'bg-[var(--bg-input)] text-[var(--text-heading)] border-[var(--border)] hover:border-blue-500/60');
+                btn.addEventListener('click', () => setLevel(value));
+                container.appendChild(btn);
+            });
+        }
+
+        function setLevel(level) {
+            currentLevel = level;
+            try { localStorage.setItem(LEVEL_STORAGE_KEY, level); } catch (e) {}
+            renderLevelChips();
+            renderClassSelector();
+
+            const selector = document.getElementById('class-selector');
+            const visible = getVisibleGroups();
+            if (selector && level !== 'all' && visible.length === 1) {
+                selector.value = visible[0].id;
+            }
+            if (selector) selector.dispatchEvent(new Event('change'));
+        }
+
+        function initLevelFilter(initialClassId) {
+            const levels = getAvailableLevels();
+            if (currentLevel !== 'all' && !levels.includes(currentLevel)) currentLevel = 'all';
+            if (initialClassId && currentLevel !== 'all') {
+                const g = availableGroups.find(x => String(x.id) === String(initialClassId));
+                if (!g || g.level !== currentLevel) currentLevel = 'all';
+            }
+            renderLevelChips();
+        }
 
         const FAVORITES_STORAGE_KEY = 'salidas_favorite_groups';
 
@@ -760,8 +840,9 @@ Gestor de <span class="text-blue-500">pasillos</span>
             const favorites = getFavoriteGroupIds().map(String);
 
             // Separate favorites and other groups
-            const favGroups = availableGroups.filter(g => favorites.includes(String(g.id)));
-            const otherGroups = availableGroups.filter(g => !favorites.includes(String(g.id)));
+            const visibleGroups = getVisibleGroups();
+            const favGroups = visibleGroups.filter(g => favorites.includes(String(g.id)));
+            const otherGroups = visibleGroups.filter(g => !favorites.includes(String(g.id)));
 
             selector.innerHTML = '';
 
@@ -791,7 +872,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                 });
                 selector.appendChild(otherGroupEl);
             } else {
-                availableGroups.forEach(g => {
+                visibleGroups.forEach(g => {
                     const opt = document.createElement('option');
                     opt.value = g.id;
                     opt.textContent = g.name;
@@ -799,7 +880,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                 });
             }
 
-            if (currentVal && availableGroups.some(g => String(g.id) === currentVal)) {
+            if (currentVal && visibleGroups.some(g => String(g.id) === currentVal)) {
                 selector.value = currentVal;
             } else {
                 selector.value = '';
@@ -902,6 +983,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
             if (!initialClass && favorites.length === 1) {
                 initialClass = favorites[0];
             }
+            initLevelFilter(initialClass);
             renderClassSelector(initialClass);
 
             function applyFilters() {

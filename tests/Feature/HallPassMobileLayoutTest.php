@@ -82,5 +82,23 @@ class HallPassMobileLayoutTest extends TestCase
         $response->assertSee('salidas_favorite_groups', false);
         $response->assertSee('renderClassSelector', false);
     }
+
+    public function test_salidas_dashboard_contains_level_chips_with_group_levels(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        foreach (['1º ESO', '2º ESO', '4º ESO'] as $course) {
+            Group::create(['course' => $course, 'name' => 'A', 'academic_year' => '2025/2026']);
+        }
+
+        $response = $this->actingAs($teacher)->get(route('salidas.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('id="level-chips"', false);
+        $response->assertSee('salidas_selected_level', false);
+        $response->assertSee('"level":"1"', false);
+        $response->assertSee('"level":"4"', false);
+    }
 }
 
