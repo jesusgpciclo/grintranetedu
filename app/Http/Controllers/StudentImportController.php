@@ -56,6 +56,10 @@ class StudentImportController extends Controller
         $errors = [];
         $skipped = 0;
 
+        // Hash único de la contraseña inicial (bcrypt por alumno ralentiza mucho la importación)
+        @set_time_limit(0);
+        $defaultPasswordHash = Hash::make('alumno1234');
+
         $startIndex = 0;
         if (stripos($firstLine, 'Alumno') !== false || stripos($firstLine, 'Apellidos') !== false || stripos($firstLine, 'Nombre') !== false || stripos($firstLine, 'Unidad') !== false) {
             $startIndex = 1;
@@ -146,7 +150,7 @@ class StudentImportController extends Controller
                 'name' => $nombre,
                 'last_name' => $apellidos,
                 'email' => $email,
-                'password' => Hash::make('alumno1234'),
+                'password' => $defaultPasswordHash,
                 'group_id' => $group->id,
                 'must_change_password' => true,
             ]);

@@ -338,6 +338,11 @@ class StudentController extends Controller
             return back()->withErrors('El archivo está vacío o no tiene el formato correcto.');
         }
 
+        // Importaciones grandes: sin límite de tiempo y con la contraseña inicial hasheada una sola vez
+        // (bcrypt es costoso a propósito; repetirlo por alumno provocaba timeouts de 300 s).
+        @set_time_limit(0);
+        $defaultPasswordHash = Hash::make('alumno1234');
+
         $imported = 0;
         foreach ($data as $row) {
             $parsed = $this->parseStudentRow($row);
@@ -420,7 +425,7 @@ class StudentController extends Controller
                     'name' => $name,
                     'last_name' => $lastName,
                     'email' => $email,
-                    'password' => Hash::make('alumno1234'),
+                    'password' => $defaultPasswordHash,
                     'group_id' => $groupId,
                     'must_change_password' => true,
                 ];
