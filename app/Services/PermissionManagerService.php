@@ -348,6 +348,17 @@ class PermissionManagerService
                     ],
                 ],
             ],
+            'enlaces_interes' => [
+                'title' => 'Enlaces de Interés',
+                'icon' => '🔗',
+                'description' => 'Directorio de accesos rápidos y enlaces externos de interés para el profesorado.',
+                'permissions' => [
+                    'enlaces.view' => [
+                        'label' => 'Ver Enlaces de Interés',
+                        'description' => 'Permite visualizar el menú y la tabla con los enlaces de interés del centro.'
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -379,26 +390,26 @@ class PermissionManagerService
         return [
             'admin' => $all, // Admin tiene todos los permisos
 
-            // Jefatura lo ve y puede todo en control de salidas
+            // Jefatura lo ve y puede todo en control de salidas y enlaces de interés
             'jefatura' => [
-                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'enlaces.view',
             ],
 
             'directiva' => [
-                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'enlaces.view',
             ],
 
             'director' => [
-                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'enlaces.view',
             ],
 
-            // Profesor: gestiona salidas y ve el monitor, pero sin historial ni regresar en monitor
+            // Profesor: gestiona salidas, ve el monitor y enlaces de interés para el profesorado
             'profesor' => [
-                'salidas.view', 'salidas.create',
+                'salidas.view', 'salidas.create', 'enlaces.view',
             ],
 
             'jefe-de-departamento' => [
-                'salidas.view', 'salidas.create',
+                'salidas.view', 'salidas.create', 'enlaces.view',
             ],
 
             // Conserje: solo ve el monitor (sin regresar alumnos ni gestionar salidas)

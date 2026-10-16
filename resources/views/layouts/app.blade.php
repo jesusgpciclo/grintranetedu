@@ -352,6 +352,42 @@
             color: var(--primary);
         }
 
+        /* Password Visibility Toggle */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .password-wrapper input {
+            padding-right: 2.75rem !important;
+        }
+        .password-toggle-btn {
+            position: absolute;
+            right: 0.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            padding: 0.45rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            transition: color 0.15s ease, background-color 0.15s ease;
+            z-index: 2;
+        }
+        .password-toggle-btn:hover {
+            color: var(--primary) !important;
+            background-color: var(--bg-hover) !important;
+        }
+        .password-toggle-btn:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
         .mobile-header {
             display: none;
         }
@@ -1064,6 +1100,37 @@
             
             localStorage.setItem('theme', newTheme);
             updateThemeIcons();
+        }
+
+        // Global Password Visibility Toggle
+        function togglePasswordVisibility(fieldId, btn) {
+            const input = document.getElementById(fieldId);
+            if (!input) return;
+
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            const showIcon = btn.querySelector('.eye-show-icon');
+            const hideIcon = btn.querySelector('.eye-hide-icon');
+
+            if (showIcon && hideIcon) {
+                if (isPassword) {
+                    showIcon.style.display = 'none';
+                    hideIcon.style.display = 'inline-block';
+                    btn.setAttribute('title', 'Ocultar contraseña');
+                    btn.setAttribute('aria-label', 'Ocultar contraseña');
+                } else {
+                    showIcon.style.display = 'inline-block';
+                    hideIcon.style.display = 'none';
+                    btn.setAttribute('title', 'Ver contraseña');
+                    btn.setAttribute('aria-label', 'Ver contraseña');
+                }
+            }
+            input.focus();
+            const len = input.value.length;
+            try {
+                input.setSelectionRange(len, len);
+            } catch (e) {}
         }
 
         // Unified Sidebar Menu Toggle (Mobile Drawer vs Desktop Collapse)

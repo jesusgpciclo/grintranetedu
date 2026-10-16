@@ -160,6 +160,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/salidas/history/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.history.destroy');
         Route::delete('/salidas/pass/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.destroy');
         Route::post('/salidas/history/bulk-delete', [\App\Http\Controllers\HallPassController::class, 'bulkDelete'])->name('salidas.history.bulk-delete');
+        Route::patch('/salidas/settings', [\App\Http\Controllers\HallPassController::class, 'updateSettings'])->name('salidas.settings.update');
         Route::post('/salidas/favorites', [\App\Http\Controllers\HallPassController::class, 'toggleFavoriteGroup'])->name('salidas.toggle-favorite');
         Route::patch('/salidas/pass/{hallPass}/time', [\App\Http\Controllers\HallPassController::class, 'updatePassTime'])->name('salidas.pass.update-time');
     });
@@ -272,6 +273,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/calendars', [\App\Http\Controllers\CalendarManagerController::class, 'store'])->name('calendars.store');
     Route::put('/calendars/{calendar}', [\App\Http\Controllers\CalendarManagerController::class, 'update'])->name('calendars.update');
     Route::delete('/calendars/{calendar}', [\App\Http\Controllers\CalendarManagerController::class, 'destroy'])->name('calendars.destroy');
+
+    // --- MÓDULO: Enlaces de Interés para el Profesorado ---
+    Route::get('/enlaces-interes', [\App\Http\Controllers\EnlaceInteresController::class, 'index'])->name('enlaces.index');
 });
 
 // Public iCal Feed Subscription Route (no auth required)

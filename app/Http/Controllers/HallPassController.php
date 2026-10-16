@@ -9,6 +9,41 @@ use Illuminate\Http\Request;
 
 class HallPassController extends Controller
 {
+    public const DEFAULT_SERVICE_LIMIT = 4;
+
+    /**
+     * Número máximo de alumnos en el servicio antes de mostrar el aviso.
+     */
+    public static function serviceLimit(): int
+    {
+        $value = (int) \App\Models\Setting::get('salidas_servicio_max', self::DEFAULT_SERVICE_LIMIT);
+        return $value >= 1 ? $value : self::DEFAULT_SERVICE_LIMIT;
+    }
+
+    /**
+     * Guarda el límite de alumnos en el servicio (solo gestión de salidas).
+     */
+    public function updateSettings(Request $request)
+    {
+        $this->authorizeHistory();
+
+        $data = $request->validate([
+            'servicio_max' => 'required|integer|min:1|max:50',
+        ]);
+
+        \App\Models\Setting::set('salidas_servicio_max', (int) $data['servicio_max']);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Límite de alumnos en el servicio actualizado.',
+                'servicio_max' => (int) $data['servicio_max'],
+            ]);
+        }
+
+        return back()->with('success', 'Límite de alumnos en el servicio actualizado.');
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -144,6 +179,29 @@ class HallPassController extends Controller
                     'active_count' => $activeGroupPassesCount,
                     'message' => "Ya hay {$activeGroupPassesCount} alumnos de este grupo fuera de clase. ¿Deseas autorizar la salida de todos modos?",
                     'error' => 'Ya hay 2 alumnos fuera de clase en este grupo. Finaliza un pase antes de autorizar otro.'
+                ], 422);
+            }
+        }
+
+        // Aviso si ya hay más de 4 alumnos fuera por servicio/baño
+        $reasonLower = mb_strtolower($request->reason);
+        $isServiceReason = str_contains($reasonLower, 'baño') || str_contains($reasonLower, 'aseo') || str_contains($reasonLower, 'servicio');
+        if ($isServiceReason && !$request->boolean('force_service')) {
+            $activeServiceCount = HallPass::whereNull('end_time')
+                ->where(function ($q) {
+                    $q->where('reason', 'like', '%baño%')
+                      ->orWhere('reason', 'like', '%aseo%')
+                      ->orWhere('reason', 'like', '%servicio%');
+                })
+                ->count();
+
+            if ($activeServiceCount > self::serviceLimit()) {
+                return response()->json([
+                    'warning' => true,
+                    'needs_service_confirmation' => true,
+                    'active_count' => $activeServiceCount,
+                    'message' => 'AVISO: hay más de ' . self::serviceLimit() . ' alumnos y alumnas en el servicio. ¿Desea continuar?',
+                    'error' => 'Hay más de ' . self::serviceLimit() . ' alumnos y alumnas en el servicio.',
                 ], 422);
             }
         }
@@ -547,10 +605,20 @@ class HallPassController extends Controller
         }
 
         $request->validate([
-            'duration_minutes' => 'nullable|integer|min:1|max:480',
+            'duration_minutes' => 'nullable|integer|min:0|max:480',
             'start_time' => 'nullable|date_format:H:i',
             'end_time' => 'nullable|date_format:H:i',
         ]);
+
+        // 0 minutos: solo el profesor que autorizó la salida puede eliminarla
+        if ($request->exists('duration_minutes') && $request->input('duration_minutes') !== null
+            && $request->input('duration_minutes') !== '' && (int) $request->input('duration_minutes') === 0) {
+            if ($hallPass->teacher_id !== $user->id) {
+                return response()->json(['error' => 'Solo el profesor que autorizó la salida puede eliminarla.'], 403);
+            }
+            $hallPass->delete();
+            return response()->json(['message' => 'Salida eliminada correctamente.', 'deleted' => true]);
+        }
 
         $passDate = $hallPass->date ? \Carbon\Carbon::parse($hallPass->date)->toDateString() : now()->toDateString();
 

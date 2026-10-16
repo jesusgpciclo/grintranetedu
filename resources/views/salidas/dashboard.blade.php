@@ -55,6 +55,11 @@ Gestor de <span class="text-blue-500">pasillos</span>
             }
         }
 
+        /* Prevent FOUC: hide student cards by default until JavaScript applies class and search filters */
+        .student-card {
+            display: none;
+        }
+
         /* Modern Toast Styles */
         .toast-container {
             position: fixed;
@@ -165,11 +170,11 @@ Gestor de <span class="text-blue-500">pasillos</span>
                     <div class="hidden sm:flex gap-2 sm:gap-3 shrink-0">
                         <div class="bg-blue-500/10 border border-blue-500/25 rounded-xl px-3 sm:px-4 py-2 flex items-center justify-between sm:block">
                             <span class="text-[10px] font-bold text-blue-500 uppercase tracking-widest sm:block mb-0.5">Activos</span>
-                            <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['active_count'] }}</span>
+                            <span id="active-stat-count" class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['active_count'] }}</span>
                         </div>
                         <div class="bg-indigo-500/10 border border-indigo-500/25 rounded-xl px-3 sm:px-4 py-2 flex items-center justify-between sm:block">
                             <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-widest sm:block mb-0.5">Hoy</span>
-                            <span class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['today_count'] }}</span>
+                            <span id="today-stat-count" class="text-lg sm:text-xl font-black text-[var(--text-heading)] leading-none">{{ $stats['today_count'] }}</span>
                         </div>
                     </div>
 
@@ -195,6 +200,17 @@ Gestor de <span class="text-blue-500">pasillos</span>
                                         </option>
                                     @endforeach
                                 </select>
+                                <script>
+                                    (function() {
+                                        try {
+                                            const saved = localStorage.getItem('selected_class');
+                                            if (saved) {
+                                                const sel = document.getElementById('class-selector');
+                                                if (sel) sel.value = saved;
+                                            }
+                                        } catch(e) {}
+                                    })();
+                                </script>
                                 <button type="button" id="favorite-class-btn" onclick="toggleCurrentClassFavorite(event)"
                                     class="p-1.5 mr-1.5 shrink-0 text-slate-400 hover:text-amber-500 hover:scale-110 active:scale-95 transition-all focus:outline-none flex items-center justify-center"
                                     title="Marcar o desmarcar como favorita">
@@ -253,42 +269,41 @@ Gestor de <span class="text-blue-500">pasillos</span>
                         $studentFullName = trim($student->name . ' ' . ($student->last_name ?? ''));
                         $courseName = trim(($student->groupRel?->course ? $student->groupRel->course . ' ' : '') . ($student->groupRel?->name ?? ''));
                     @endphp
-                    <div class="student-card group relative rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all duration-200 border flex items-center justify-between gap-2.5 w-full"
+                    <div class="student-card group relative rounded-2xl p-2.5 sm:p-3 shadow-xs hover:shadow-md transition-all duration-200 border items-center justify-between gap-2.5 w-full"
                         style="background: var(--bg-card); border-color: {{ $activePass ? 'rgba(245, 158, 11, 0.6)' : ($todayCount >= 3 ? 'rgba(239, 68, 68, 0.4)' : 'var(--border)') }};"
                         data-group-id="{{ $student->group_id }}" data-id="{{ $student->id }}"
                         data-student-name="{{ $studentDisplayName }}"
                         data-student-course="{{ $courseName }}"
                         data-today-count="{{ $todayCount }}"
                         data-last-exit="{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}"
-                        data-search="{{ strtolower(($student->last_name ?? '') . ' ' . $student->name . ' ' . $student->name . ' ' . ($student->last_name ?? '')) }}"
-                        style="display: none;">
+                        data-search="{{ strtolower(($student->last_name ?? '') . ' ' . $student->name . ' ' . $student->name . ' ' . ($student->last_name ?? '')) }}">
 
                         <!-- Left: Avatar + Name + Course + Exits Today -->
                         <div class="flex items-center gap-2.5 min-w-0 flex-1">
-                            <div class="h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-500 to-indigo-600') }} flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-xs">
+                            <div class="student-avatar h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-gradient-to-tr {{ $activePass ? 'from-amber-400 to-amber-600' : ($todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-500 to-indigo-600') }} flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-xs">
                                 {{ substr($student->last_name ?? $student->name, 0, 1) }}{{ substr($student->name, 0, 1) }}
                             </div>
                             <div class="overflow-hidden min-w-0 flex-1">
-                                <div class="flex items-center gap-1.5">
+                                <div class="student-name-container flex items-center gap-1.5">
                                     <h3 class="student-name student-name-mobile text-base sm:text-lg font-bold text-[var(--text-heading)] truncate leading-tight"
                                         title="{{ $studentDisplayName }}">
                                         {{ $studentDisplayName }}
                                     </h3>
                                     @if($todayCount > 0 && !$activePass)
-                                        <span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded-md {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}" title="{{ $todayCount }} salidas hoy">
+                                        <span class="today-exits-badge text-[10px] font-extrabold px-1.5 py-0.5 rounded-md {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}" title="{{ $todayCount }} salidas hoy">
                                             {{ $todayCount }}
                                         </span>
                                     @endif
                                 </div>
-                                <div class="student-course-mobile flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
+                                <div class="student-status-line student-course-mobile flex items-center gap-1 text-[11px] text-[var(--text-muted)] leading-tight mt-0.5">
                                     <span class="truncate">{{ $courseName }}</span>
                                     @if($activePass)
-                                        <span class="text-amber-500 font-extrabold flex items-center gap-1 shrink-0 ml-1">
+                                        <span class="active-fuera-badge text-amber-500 font-extrabold flex items-center gap-1 shrink-0 ml-1">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
                                             <span>Fuera: {{ $activePass->reason }}</span>
                                         </span>
                                     @elseif($todayCount > 0)
-                                        <span class="text-[10px] text-[var(--text-muted)] truncate hidden xs:inline">• Última: {{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}</span>
+                                        <span class="last-exit-text text-[10px] text-[var(--text-muted)] truncate hidden xs:inline">• Última: {{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}</span>
                                     @endif
                                 </div>
                             </div>
@@ -296,7 +311,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
 
                         <!-- Right: Actions (Active state has Timer + Regresar; Inactive state has ONLY Servicio icon and More [+] icon) -->
                         @if($activePass)
-                            <div class="flex items-center gap-1.5 shrink-0">
+                            <div class="card-actions flex items-center gap-1.5 shrink-0">
                                 <div class="px-2 py-1 bg-amber-500/15 border border-amber-500/30 rounded-xl text-center">
                                     <span class="text-[11px] font-mono font-black text-amber-500 timer block leading-none" data-start="{{ $activePass->start_time->timestamp }}">00:00</span>
                                 </div>
@@ -306,7 +321,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                                 </button>
                             </div>
                         @else
-                            <div class="flex items-center gap-1 shrink-0">
+                            <div class="card-actions flex items-center gap-1 shrink-0">
                                 <!-- 1. Icono de servicio (Baño / Aseo / WC) -->
                                 <button type="button"
                                     onclick="createPass({{ $student->id }}, 'Baño', {{ $todayCount }}, '{{ $lastPass?->start_time ? $lastPass->start_time->format('H:i') : '' }}')"
@@ -620,7 +635,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
         async function promptEditPassTime(passId, currentMinutes, startTime, endTime) {
             const newDurationStr = await customModal({
                 title: 'Editar Tiempo de Salida',
-                description: `Indica la duración en minutos de la salida (actual: ${currentMinutes || 5} min):`,
+                description: `Indica la duración en minutos de la salida (actual: ${currentMinutes || 5} min). Si pones 0 minutos, la salida se eliminará:`,
                 input: true,
                 confirmText: 'Guardar tiempo',
                 type: 'question'
@@ -629,11 +644,22 @@ Gestor de <span class="text-blue-500">pasillos</span>
             if (newDurationStr === null || String(newDurationStr).trim() === '') return;
 
             const newMinutes = parseInt(String(newDurationStr).trim(), 10);
-            if (isNaN(newMinutes) || newMinutes <= 0 || newMinutes > 480) {
+            if (isNaN(newMinutes) || newMinutes < 0 || newMinutes > 480) {
                 if (typeof window.showToast === 'function') {
-                    window.showToast('Por favor introduce un número válido de minutos (1 - 480).', 'error');
+                    window.showToast('Por favor introduce un número válido de minutos (0 - 480).', 'error');
                 }
                 return;
+            }
+
+            if (newMinutes === 0) {
+                const confirmDelete = await customModal({
+                    title: 'Eliminar salida',
+                    description: '0 minutos eliminará esta salida definitivamente. ¿Desea continuar?',
+                    confirmText: 'Sí, eliminar',
+                    cancelText: 'No',
+                    type: 'warning'
+                });
+                if (!confirmDelete) return;
             }
 
             try {
@@ -651,6 +677,20 @@ Gestor de <span class="text-blue-500">pasillos</span>
                 const data = await res.json();
                 if (!res.ok) {
                     throw new Error(data.error || 'Error al actualizar el tiempo');
+                }
+
+                if (data.deleted) {
+                    if (window.showToast) window.showToast('Salida eliminada correctamente', 'success');
+                    if (currentModalStudent && todayPassesMap[currentModalStudent.id]) {
+                        todayPassesMap[currentModalStudent.id] = todayPassesMap[currentModalStudent.id].filter(x => x.id !== passId);
+                        renderModalTodayHistory(currentModalStudent.id);
+                    }
+                    const timerBtn = document.querySelector(`.card-actions button[onclick="endPass(${passId})"]`);
+                    if (timerBtn) {
+                        const card = timerBtn.closest('.student-card');
+                        if (card) resetCardToReturned(card, passId);
+                    }
+                    return;
                 }
 
                 // Update in local todayPassesMap
@@ -1063,11 +1103,12 @@ Gestor de <span class="text-blue-500">pasillos</span>
             const modalCancel = document.getElementById('modal-cancel');
             const modalIconContainer = document.getElementById('modal-icon-container');
 
-            window.customModal = function({ title, description, input = false, confirmText = 'Confirmar', type = 'info' }) {
+            window.customModal = function({ title, description, input = false, confirmText = 'Confirmar', cancelText = 'Cancelar', type = 'info' }) {
                 return new Promise((resolve) => {
                     modalTitle.textContent = title;
                     modalDesc.textContent = description;
                     modalConfirm.textContent = confirmText;
+                    modalCancel.textContent = cancelText;
                     modalInput.value = '';
                     
                     if (input) {
@@ -1152,7 +1193,110 @@ Gestor de <span class="text-blue-500">pasillos</span>
         // API Calls
         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '{{ csrf_token() }}';
 
-        async function createPass(studentId, reason, todayCount = 0, lastExitTime = '', force = false) {
+        function resetCardToReturned(card, passId = null) {
+            if (!card) return;
+            const studentId = parseInt(card.dataset.id, 10);
+            const todayCount = parseInt(card.dataset.todayCount, 10) || 0;
+            const lastExit = card.dataset.lastExit || '';
+
+            // Border
+            card.style.borderColor = todayCount >= 3 ? 'rgba(239, 68, 68, 0.4)' : 'var(--border)';
+
+            // Avatar
+            const avatar = card.querySelector('.student-avatar');
+            if (avatar) {
+                avatar.className = `student-avatar h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-gradient-to-tr ${todayCount >= 3 ? 'from-amber-500 to-rose-500' : 'from-blue-500 to-indigo-600'} flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-xs`;
+            }
+
+            // Status line
+            const statusLine = card.querySelector('.student-status-line');
+            if (statusLine) {
+                const fuera = statusLine.querySelector('.active-fuera-badge');
+                if (fuera) fuera.remove();
+                let lastSpan = statusLine.querySelector('.last-exit-text');
+                if (!lastSpan && lastExit) {
+                    lastSpan = document.createElement('span');
+                    lastSpan.className = 'last-exit-text text-[10px] text-[var(--text-muted)] truncate hidden xs:inline';
+                    statusLine.appendChild(lastSpan);
+                }
+                if (lastSpan && lastExit) {
+                    lastSpan.textContent = `• Última: ${lastExit}`;
+                }
+            }
+
+            // Exits count badge next to name
+            const nameContainer = card.querySelector('.student-name-container');
+            if (nameContainer) {
+                let badge = nameContainer.querySelector('.today-exits-badge');
+                if (!badge && todayCount > 0) {
+                    badge = document.createElement('span');
+                    nameContainer.appendChild(badge);
+                }
+                if (badge && todayCount > 0) {
+                    badge.className = `today-exits-badge text-[10px] font-extrabold px-1.5 py-0.5 rounded-md ${todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30'}`;
+                    badge.title = `${todayCount} salidas hoy`;
+                    badge.textContent = todayCount;
+                }
+            }
+
+            // Actions box
+            const actionsBox = card.querySelector('.card-actions');
+            if (actionsBox) {
+                actionsBox.className = 'card-actions flex items-center gap-1 shrink-0';
+                actionsBox.innerHTML = `
+                    <button type="button"
+                        onclick="createPass(${studentId}, 'Baño', ${todayCount}, '${lastExit}')"
+                        title="Salida a servicio / baño" aria-label="Baño"
+                        class="flex items-center justify-center w-8 h-8 rounded-xl bg-blue-500/15 hover:bg-blue-500/25 active:scale-95 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition shadow-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m8-2a2 2 0 100-4 2 2 0 000 4zM7 8h10M7 12h10" />
+                        </svg>
+                    </button>
+                    <button type="button"
+                        onclick="openStudentDetailsModal(${studentId})"
+                        title="Más opciones de salida y detalles" aria-label="Más opciones"
+                        class="flex items-center justify-center w-8 h-8 rounded-xl bg-slate-500/15 hover:bg-slate-500/25 active:scale-95 text-slate-700 dark:text-slate-300 border border-slate-500/30 transition shadow-xs">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+                `;
+            }
+
+            // Update stats
+            const activeStat = document.getElementById('active-stat-count');
+            if (activeStat) {
+                activeStat.textContent = Math.max(0, (parseInt(activeStat.textContent, 10) || 0) - 1);
+            }
+
+            // Update todayPassesMap
+            if (passId && todayPassesMap[studentId]) {
+                const p = todayPassesMap[studentId].find(x => x.id === passId);
+                if (p) {
+                    const nowH = String(new Date().getHours()).padStart(2, '0');
+                    const nowM = String(new Date().getMinutes()).padStart(2, '0');
+                    p.end_time = `${nowH}:${nowM}`;
+                }
+            }
+
+            // Return all button check
+            const returnAllBtn = document.getElementById('return-all-btn');
+            const selector = document.getElementById('class-selector');
+            const selectedGroup = selector ? selector.value : '';
+            const hasActiveInGroup = Array.from(document.querySelectorAll('.student-card')).some(c =>
+                String(c.dataset.groupId) === String(selectedGroup) &&
+                c.querySelector('.timer')
+            );
+            if (returnAllBtn) {
+                if (selectedGroup && hasActiveInGroup) {
+                    returnAllBtn.classList.remove('hidden');
+                } else {
+                    returnAllBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        async function createPass(studentId, reason, todayCount = 0, lastExitTime = '', force = false, forceService = false) {
             if (todayCount >= 2 && !force) {
                 const confirmed = await customModal({
                     title: 'Aviso de Salidas Frecuentes',
@@ -1171,7 +1315,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ student_id: studentId, reason: reason, force: force })
+                    body: JSON.stringify({ student_id: studentId, reason: reason, force: force, force_service: forceService })
                 });
 
                 let data = {};
@@ -1180,6 +1324,21 @@ Gestor de <span class="text-blue-500">pasillos</span>
                 } catch (jsonErr) {}
 
                 if (!res.ok) {
+                    // Aviso: más de N alumnos en el servicio
+                    if (res.status === 422 && data.needs_service_confirmation) {
+                        const continueService = await customModal({
+                            title: 'Aviso',
+                            description: data.message || 'AVISO: hay más de 4 alumnos y alumnas en el servicio. ¿Desea continuar?',
+                            confirmText: 'Sí',
+                            cancelText: 'No',
+                            type: 'warning'
+                        });
+                        if (continueService) {
+                            return createPass(studentId, reason, todayCount, lastExitTime, force, true);
+                        }
+                        return;
+                    }
+
                     // Si el sistema avisa de que ya hay 2 o más alumnos fuera en este grupo, se da un aviso sin impedir dejar salir
                     if (res.status === 422 && (data.needs_confirmation || data.warning || (data.error && data.error.toLowerCase().includes('alumnos fuera')))) {
                         const allowMore = await customModal({
@@ -1190,7 +1349,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                         });
 
                         if (allowMore) {
-                            return createPass(studentId, reason, todayCount, lastExitTime, true);
+                            return createPass(studentId, reason, todayCount, lastExitTime, true, forceService);
                         }
                         return;
                     }
@@ -1199,7 +1358,84 @@ Gestor de <span class="text-blue-500">pasillos</span>
                 }
 
                 showToast('Pase creado correctamente', 'success');
-                setTimeout(() => window.location.reload(), 500);
+
+                // Actualizar tarjeta en el DOM directamente sin recargar página
+                const card = document.querySelector(`.student-card[data-id="${studentId}"]`);
+                if (card) {
+                    card.style.borderColor = 'rgba(245, 158, 11, 0.6)';
+
+                    const avatar = card.querySelector('.student-avatar');
+                    if (avatar) {
+                        avatar.className = 'student-avatar h-9 w-9 sm:h-10 sm:w-10 shrink-0 rounded-full bg-gradient-to-tr from-amber-400 to-amber-600 flex items-center justify-center text-white font-black text-xs sm:text-sm shadow-xs';
+                    }
+
+                    const todayBadge = card.querySelector('.today-exits-badge');
+                    if (todayBadge) todayBadge.remove();
+
+                    const statusLine = card.querySelector('.student-status-line');
+                    if (statusLine) {
+                        const existingFuera = statusLine.querySelector('.active-fuera-badge');
+                        if (existingFuera) existingFuera.remove();
+                        const existingLast = statusLine.querySelector('.last-exit-text');
+                        if (existingLast) existingLast.remove();
+
+                        const badge = document.createElement('span');
+                        badge.className = 'active-fuera-badge text-amber-500 font-extrabold flex items-center gap-1 shrink-0 ml-1';
+                        badge.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span><span>Fuera: ${escapeHtml(reason)}</span>`;
+                        statusLine.appendChild(badge);
+                    }
+
+                    const passId = data.id;
+                    const startTimestamp = data.start_time ? Math.floor(new Date(data.start_time).getTime() / 1000) : Math.floor(Date.now() / 1000);
+                    const actionsBox = card.querySelector('.card-actions');
+                    if (actionsBox) {
+                        actionsBox.className = 'card-actions flex items-center gap-1.5 shrink-0';
+                        actionsBox.innerHTML = `
+                            <div class="px-2 py-1 bg-amber-500/15 border border-amber-500/30 rounded-xl text-center">
+                                <span class="text-[11px] font-mono font-black text-amber-500 timer block leading-none" data-start="${startTimestamp}">00:00</span>
+                            </div>
+                            <button onclick="endPass(${passId})" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl font-bold text-xs flex items-center gap-1 shadow-xs transition-all">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Regresar</span>
+                            </button>
+                        `;
+                    }
+
+                    const newCount = (parseInt(card.dataset.todayCount, 10) || 0) + 1;
+                    const nowH = String(new Date().getHours()).padStart(2, '0');
+                    const nowM = String(new Date().getMinutes()).padStart(2, '0');
+                    const nowTime = `${nowH}:${nowM}`;
+                    card.dataset.todayCount = newCount;
+                    card.dataset.lastExit = nowTime;
+
+                    const activeStat = document.getElementById('active-stat-count');
+                    if (activeStat) {
+                        activeStat.textContent = (parseInt(activeStat.textContent, 10) || 0) + 1;
+                    }
+                    const todayStat = document.getElementById('today-stat-count');
+                    if (todayStat) {
+                        todayStat.textContent = (parseInt(todayStat.textContent, 10) || 0) + 1;
+                    }
+
+                    const returnAllBtn = document.getElementById('return-all-btn');
+                    const selector = document.getElementById('class-selector');
+                    if (returnAllBtn && selector && selector.value) {
+                        returnAllBtn.classList.remove('hidden');
+                    }
+
+                    if (!todayPassesMap[studentId]) todayPassesMap[studentId] = [];
+                    todayPassesMap[studentId].unshift({
+                        id: passId,
+                        user_id: studentId,
+                        teacher_id: data.teacher_id,
+                        teacher_name: data.teacher ? ((data.teacher.name || '') + ' ' + (data.teacher.last_name || '')).trim() : 'Tú',
+                        reason: reason,
+                        start_time: nowTime,
+                        end_time: null,
+                        duration_minutes: null,
+                        can_edit_time: true
+                    });
+                }
             } catch (e) {
                 console.error(e);
                 showToast(e.message, 'error');
@@ -1235,7 +1471,12 @@ Gestor de <span class="text-blue-500">pasillos</span>
 
                 if (!res.ok) throw new Error('Error al registrar el regreso');
                 showToast('Pase finalizado', 'success');
-                setTimeout(() => window.location.reload(), 500);
+
+                const btn = document.querySelector(`.card-actions button[onclick="endPass(${passId})"]`);
+                const card = btn ? btn.closest('.student-card') : null;
+                if (card) {
+                    resetCardToReturned(card, passId);
+                }
             } catch (e) {
                 showToast(e.message, 'error');
             }
@@ -1270,7 +1511,21 @@ Gestor de <span class="text-blue-500">pasillos</span>
 
                 if (!res.ok) throw new Error('Error returning all');
                 showToast('Todos los alumnos han regresado', 'success');
-                setTimeout(() => window.location.reload(), 500);
+
+                const activeButtons = document.querySelectorAll('.card-actions button[onclick^="endPass("]');
+                activeButtons.forEach(btn => {
+                    const match = btn.getAttribute('onclick').match(/endPass\((\d+)\)/);
+                    if (match) {
+                        const passId = parseInt(match[1], 10);
+                        const card = btn.closest('.student-card');
+                        if (card && String(card.dataset.groupId) === String(groupId)) {
+                            resetCardToReturned(card, passId);
+                        }
+                    }
+                });
+
+                const returnAllBtn = document.getElementById('return-all-btn');
+                if (returnAllBtn) returnAllBtn.classList.add('hidden');
             } catch (e) {
                 showToast(e.message, 'error');
             }

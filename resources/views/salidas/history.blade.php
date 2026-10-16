@@ -9,7 +9,7 @@ Historial de <span class="text-blue-500">pasillos</span>
 @section('content')
     <style>
         /* Modern Modal Styles */
-        #custom-modal-overlay {
+        #custom-modal-overlay, #service-limit-modal-overlay {
             backdrop-filter: blur(8px);
             background-color: rgba(15, 23, 42, 0.6);
             transition: all 0.3s ease;
@@ -19,7 +19,8 @@ Historial de <span class="text-blue-500">pasillos</span>
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        #custom-modal-overlay.active .modal-content {
+        #custom-modal-overlay.active .modal-content,
+        #service-limit-modal-overlay.active .modal-content {
             transform: scale(1);
             opacity: 1;
         }
@@ -70,7 +71,17 @@ Historial de <span class="text-blue-500">pasillos</span>
                         </svg>
                     </a>
                     <div>
-                        <h1 class="text-xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Historial de Pasillos</h1>
+                        <div class="flex items-center gap-2.5 sm:gap-3">
+                            <h1 class="text-xl sm:text-3xl font-extrabold text-[var(--text-heading)] leading-none">Historial de Pasillos</h1>
+                            <button type="button" onclick="openServiceLimitModal()"
+                                class="p-1.5 sm:p-2 text-[var(--text-muted)] hover:text-[var(--primary)] hover:bg-[var(--bg-hover)] rounded-xl border border-transparent hover:border-[var(--border)] transition-all shrink-0"
+                                title="Configurar aviso de alumnos en el servicio">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </button>
+                        </div>
                         <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Registro completo de movimientos y pases</p>
                     </div>
                 </div>
@@ -536,6 +547,52 @@ Historial de <span class="text-blue-500">pasillos</span>
         </div>
     </div>
 
+    <!-- Modal Configuración Aviso Alumnos Servicio -->
+    <div id="service-limit-modal-overlay" class="fixed inset-0 z-[100] hidden items-center justify-center p-4">
+        <div class="modal-content w-full max-w-md bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-6">
+                <div class="flex items-center justify-between pb-3 mb-4 border-b border-[var(--border)]">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 bg-[var(--primary)]/15 text-[var(--primary)] rounded-xl">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-[var(--text-heading)]">Aviso de alumnos en el servicio</h3>
+                    </div>
+                    <button type="button" onclick="closeServiceLimitModal()" class="text-[var(--text-muted)] hover:text-[var(--text-heading)] p-1.5 rounded-xl hover:bg-[var(--bg-hover)] transition-colors" title="Cerrar">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+
+                <p class="text-xs sm:text-sm text-[var(--text-muted)] mb-5">
+                    Se avisará al profesor cuando haya más de este número de alumnos fuera por baño, aseo o servicio.
+                </p>
+
+                <form id="service-limit-form" onsubmit="submitServiceLimit(event)" class="space-y-4">
+                    <div>
+                        <label for="modal_servicio_max" class="block text-xs font-bold text-[var(--text-heading)] uppercase mb-1.5">
+                            Número de alumnos
+                        </label>
+                        <input type="number" id="modal_servicio_max" name="servicio_max" min="1" max="50" required
+                            value="{{ \App\Http\Controllers\HallPassController::serviceLimit() }}"
+                            class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2.5 px-3 text-base font-bold text-[var(--text-color)] focus:ring-2 focus:ring-[var(--primary)] focus:border-[var(--primary)] transition-all">
+                    </div>
+
+                    <div class="flex gap-2.5 pt-2">
+                        <button type="button" onclick="closeServiceLimitModal()" class="flex-1 py-2.5 bg-[var(--bg-hover)] hover:bg-[var(--border)] text-[var(--text-color)] font-bold rounded-xl transition-all border border-[var(--border)] text-sm">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="btn-save-service-limit" class="flex-1 py-2.5 bg-[var(--primary)] hover:bg-[var(--primary-hover,var(--primary))] text-white font-bold rounded-xl shadow-md transition-all text-sm">
+                            Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Container -->
     <div id="toast-container" class="toast-container"></div>
 
@@ -818,5 +875,76 @@ Historial de <span class="text-blue-500">pasillos</span>
                 showToast(e.message, 'error');
             }
         }
+
+        // Modal de configuración de límite de alumnos en el servicio
+        function openServiceLimitModal() {
+            const overlay = document.getElementById('service-limit-modal-overlay');
+            if (!overlay) return;
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            setTimeout(() => overlay.classList.add('active'), 10);
+            const input = document.getElementById('modal_servicio_max');
+            if (input) setTimeout(() => { input.focus(); input.select(); }, 100);
+        }
+
+        function closeServiceLimitModal() {
+            const overlay = document.getElementById('service-limit-modal-overlay');
+            if (!overlay) return;
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 300);
+        }
+
+        async function submitServiceLimit(e) {
+            e.preventDefault();
+            const input = document.getElementById('modal_servicio_max');
+            const val = parseInt(input.value, 10);
+            if (isNaN(val) || val < 1 || val > 50) {
+                showToast('Introduce un número válido entre 1 y 50', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-service-limit');
+            if (btn) btn.disabled = true;
+
+            try {
+                const res = await fetch('{{ route("salidas.settings.update") }}', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({ servicio_max: val })
+                });
+
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    throw new Error(data.message || 'Error al guardar la configuración');
+                }
+
+                showToast(data.message || 'Límite de alumnos en el servicio actualizado.', 'success');
+                closeServiceLimitModal();
+            } catch (err) {
+                showToast(err.message || 'Error de conexión', 'error');
+            } finally {
+                if (btn) btn.disabled = false;
+            }
+        }
+
+        document.getElementById('service-limit-modal-overlay')?.addEventListener('click', (e) => {
+            if (e.target.id === 'service-limit-modal-overlay') closeServiceLimitModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('service-limit-modal-overlay');
+                if (overlay && !overlay.classList.contains('hidden')) {
+                    closeServiceLimitModal();
+                }
+            }
+        });
     </script>
 @endsection
