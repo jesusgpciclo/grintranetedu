@@ -220,24 +220,16 @@ class HallPassController extends Controller
                     ->unique();
 
                 if ($otherIncompatibleUserIds->isNotEmpty()) {
-                    $conflictingPasses = HallPass::whereNull('end_time')
+                    $hasConflictingPass = HallPass::whereNull('end_time')
                         ->whereIn('user_id', $otherIncompatibleUserIds)
-                        ->with(['student.groupRel'])
-                        ->get();
+                        ->exists();
 
-                    if ($conflictingPasses->isNotEmpty()) {
-                        $names = $conflictingPasses->map(function ($p) {
-                            $stu = $p->student;
-                            $groupName = $stu?->groupRel ? " ({$stu->groupRel->name})" : '';
-                            return trim(($stu?->name ?? '') . ' ' . ($stu?->last_name ?? '')) . $groupName;
-                        })->unique()->implode(', ');
-
+                    if ($hasConflictingPass) {
                         return response()->json([
                             'warning' => true,
                             'needs_incompatibility_confirmation' => true,
-                            'conflicting_students' => $names,
-                            'message' => "AVISO: Este alumno tiene incompatibilidad con {$names}, que actualmente está fuera en el pasillo. No debería salir en este momento. ¿Deseas autorizar la salida de todos modos?",
-                            'error' => "Conflicto de incompatibilidad: {$names} está en el pasillo."
+                            'message' => 'AVISO: Este alumno o alumna tiene incompatibilidad con otros que actualmente están fuera en el pasillo. No debería salir en este momento. ¿Deseas autorizar la salida de todos modos?',
+                            'error' => 'Conflicto de incompatibilidad en pasillo.'
                         ], 422);
                     }
                 }

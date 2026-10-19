@@ -190,8 +190,8 @@ class HallPassIncompatibilityTest extends TestCase
         $response->assertJsonFragment([
             'needs_incompatibility_confirmation' => true,
         ]);
-        $this->assertStringContainsString('Juan Perez', $response->json('message'));
-        $this->assertStringContainsString('AVISO', $response->json('message'));
+        $this->assertStringNotContainsString('Juan Perez', $response->json('message'));
+        $this->assertStringContainsString('AVISO: Este alumno o alumna tiene incompatibilidad con otros que actualmente están fuera en el pasillo', $response->json('message'));
     }
 
     public function test_can_force_pass_when_incompatible_student_is_in_hallway(): void

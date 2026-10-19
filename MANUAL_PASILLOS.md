@@ -149,9 +149,12 @@ Para evitar altercados o distracciones entre alumnos con conflictos previos o me
 [Captura de pantalla: Formulario de creación de Grupo de Incompatibilidad con buscador de alumnos, filtro de clases y casillas de selección múltiple]
 
 **¿Cómo actúa el aviso en el día a día?**
-Cuando cualquier profesor intenta dar salida a un alumno que pertenece a un grupo de incompatibilidad y otro integrante de su grupo se encuentra ya en el pasillo, la aplicación muestra una ventana de aviso destacada indicando qué compañero está fuera y preguntando si desea autorizar la salida de todos modos o cancelarla.
+Cuando cualquier profesor intenta dar salida a un alumno que pertenece a un grupo de incompatibilidad y otro integrante de su grupo se encuentra ya en el pasillo, la aplicación muestra una ventana de aviso destacada alertando de la situación de forma confidencial (sin revelar el nombre del otro alumno):
+> *"AVISO: Este alumno o alumna tiene incompatibilidad con otros que actualmente están fuera en el pasillo. No debería salir en este momento. ¿Deseas autorizar la salida de todos modos?"*
 
-[Captura de pantalla: Ventana modal de aviso alertando de que el alumno tiene incompatibilidad con otro alumno actualmente fuera en el pasillo y solicitando confirmación para continuar]
+El docente puede entonces elegir si autoriza la salida de todos modos (**"Sí, autorizar salida"**) o si la desestima (**"Cancelar"**).
+
+[Captura de pantalla: Ventana modal de aviso confidencial alertando de incompatibilidad con alumnos actualmente en el pasillo y solicitando confirmación para continuar]
 
 ---
 

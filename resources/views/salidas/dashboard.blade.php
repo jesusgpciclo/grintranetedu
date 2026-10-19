@@ -1342,7 +1342,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                     if (res.status === 422 && data.needs_incompatibility_confirmation) {
                         const continueIncompatibility = await customModal({
                             title: 'Aviso de Incompatibilidad en Pasillo',
-                            description: data.message || 'Este alumno tiene una incompatibilidad registrada con otro alumno que está actualmente en el pasillo. ¿Deseas continuar y autorizar la salida?',
+                            description: data.message || 'AVISO: Este alumno o alumna tiene incompatibilidad con otros que actualmente están fuera en el pasillo. No debería salir en este momento. ¿Deseas autorizar la salida de todos modos?',
                             confirmText: 'Sí, autorizar salida',
                             cancelText: 'Cancelar',
                             type: 'warning'
