@@ -36,6 +36,16 @@ Incompatibilidades de <span class="text-rose-500">pasillos</span>
             </div>
 
             <div class="flex items-center gap-2">
+                @if(auth()->user()->can('salidas.notices') || auth()->user()->hasRole('admin'))
+                    <a href="{{ route('salidas.notices.index') }}"
+                        class="p-2.5 bg-[var(--bg-input)] text-[var(--text-muted)] hover:text-amber-500 border border-[var(--border)] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0"
+                        title="Ver avisos especiales de salidas">
+                        <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                        </svg>
+                        <span class="hidden md:inline">Avisos Salidas</span>
+                    </a>
+                @endif
                 <a href="{{ route('salidas.incompatibilities.create') }}"
                     class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white rounded-xl font-bold text-sm shadow-md shadow-rose-500/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

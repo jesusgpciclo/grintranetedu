@@ -158,6 +158,30 @@ El docente puede entonces elegir si autoriza la salida de todos modos (**"Sí, a
 
 ---
 
+### 6.5. Avisos Especiales de Salidas (Avisos Personalizados por Alumno)
+Permite configurar notas o advertencias específicas para alumnos individuales (por ejemplo: *"Debe salir siempre acompañado"*, *"Dejarle salir siempre que lo solicite por prescripción médica"*, etc.):
+1. Accede desde el botón **"Avisos Salidas"** en la barra superior o en el menú lateral (**Pasillos > Avisos Salidas**).
+2. Pulsa en **"Nuevo Aviso"**.
+3. Selecciona al alumno o alumna deseada mediante el buscador o selector de clase.
+4. Escribe el texto del mensaje o selecciona una de las sugerencias rápidas disponibles.
+5. Marca si el aviso debe estar activo de inmediato y pulsa **"Registrar Aviso"**.
+
+[Captura de pantalla: Formulario de creación de Aviso Especial de Salida con selector de alumno, botones de sugerencias y campo de texto]
+
+**¿Qué ocurre cuando el alumno solicita salir?**
+* En el panel general de la clase, el alumno mostrará un pequeño icono de campana 🔔 indicando que cuenta con un aviso especial.
+* Cuando cualquier profesor pulse sobre el alumno para darle un pase de salida, la aplicación mostrará una ventana emergente de aviso con el mensaje configurado:
+  > *"AVISO DE SALIDA PARA ESTE ALUMNO O ALUMNA:*
+  > *• Debe salir acompañado/a*
+  > *¿Deseas autorizar la salida de todos modos?"*
+* El profesor puede confirmar (**"Sí, autorizar salida"**) o cancelar la acción.
+
+[Captura de pantalla: Ventana modal de aviso especial con el mensaje del alumno y los botones para autorizar o cancelar]
+
+> 🔐 **Permisos de acceso:** La gestión de *Incompatibilidades* y *Avisos de Salidas* cuenta con permisos independientes (`salidas.incompatibilities` y `salidas.notices`) configurables para cada rol desde la matriz de permisos de la intranet.
+
+---
+
 ## 💡 7. Preguntas frecuentes del día a día
 
 ### ¿Tengo que elegir mi clase cada vez que entro a la web?

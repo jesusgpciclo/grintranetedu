@@ -257,6 +257,14 @@ class PermissionManagerService
                         'label' => 'Administrar Pases e Historial',
                         'description' => 'Finalizar pases de cualquier aula, consultar historial y exportar CSV.'
                     ],
+                    'salidas.incompatibilities' => [
+                        'label' => 'Gestionar Incompatibilidades',
+                        'description' => 'Crear, consultar, editar y borrar grupos de alumnos incompatibles en pasillos.'
+                    ],
+                    'salidas.notices' => [
+                        'label' => 'Gestionar Avisos de Salidas',
+                        'description' => 'Crear, consultar, editar y borrar avisos específicos asignados a alumnos al salir del aula.'
+                    ],
                 ],
             ],
             'cuaderno_evaluacion' => [
@@ -392,24 +400,24 @@ class PermissionManagerService
 
             // Jefatura lo ve y puede todo en control de salidas y enlaces de interés
             'jefatura' => [
-                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'enlaces.view',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'salidas.incompatibilities', 'salidas.notices', 'enlaces.view',
             ],
 
             'directiva' => [
-                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'enlaces.view',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'salidas.incompatibilities', 'salidas.notices', 'enlaces.view',
             ],
 
             'director' => [
-                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'enlaces.view',
+                'salidas.view', 'salidas.create', 'salidas.return_monitor', 'salidas.manage', 'salidas.incompatibilities', 'salidas.notices', 'enlaces.view',
             ],
 
             // Profesor: gestiona salidas, ve el monitor y enlaces de interés para el profesorado
             'profesor' => [
-                'salidas.view', 'salidas.create', 'enlaces.view',
+                'salidas.view', 'salidas.create', 'salidas.incompatibilities', 'salidas.notices', 'enlaces.view',
             ],
 
             'jefe-de-departamento' => [
-                'salidas.view', 'salidas.create', 'enlaces.view',
+                'salidas.view', 'salidas.create', 'salidas.incompatibilities', 'salidas.notices', 'enlaces.view',
             ],
 
             // Conserje: solo ve el monitor (sin regresar alumnos ni gestionar salidas)

@@ -81,6 +81,7 @@ Historial de <span class="text-blue-500">pasillos</span>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                                 </svg>
                             </button>
+                            @if(auth()->user()->can('salidas.incompatibilities') || auth()->user()->hasRole('admin'))
                             <a href="{{ route('salidas.incompatibilities.index') }}"
                                 class="p-1.5 sm:p-2 text-[var(--text-muted)] hover:text-rose-500 hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-500/30 transition-all shrink-0"
                                 title="Grupos de Incompatibilidades en Pasillos">
@@ -88,6 +89,16 @@ Historial de <span class="text-blue-500">pasillos</span>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                                 </svg>
                             </a>
+                            @endif
+                            @if(auth()->user()->can('salidas.notices') || auth()->user()->hasRole('admin'))
+                            <a href="{{ route('salidas.notices.index') }}"
+                                class="p-1.5 sm:p-2 text-[var(--text-muted)] hover:text-amber-500 hover:bg-amber-500/10 rounded-xl border border-transparent hover:border-amber-500/30 transition-all shrink-0"
+                                title="Avisos Especiales de Salidas">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                            </a>
+                            @endif
                         </div>
                         <p class="text-[var(--text-muted)] text-xs sm:text-sm font-medium mt-1">Registro completo de movimientos y pases</p>
                     </div>

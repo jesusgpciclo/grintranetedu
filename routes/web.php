@@ -169,6 +169,13 @@ Route::middleware(['auth'])->group(function () {
             'as' => 'salidas',
             'parameters' => ['incompatibilities' => 'incompatibility']
         ]);
+
+        // Salidas Avisos
+        Route::patch('salidas/notices/{notice}/toggle', [\App\Http\Controllers\HallPassNoticeController::class, 'toggle'])->name('salidas.notices.toggle');
+        Route::resource('salidas/notices', \App\Http\Controllers\HallPassNoticeController::class, [
+            'as' => 'salidas',
+            'parameters' => ['notices' => 'notice']
+        ]);
     });
 
     // --- MÓDULO: Mensajería Interna (Fernández, Raquel) ---

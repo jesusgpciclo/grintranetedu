@@ -7,8 +7,18 @@ use App\Models\HallPassIncompatibilityGroup;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class HallPassIncompatibilityController extends Controller
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+
+class HallPassIncompatibilityController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [
+            new Middleware('role_or_permission:admin|salidas.incompatibilities'),
+        ];
+    }
+
     /**
      * Display a listing of the incompatibility groups.
      */

@@ -70,7 +70,9 @@ class HallPassController extends Controller
         // Get students (Users with role 'alumno')
         // Sorted: 1) Active passes first, 2) Alphabetical order by last_name (apellidos), then name
         $students = User::role('alumno')
-            ->with('groupRel')
+            ->with(['groupRel', 'hallPassNotices' => function ($q) {
+                $q->where('is_active', true);
+            }])
             ->get()
             ->sort(function ($a, $b) use ($activeStudentIds) {
                 $aActive = isset($activeStudentIds[$a->id]) ? 0 : 1;
@@ -233,6 +235,25 @@ class HallPassController extends Controller
                         ], 422);
                     }
                 }
+            }
+        }
+
+        // Comprobar avisos especiales asignados al alumno
+        if (!$request->boolean('force_notice')) {
+            $activeNotices = \App\Models\HallPassNotice::where('user_id', $request->student_id)
+                ->where('is_active', true)
+                ->get();
+
+            if ($activeNotices->isNotEmpty()) {
+                $noticeBulletList = $activeNotices->map(fn($n) => '• ' . $n->message)->implode("\n");
+
+                return response()->json([
+                    'warning' => true,
+                    'needs_notice_confirmation' => true,
+                    'notices' => $activeNotices->pluck('message')->all(),
+                    'message' => "AVISO DE SALIDA PARA ESTE ALUMNO O ALUMNA:\n{$noticeBulletList}\n\n¿Deseas autorizar la salida de todos modos?",
+                    'error' => 'Aviso de salida configurado para este alumno.'
+                ], 422);
             }
         }
 

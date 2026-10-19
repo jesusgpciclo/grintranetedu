@@ -60,6 +60,11 @@ class User extends Authenticatable
         )->withTimestamps();
     }
 
+    public function hallPassNotices()
+    {
+        return $this->hasMany(\App\Models\HallPassNotice::class, 'user_id');
+    }
+
     public function modulos()
     {
         return $this->belongsToMany(Modulo::class, 'modulo_user', 'user_id', 'modulo_id');
