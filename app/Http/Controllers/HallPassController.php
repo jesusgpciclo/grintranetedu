@@ -206,6 +206,44 @@ class HallPassController extends Controller
             }
         }
 
+        // Comprobar conflicto de incompatibilidad entre alumnos en pasillo
+        if (!$request->boolean('force_incompatibility')) {
+            $incompatibleGroupIds = \DB::table('hall_pass_incompatibility_group_user')
+                ->where('user_id', $request->student_id)
+                ->pluck('group_id');
+
+            if ($incompatibleGroupIds->isNotEmpty()) {
+                $otherIncompatibleUserIds = \DB::table('hall_pass_incompatibility_group_user')
+                    ->whereIn('group_id', $incompatibleGroupIds)
+                    ->where('user_id', '!=', $request->student_id)
+                    ->pluck('user_id')
+                    ->unique();
+
+                if ($otherIncompatibleUserIds->isNotEmpty()) {
+                    $conflictingPasses = HallPass::whereNull('end_time')
+                        ->whereIn('user_id', $otherIncompatibleUserIds)
+                        ->with(['student.groupRel'])
+                        ->get();
+
+                    if ($conflictingPasses->isNotEmpty()) {
+                        $names = $conflictingPasses->map(function ($p) {
+                            $stu = $p->student;
+                            $groupName = $stu?->groupRel ? " ({$stu->groupRel->name})" : '';
+                            return trim(($stu?->name ?? '') . ' ' . ($stu?->last_name ?? '')) . $groupName;
+                        })->unique()->implode(', ');
+
+                        return response()->json([
+                            'warning' => true,
+                            'needs_incompatibility_confirmation' => true,
+                            'conflicting_students' => $names,
+                            'message' => "AVISO: Este alumno tiene incompatibilidad con {$names}, que actualmente está fuera en el pasillo. No debería salir en este momento. ¿Deseas autorizar la salida de todos modos?",
+                            'error' => "Conflicto de incompatibilidad: {$names} está en el pasillo."
+                        ], 422);
+                    }
+                }
+            }
+        }
+
         $pass = HallPass::create([
             'user_id' => $request->student_id,
             'teacher_id' => auth()->id(),

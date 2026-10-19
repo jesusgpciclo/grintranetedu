@@ -582,6 +582,17 @@
                     </a>
                 </li>
                 @endcanany
+                @if(auth()->user()->can('salidas.manage') || auth()->user()->can('salidas.create') || auth()->user()->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor']))
+                <li>
+                    <a href="{{ route('salidas.incompatibilities.index') }}"
+                        class="nav-link min-h-[44px] {{ request()->routeIs('salidas.incompatibilities.*') ? 'active' : '' }}">
+                        <svg class="nav-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                            <path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                        </svg>
+                        <span>Incompatibilidades</span>
+                    </a>
+                </li>
+                @endif
             </ul>
         </li>
         @endcanany

@@ -1,216 +1,174 @@
-# 📖 Manual de Usuario: Módulo de Gestión de Pasillos (GrIntranet EDU)
+# 🚪 Guía Práctica de Pasillos: Control de Salidas del Aula
+### GrIntranet EDU — Manual de Uso para el Profesorado y Personal del Centro
 
 ---
 
-## Índice
-1. [Introducción y Objetivos](#1-introducción-y-objetivos)
-2. [Roles y Permisos en el Módulo](#2-roles-y-permisos-en-el-módulo)
-3. [Panel Principal de Pasillos (Gestor de Salidas)](#3-panel-principal-de-pasillos-gestor-de-salidas)
-   - 3.1. [Búsqueda y Filtros de Clase (Chips de Nivel y Favoritos)](#31-búsqueda-y-filtros-de-clase-chips-de-nivel-y-favoritos)
-   - 3.2. [Autorizar Salidas de Alumnos (Rápida y Personalizada)](#32-autorizar-salidas-de-alumnos-rápida-y-personalizada)
-   - 3.3. [Avisos Inteligentes de Aforo y Frecuencia](#33-avisos-inteligentes-de-aforo-y-frecuencia)
-   - 3.4. [Control de Alumnos Fuera y Registro de Regreso](#34-control-de-alumnos-fuera-y-registro-de-regreso)
-4. [Monitor de Pasillos en Tiempo Real](#4-monitor-de-pasillos-en-tiempo-real)
-5. [Historial y Reportes de Salidas](#5-historial-y-reportes-de-salidas)
-   - 5.1. [Filtros Avanzados (Fechas y Franjas Horarias)](#51-filtros-avanzados-fechas-y-franjas-horarias)
-   - 5.2. [Vista Adaptada en Dispositivos Móviles](#52-vista-adaptada-en-dispositivos-móviles)
-   - 5.3. [Descarga en Excel y PDF](#53-descarga-en-excel-y-pdf)
-   - 5.4. [Eliminación Individual y Masiva de Registros](#54-eliminación-individual-y-masiva-de-registros)
-6. [Preguntas Frecuentes (FAQ)](#6-preguntas-frecuentes-faq)
+## 🌟 1. ¿Para qué sirve esta herramienta?
+
+En el día a día del instituto, es habitual que los alumnos pidan permiso para ir al aseo, a buscar material o a secretaría. 
+
+El **Gestor de Pasillos** sustituye los antiguos pases de papel por una herramienta digital pensada para:
+* **Hacerte la vida más fácil:** autorizar una salida te lleva apenas **1 segundo** con un solo clic.
+* **Saber quién está fuera:** tanto tú en tu clase como los compañeros de guardia o conserjería saben quién tiene permiso para estar en el pasillo.
+* **Evitar masificaciones en los baños:** el sistema te avisa amablemente si ya hay varios alumnos en los aseos o si un alumno pide salir muchas veces seguidas.
+* **Cero complicaciones:** tus clases se quedan guardadas y no tienes que estar seleccionándolas una y otra vez.
 
 ---
 
-## 1. Introducción y Objetivos
+## 👥 2. ¿Quién lo utiliza y qué puede hacer cada uno?
 
-El **Módulo de Pasillos** de GrIntranet EDU está diseñado para controlar de forma ágil, visual y centralizada los pases al pasillo del alumnado durante el horario lectivo. Permite:
-- Reducir el tiempo necesario para registrar una salida a menos de 2 segundos.
-- Controlar en tiempo real cuántos alumnos están fuera del aula en todo el centro.
-- Evitar aglomeraciones en baños y zonas comunes mediante avisos de aforo.
-- Disponer de un histórico fiable de salidas por alumno, grupo y tramo horario.
-
----
-
-## 2. Roles y Permisos en el Módulo
-
-El sistema adapta su interfaz según el rol del usuario conectado:
-* **Profesorado:** Puede autorizar salidas de sus alumnos, ver el historial de salidas del día, marcar el regreso de sus alumnos y consultar el monitor de pasillos.
-* **Profesorado de Guardia / Controlador de Pasillos:** Además de lo anterior, puede marcar el regreso de cualquier alumno del centro desde el Monitor de Pasillos.
-* **Conserjería:** Dispone de acceso directo en modo solo lectura al Monitor de Pasillos para consultar quién está autorizado a estar fuera.
-* **Equipo Directivo / Administrador:** Acceso total, incluyendo el historial general, exportación de reportes y eliminación de registros.
+| Perfil | ¿Qué hace en la aplicación? |
+| :--- | :--- |
+| **Profesor/a en el aula** | Deja salir a sus alumnos con un clic, ve el tiempo que llevan fuera y marca su regreso cuando vuelven. Si se equivoca, puede anular la salida fácilmente. |
+| **Profesor/a de guardia** | Consulta el **Monitor** en directo para ver quién anda por el pasillo y puede marcar el regreso de cualquier alumno del centro. |
+| **Conserjería** | Dispone de una pantalla de consulta en tiempo real para comprobar si un alumno que está en la entrada o el pasillo tiene permiso para salir. |
+| **Equipo Directivo** | Puede consultar el historial de días anteriores, descargar informes y decidir a partir de cuántos alumnos en el aseo debe saltar el aviso de aforo. |
 
 ---
 
-## 3. Panel Principal de Pasillos (Gestor de Salidas)
+## 🏫 3. Guía rápida para el profesor en clase
 
-Para acceder al gestor, pulsa en el menú lateral en **Pasillos** (o accede a la ruta `/salidas`).
+Accede desde el menú lateral pulsando en **Pasillos** (o en la barra superior en el botón 🚪 *Pasillos*).
 
-[Captura de imagen: Vista general del panel principal de Pasillos mostrando la barra superior con estadísticas de alumnos activos/hoy, el buscador, el desplegable de clase y el listado de alumnos del grupo seleccionado]
+[Captura de pantalla: Vista general del panel de clase con los alumnos, el buscador y las clases]
 
-### 3.1. Búsqueda y Filtros de Clase (Chips de Nivel y Favoritos)
-
-Para localizar al alumno o grupo deseado dispones de dos herramientas complementarias:
-
-1. **Chips de filtro por Nivel (`Todos`, `1º`, `2º`, `3º`, `4º`...):**
-   - Pulsa sobre el chip del curso deseado (por ejemplo, **2º**).
-   - El desplegable de clases se filtrará automáticamente para mostrarte únicamente los grupos de ese nivel (ej. *2º ESO A, 2º ESO B, etc.*).
-   - La selección queda memorizada en tu dispositivo para que no tengas que repetirla cada vez.
-
-[Captura de imagen: Detalle de los botones de chips de nivel (Todos, 1º, 2º, 3º...) con uno de ellos seleccionado en color azul y el desplegable de clases filtrado desplegado]
-
-2. **Grupos Favoritos (Icono Estrella ⭐):**
-   - Si impartes clase habitualmente en varios grupos, selecciónalos y pulsa el icono de la **estrella** situado a la derecha del desplegable.
-   - Esos grupos quedarán fijados en la parte superior del selector bajo el apartado **"⭐ Favoritos"** y se sincronizarán en todos tus dispositivos.
-
-3. **Buscador Rápido de Alumno:**
-   - Si no recuerdas el grupo exacto, escribe el nombre o apellido del alumno en el cuadro de búsqueda superior.
+### Paso 1: Elige tu clase y guárdala como favorita
+1. En la parte superior, pulsa en el botón de tu curso (por ejemplo, **2º**) y en el desplegable elige tu grupo (ej: *2º ESO B*).
+2. **Consejo de oro ⭐:** Si es una clase a la que das clase habitualmente, pulsa en la **estrella** que hay justo al lado del selector. 
+   - A partir de ese momento, esa clase aparecerá siempre arriba del todo en tus favoritos.
+   - La aplicación recordará siempre tu última clase seleccionada, incluso si cierras el navegador.
 
 ---
 
-### 3.2. Autorizar Salidas de Alumnos (Rápida y Personalizada)
+### Paso 2: Dejar salir a un alumno
 
-Los alumnos aparecen ordenados por **apellidos y nombre** para facilitar su localización en la lista de clase.
+Tienes a tus alumnos ordenados alfabéticamente por apellido. Para darles permiso tienes dos opciones:
 
-[Captura de imagen: Fila o tarjeta de un alumno con el avatar, nombre completo, curso, contador de salidas previas del día y los dos botones de acción: el icono azul de Baño y el icono gris con el símbolo más (+)]
+#### A) Salida rápida al Baño (la más habitual)
+* Pulsa el botón con el **icono azul de aseo/baño** en la fila del alumno.
+* ¡Listo! El alumno pasa a estar "Fuera", su tarjeta se pone en tono naranja y empieza a contar un cronómetro con los minutos que lleva fuera.
 
-Dispones de dos formas de autorizar una salida:
+#### B) Salida por otro motivo (Enfermería, Material, Jefatura...)
+* Pulsa el botón gris con el **signo más (+)** en la tarjeta del alumno.
+* Se abrirá una ventana donde puedes elegir un motivo rápido (*Agua, Enfermedad, Material*) o escribir a mano a dónde va (por ejemplo: *A por tizas*, *Secretaría*).
+* Pulsa en **"Crear Pase"** y el alumno quedará registrado.
 
-#### A) Salida directa a "Baño" (1 solo clic)
-* Pulsa el botón con el **icono de servicio/baño (azul)** en la tarjeta del alumno.
-* La salida se registrará de inmediato y el alumno pasará a estado activo con su cronómetro en marcha.
-
-#### B) Salida por otros motivos (Botón "+")
-* Pulsa el botón con el **icono más (+)** para abrir la ficha detallada del alumno.
-* En la ventana emergente dispones de:
-  1. **Motivos rápidos:** Baño, Agua, Enfermedad o Material.
-  2. **Otro motivo:** Campo de texto libre para detallar salidas especiales (ej: *Biblioteca, Secretaría, Jefatura*).
-  3. **Historial de hoy:** Consulta de todas las veces que ha salido hoy el alumno con indicación de la hora, motivo y el profesor que lo autorizó. Si fuiste tú quien autorizó una salida previa, dispones del botón **✏️ Editar tiempo** para corregir la duración o las horas si fuera necesario.
-
-[Captura de imagen: Ventana modal de opciones del alumno abierta, mostrando los botones de motivos rápidos en colores, el campo de 'Otro motivo' con su botón azul y la lista inferior con el historial de salidas del día de ese alumno]
+[Captura de pantalla: Ventana con los motivos rápidos en colores y el campo para escribir otro motivo]
 
 ---
 
-### 3.3. Avisos Inteligentes de Aforo y Frecuencia
-
-El sistema vela por la convivencia en el centro mediante dos sistemas de aviso no bloqueantes:
-
-1. **Aviso de Salidas Frecuentes del Alumno:**
-   - Si un alumno ya ha salido **2 o más veces en el mismo día**, al intentar autorizar una nueva salida el sistema mostrará una advertencia informativa indicando cuántas veces ha salido y a qué hora fue la última.
-   - El docente decide si pulsa **"Autorizar salida"** o cancela.
-
-[Captura de imagen: Ventana de confirmación 'Aviso de Salidas Frecuentes' alertando de que el alumno ya ha salido 2 veces hoy, con el botón amarillo/naranja 'Autorizar salida']
-
-2. **Aviso de Aforo del Grupo:**
-   - Si en el grupo ya hay **2 o más alumnos fuera de clase a la vez**, la aplicación avisará al profesor indicando que se ha alcanzado el límite recomendado.
-   - **No se bloquea la salida:** El profesor puede pulsar **"Sí, autorizar salida"** en caso de necesidad justificada o urgencia médica, quedando registrada con normalidad.
-
-[Captura de imagen: Ventana modal 'Aviso: Alumnos fuera en este grupo' preguntando si se desea autorizar la salida de todos modos, con los botones Cancelar y 'Sí, autorizar salida']
+### Paso 3: Cuando el alumno vuelve al aula
+* Cuando el alumno entra de nuevo por la puerta, pulsa el botón verde **"Regresar"** que aparece en su tarjeta. El cronómetro se detendrá y el alumno volverá a su estado normal.
+* **Al sonar el timbre de final de clase:** Si tienes a varios alumnos fuera y ya termina la hora, no hace falta que pulses uno a uno; pulsa el botón rojo **"Regresar a todos los alumnos"** que verás arriba y todos quedarán marcados como regresados a la vez.
 
 ---
 
-### 3.4. Control de Alumnos Fuera y Registro de Regreso
+### Paso 4: ¡Me he equivocado de alumno! ¿Cómo lo borro?
+Si le has dado sin querer al botón de un alumno que no ha salido:
+1. Pulsa en el botón **"+"** de ese alumno.
+2. En la parte inferior verás la lista de sus salidas de hoy. Pulsa en **"✏️ Editar tiempo"** en la salida que quieres quitar.
+3. En la casilla pon el número **`0`** y pulsa guardar.
+4. El sistema te preguntará: *¿Deseas eliminar esta salida?*. Al decir que **Sí**, la salida se borrará por completo y el alumno volverá a estar en clase como si nada hubiera pasado.
 
-Cuando un alumno se encuentra fuera del aula:
-* Su tarjeta se resalta con borde ámbar y se sitúa automáticamente **al principio de la lista**.
-* Se activa un **cronómetro en tiempo real** que indica los minutos y segundos transcurridos.
-* Aparece el botón verde **"Regresar"**:
-  - Al regresar el alumno al aula, pulsa **"Regresar"** para cerrar el pase.
-* **Regreso múltiple:** Si necesitas cerrar todos los pases del grupo a la vez (por ejemplo, al finalizar la hora de clase), pulsa el botón rojo inferior **"Regresar a todos los alumnos"**.
-
-[Captura de imagen: Detalle de dos alumnos en estado activo fuera de clase, mostrando el cronómetro en marcha en color naranja, el motivo de la salida y el botón verde 'Regresar']
+> ℹ️ *Por seguridad, solo el profesor que dejó salir al alumno (o el equipo directivo) puede modificar o borrar una salida.*
 
 ---
 
-## 4. Monitor de Pasillos en Tiempo Real
+## ⚠️ 4. Los avisos en pantalla: ¿Qué significan?
 
-El **Monitor de Pasillos** (icono del ojo en la barra superior o ruta `/salidas/monitor`) está pensado para proyectarse o consultarse desde conserjería, guardias o pasillos.
+Para ayudarte a gestionar la convivencia, a veces verás ventanas de aviso informativas. **Ningún aviso te impedirá dejar salir al alumno si tú consideras que lo necesita**, tú tienes siempre la última palabra como docente:
 
-[Captura de imagen: Vista completa de la pantalla del Monitor de Pasillos en modo tabla compacta, mostrando el total de alumnos fuera actualmente, las columnas de Alumno, Grupo, Motivo, Profesor autorizador, Tiempo y el botón verde de regreso]
+### 1. Aviso de salidas frecuentes
+* **Cuándo sale:** Si el alumno ya ha salido **2 o más veces hoy**.
+* **Qué te dice:** Te recuerda cuántas veces ha salido y a qué hora fue la última.
+* **Qué debes hacer:** Tú decides si le permites volver a salir pulsando *"Autorizar salida"* o si prefieres decirle que espere.
 
-* **Información que muestra:**
-  - Alumno (nombre y apellidos en tamaño destacado).
-  - Grupo / Curso.
-  - Motivo de la salida con chip identificativo.
-  - Nombre del profesor o profesora que le ha autorizado a salir.
-  - Tiempo transcurrido con cronómetro dinámico.
-* **Acciones disponibles:**
-  - Los profesores de guardia o usuarios con rol *Controlador de pasillo* pueden registrar el regreso del alumno directamente desde esta pantalla si lo encuentran en el pasillo o regresa a su zona.
-  - El personal de conserjería dispone de esta vista como visor de consulta rápida sin peligro de modificar datos por error.
+### 2. Aviso de aforo en tu clase
+* **Cuándo sale:** Si ya tienes a **2 alumnos fuera de tu aula** en ese momento e intentas que salga un tercero.
+* **Qué te dice:** Te avisa para evitar que se quede la clase vacía. Si hay un motivo justificado (una urgencia médica, un mareo...), puedes pulsar *"Sí, autorizar"* y saldrá normalmente.
 
----
+### 3. Aviso de alumnos en los aseos del centro
+* **Cuándo sale:** Si en ese momento ya hay más de **4 alumnos** (o el número fijado por tu centro) en los baños de todo el instituto.
+* **Qué te dice:** *"AVISO: hay más de 4 alumnos y alumnas en el servicio. ¿Desea continuar?"*
+* **Qué debes hacer:** Si puedes pedirle al alumno que espere dos minutos a que vuelva alguno de los que están fuera, pulsa **"No"**. Si es urgente, pulsa **"Sí"** y saldrá registrado.
 
-## 5. Historial y Reportes de Salidas
-
-Accediendo desde el botón con el icono del reloj (o ruta `/salidas/history`), el equipo directivo y personal autorizado pueden auditar todo el registro de movimientos del centro.
-
-[Captura de imagen: Vista del Historial de Pasillos en ordenador con el buscador principal, el botón 'Fecha y hora', los accesos a 'Descargar Excel' y 'Descargar PDF', y la tabla de registros]
-
-### 5.1. Filtros Avanzados (Fechas y Franjas Horarias)
-
-Para mantener la pantalla despejada, los filtros de fecha y hora se encuentran **ocultos por defecto**.
-
-1. Pulsa en el botón **"Fecha y hora"**:
-   - Se desplegará el panel con los campos:
-     - **Fecha Desde:** Introduce un día para consultar solo esa fecha.
-     - **Fecha Hasta (opcional):** Rellena ambas para consultar un rango (ej: toda una semana o mes).
-     - **Hora Desde / Hora Hasta:** Filtra por tramos horarios lectivos (ej: salidas entre las `10:15` y las `11:45`).
-   - Botón **"📅 Solo Hoy"**: Rellena automáticamente la fecha actual con un solo clic.
-   - Pulsa **"Aplicar"** para ejecutar la búsqueda.
-
-[Captura de imagen: Panel desplegable de 'Filtros por Fecha y Rango de Horas' abierto, mostrando los 4 selectores de fecha y hora junto a los botones 'Solo Hoy', 'Borrar fechas/horas' y 'Aplicar']
-
-2. **Resumen de filtros activos:**
-   - Si cierras el panel o navegas con filtros puestos, debajo del buscador verás unas etiquetas informativas (ej: `📅 15/10/2026 | ⏰ 09:00 → 11:30`) y el botón `Quitar fechas/horas` para volver al listado general en cualquier momento.
+[Captura de pantalla: Ventana de aviso preguntando si desea continuar con opciones Sí y No]
 
 ---
 
-### 5.2. Vista Adaptada en Dispositivos Móviles
+## 🛡️ 5. Si estás de Guardia o en Conserjería: El Monitor
 
-Si consultas el historial desde un teléfono móvil o tablet:
-* La tabla tradicional de ordenador se sustituye por **tarjetas táctiles optimizadas**.
-* Cada tarjeta muestra:
-  - Nombre completo del alumno en letra grande y legible.
-  - Curso y grupo.
-  - Motivo de salida y duración (o indicador `Activo` animado si aún no ha vuelto).
-  - Fecha exacta, hora de inicio y hora de fin.
-  - Nombre del profesor que autorizó el pase.
-  - Checkbox para selección múltiple y botón de papelera para eliminar.
+En la barra superior encontrarás el icono de un ojo (o en el menú: **Pasillos > Monitor**). Esta pantalla está pensada para proyectarse en conserjería o para que el profesor de guardia la lleve en el móvil o tablet mientras recorre el centro.
 
-[Captura de imagen: Pantalla de móvil mostrando el Historial de Pasillos con dos tarjetas de alumnos perfectamente adaptadas a la pantalla vertical con sus etiquetas de colores, horas y profesor]
+[Captura de pantalla: Monitor en tiempo real mostrando la tabla de alumnos en el pasillo, su clase, el profesor que lo autorizó y los minutos que lleva fuera]
 
----
+### ¿Qué información ves de un vistazo?
+* Nombre y apellidos del alumno.
+* Su curso y grupo.
+* Por qué ha salido (con una etiqueta de color: Baño, Enfermería, etc.).
+* **Qué profesor/a le ha dejado salir.**
+* Cuántos minutos lleva fuera en directo.
 
-### 5.3. Descarga en Excel y PDF
+### ¿Qué puedes hacer si estás de guardia?
+Si estás vigilando los pasillos y ves a un alumno regresar a su clase o te encuentras a alguien desorientado, puedes pulsar directamente sobre el botón verde **"Regresar"** en tu pantalla del monitor para cerrar su pase sin necesidad de avisar al profesor de su aula.
 
-En la barra de herramientas del Historial dispones de dos opciones de reporte:
-* **Descargar Excel:** Exporta un archivo `.csv` compatible con Excel con todos los registros filtrados (fecha, alumno, clase, motivo, duración en minutos y profesor).
-* **Descargar PDF:** Abre una vista limpia y maquetada lista para imprimir o guardar en PDF, incluyendo la cabecera oficial del centro, fecha de expedición y el detalle de los filtros aplicados.
-
-[Captura de imagen: Vista previa de impresión del Reporte en PDF con el membrete institucional, los filtros aplicados en el encabezado y la tabla maquetada]
+> 👁️ *El personal de conserjería ve exactamente la misma pantalla informativa en modo consulta, lo que permite saber al segundo si un alumno tiene permiso para estar fuera o no.*
 
 ---
 
-### 5.4. Eliminación Individual y Masiva de Registros
+## ⚙️ 6. Para Equipo Directivo y Jefatura: Historial y Ajustes
 
-Los usuarios administradores disponen de herramientas para depuración de registros:
-* **Eliminar una salida:** Pulsa el icono de la papelera en la fila o tarjeta correspondiente y confirma en la ventana emergente.
-* **Eliminar seleccionadas:** Marca las casillas de los registros deseados; aparecerá el botón rojo **"Eliminar seleccionadas (N)"**.
-* **Eliminar todo el historial:** Botón para vaciar los registros históricos de cursos anteriores.
+Pulsando en el icono del reloj (o en el menú: **Pasillos > Historial**), dirección y jefatura tienen acceso al registro histórico de salidas.
+
+[Captura de pantalla: Pantalla de Historial con el botón de ajustes en la cabecera, los filtros de fecha y hora y el listado de registros]
+
+### 6.1. Cambiar el número de alumnos permitido en los baños
+¿Prefieres que el aviso salte cuando haya más de 3 alumnos en los aseos? ¿O quizás en tu centro tenéis aseos amplios y queréis subirlo a 6?
+1. En el Historial de Pasillos, pulsa en el **icono del engranaje (⚙️)** situado justo a la derecha del título *"Historial de Pasillos"*.
+2. Se abrirá una pequeña ventana donde puedes escribir el número de alumnos deseado.
+3. Pulsa **"Guardar"**. El cambio se aplica inmediatamente en todo el centro sin necesidad de reiniciar nada.
+
+[Captura de pantalla: Ventana de configuración del límite de alumnos en el servicio abierta con el número y el botón Guardar]
+
+### 6.2. Buscar salidas de días anteriores
+Por defecto el historial te muestra los registros recientes. Si necesitas buscar algo específico:
+* **Por alumno o profesor:** escribe su nombre en la barra de búsqueda.
+* **Por fecha o tramo horario:** pulsa en el botón **"Fecha y hora"**. Podrás indicar un día concreto (o pulsar *"Solo Hoy"*), un rango de fechas (ej: la semana pasada) o incluso una franja horaria (ej: salidas entre las *10:15* y las *11:15*).
+
+### 6.3. Descargar informes para reuniones o familias
+En la parte superior dispones de dos botones muy prácticos:
+* **Descargar Excel:** te descarga una hoja de cálculo con todos los datos filtrados para sacar estadísticas o porcentajes.
+### 6.4. Gestión de Incompatibilidades entre Alumnos
+Para evitar altercados o distracciones entre alumnos con conflictos previos o medidas disciplinarias, el sistema permite definir **Grupos de Incompatibilidad**:
+1. Accede mediante el botón **"Incompatibilidades"** situado en la barra superior o en el menú lateral (**Pasillos > Incompatibilidades**).
+2. Pulsa en **"Nuevo Grupo"**.
+3. Asigna un nombre al grupo (ej: *"Conflicto 2º ESO A - Alumnos X e Y"*) y una descripción opcional.
+4. Utiliza el buscador y el selector de clases para localizar a los alumnos y marca sus casillas (mínimo 2 alumnos).
+5. Pulsa en **"Guardar Grupo"**.
+
+[Captura de pantalla: Formulario de creación de Grupo de Incompatibilidad con buscador de alumnos, filtro de clases y casillas de selección múltiple]
+
+**¿Cómo actúa el aviso en el día a día?**
+Cuando cualquier profesor intenta dar salida a un alumno que pertenece a un grupo de incompatibilidad y otro integrante de su grupo se encuentra ya en el pasillo, la aplicación muestra una ventana de aviso destacada indicando qué compañero está fuera y preguntando si desea autorizar la salida de todos modos o cancelarla.
+
+[Captura de pantalla: Ventana modal de aviso alertando de que el alumno tiene incompatibilidad con otro alumno actualmente fuera en el pasillo y solicitando confirmación para continuar]
 
 ---
 
-## 6. Preguntas Frecuentes (FAQ)
+## 💡 7. Preguntas frecuentes del día a día
 
-### ¿Qué ocurre si un alumno no regresa y el profesor olvida cerrar el pase?
-El sistema cuenta con un proceso automático que, al cambiar de jornada lectiva, cierra automáticamente todas las salidas que quedaron pendientes del día anterior, evitando que queden bloqueadas indefinidamente.
+### ¿Tengo que elegir mi clase cada vez que entro a la web?
+**No.** La aplicación recuerda automáticamente la última clase con la que trabajaste. Si además marcas tus grupos con la estrella ⭐, los tendrás siempre en la parte superior del listado.
 
-### ¿Puede un alumno tener dos pases activos al mismo tiempo?
-No. El sistema comprueba que el alumno no tenga ya un pase abierto y emitirá un mensaje de aviso si se intenta duplicar.
+### ¿Qué pasa si un alumno vuelve y a mí se me olvida pulsar "Regresar"?
+No te preocupes. Al terminar la jornada lectiva, el sistema cierra automáticamente cualquier salida que hubiera quedado abierta por olvido para no alterar los registros del día siguiente. No obstante, se recomienda pulsar "Regresar" para que el tiempo reflejado sea el real.
 
-### ¿Se pueden editar las horas de una salida ya realizada?
-Sí. El profesor que autorizó la salida (o el equipo directivo) puede abrir la ficha del alumno con el botón `+`, localizar la salida en el "Historial de hoy" y pulsar en **✏️ Editar tiempo** para corregir la hora de inicio o la duración en minutos.
+### ¿Puedo ver cuántas veces ha salido un alumno en total?
+Sí. En la ficha de cada alumno (pulsando el botón **"+"**) verás el historial con todas las salidas que ha realizado en el día, los motivos y qué profesores lo autorizaron.
 
-### ¿Se pierden mis grupos favoritos si cambio de navegador?
-No. Aunque los favoritos se guardan en el navegador para una carga instantánea, también se sincronizan automáticamente con tu cuenta en el servidor de la intranet.
+### ¿Puedo usarlo cómodamente desde el móvil?
+**Sí, perfectamente.** Toda la aplicación está adaptada para teléfonos móviles. Los botones son grandes y fáciles de pulsar con el pulgar, y en el historial las tablas se convierten automáticamente en tarjetas táctiles muy cómodas de leer en vertical.
 
 ---
-*Manual actualizado para la versión vigente de GrIntranet EDU.*
+
+*GrIntranet EDU — Diseñado para hacer más sencilla y tranquila la labor docente.*

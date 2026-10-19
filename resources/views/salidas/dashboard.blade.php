@@ -220,7 +220,15 @@ Gestor de <span class="text-blue-500">pasillos</span>
                                 </button>
                             </div>
 
-                            <div class="flex gap-1 shrink-0">
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <a href="{{ route('salidas.incompatibilities.index') }}"
+                                    class="inline-flex items-center gap-1.5 px-3 py-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-rose-500 hover:border-rose-500/40 hover:bg-rose-500/5 transition-all text-xs font-bold"
+                                    title="Grupos de Incompatibilidades de Pasillos">
+                                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                                    </svg>
+                                    <span class="hidden sm:inline">Incompatibilidades</span>
+                                </a>
                                 <a href="{{ route('salidas.monitor') }}"
                                     class="p-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all"
                                     title="Monitor">
@@ -1296,7 +1304,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
             }
         }
 
-        async function createPass(studentId, reason, todayCount = 0, lastExitTime = '', force = false, forceService = false) {
+        async function createPass(studentId, reason, todayCount = 0, lastExitTime = '', force = false, forceService = false, forceIncompatibility = false) {
             if (todayCount >= 2 && !force) {
                 const confirmed = await customModal({
                     title: 'Aviso de Salidas Frecuentes',
@@ -1315,7 +1323,13 @@ Gestor de <span class="text-blue-500">pasillos</span>
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ student_id: studentId, reason: reason, force: force, force_service: forceService })
+                    body: JSON.stringify({
+                        student_id: studentId,
+                        reason: reason,
+                        force: force,
+                        force_service: forceService,
+                        force_incompatibility: forceIncompatibility
+                    })
                 });
 
                 let data = {};
@@ -1324,6 +1338,21 @@ Gestor de <span class="text-blue-500">pasillos</span>
                 } catch (jsonErr) {}
 
                 if (!res.ok) {
+                    // Aviso: Incompatibilidad de pasillos (otro alumno del grupo incompatible está fuera)
+                    if (res.status === 422 && data.needs_incompatibility_confirmation) {
+                        const continueIncompatibility = await customModal({
+                            title: 'Aviso de Incompatibilidad en Pasillo',
+                            description: data.message || 'Este alumno tiene una incompatibilidad registrada con otro alumno que está actualmente en el pasillo. ¿Deseas continuar y autorizar la salida?',
+                            confirmText: 'Sí, autorizar salida',
+                            cancelText: 'Cancelar',
+                            type: 'warning'
+                        });
+                        if (continueIncompatibility) {
+                            return createPass(studentId, reason, todayCount, lastExitTime, force, forceService, true);
+                        }
+                        return;
+                    }
+
                     // Aviso: más de N alumnos en el servicio
                     if (res.status === 422 && data.needs_service_confirmation) {
                         const continueService = await customModal({
@@ -1334,7 +1363,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                             type: 'warning'
                         });
                         if (continueService) {
-                            return createPass(studentId, reason, todayCount, lastExitTime, force, true);
+                            return createPass(studentId, reason, todayCount, lastExitTime, force, true, forceIncompatibility);
                         }
                         return;
                     }
@@ -1349,7 +1378,7 @@ Gestor de <span class="text-blue-500">pasillos</span>
                         });
 
                         if (allowMore) {
-                            return createPass(studentId, reason, todayCount, lastExitTime, true, forceService);
+                            return createPass(studentId, reason, todayCount, lastExitTime, true, forceService, forceIncompatibility);
                         }
                         return;
                     }

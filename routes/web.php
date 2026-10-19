@@ -163,6 +163,12 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/salidas/settings', [\App\Http\Controllers\HallPassController::class, 'updateSettings'])->name('salidas.settings.update');
         Route::post('/salidas/favorites', [\App\Http\Controllers\HallPassController::class, 'toggleFavoriteGroup'])->name('salidas.toggle-favorite');
         Route::patch('/salidas/pass/{hallPass}/time', [\App\Http\Controllers\HallPassController::class, 'updatePassTime'])->name('salidas.pass.update-time');
+
+        // Salidas Incompatibilidades
+        Route::resource('salidas/incompatibilities', \App\Http\Controllers\HallPassIncompatibilityController::class, [
+            'as' => 'salidas',
+            'parameters' => ['incompatibilities' => 'incompatibility']
+        ]);
     });
 
     // --- MÓDULO: Mensajería Interna (Fernández, Raquel) ---

@@ -50,6 +50,16 @@ class User extends Authenticatable
         return $this->belongsTo(Group::class, 'group_id');
     }
 
+    public function hallPassIncompatibilityGroups()
+    {
+        return $this->belongsToMany(
+            \App\Models\HallPassIncompatibilityGroup::class,
+            'hall_pass_incompatibility_group_user',
+            'user_id',
+            'group_id'
+        )->withTimestamps();
+    }
+
     public function modulos()
     {
         return $this->belongsToMany(Modulo::class, 'modulo_user', 'user_id', 'modulo_id');
