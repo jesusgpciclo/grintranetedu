@@ -26,4 +26,9 @@ class Group extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function getFullNameAttribute(): string
+    {
+        return trim(($this->course ? $this->course . ' ' : '') . $this->name);
+    }
 }

@@ -52,7 +52,7 @@ class HallPassIncompatibilityController extends Controller implements HasMiddlew
     public function create()
     {
         $students = $this->getSortedStudents();
-        $classGroups = Group::orderBy('name')->get();
+        $classGroups = Group::orderBy('course')->orderBy('name')->get();
         $selectedStudentIds = old('student_ids', []);
 
         return view('salidas.incompatibilities.form', [
@@ -98,7 +98,7 @@ class HallPassIncompatibilityController extends Controller implements HasMiddlew
     {
         $incompatibility->load('students');
         $students = $this->getSortedStudents();
-        $classGroups = Group::orderBy('name')->get();
+        $classGroups = Group::orderBy('course')->orderBy('name')->get();
         $selectedStudentIds = old('student_ids', $incompatibility->students->pluck('id')->toArray());
 
         return view('salidas.incompatibilities.form', [

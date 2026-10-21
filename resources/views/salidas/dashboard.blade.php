@@ -221,27 +221,6 @@ Gestor de <span class="text-blue-500">pasillos</span>
                             </div>
 
                             <div class="flex items-center gap-1.5 shrink-0 flex-wrap">
-                                @if(auth()->user()->can('salidas.incompatibilities') || auth()->user()->hasRole('admin'))
-                                <a href="{{ route('salidas.incompatibilities.index') }}"
-                                    class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-rose-500 hover:border-rose-500/40 hover:bg-rose-500/5 transition-all text-xs font-bold"
-                                    title="Grupos de Incompatibilidades de Pasillos">
-                                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
-                                    </svg>
-                                    <span class="hidden md:inline">Incompatibilidades</span>
-                                </a>
-                                @endif
-
-                                @if(auth()->user()->can('salidas.notices') || auth()->user()->hasRole('admin'))
-                                <a href="{{ route('salidas.notices.index') }}"
-                                    class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-amber-500 hover:border-amber-500/40 hover:bg-amber-500/5 transition-all text-xs font-bold"
-                                    title="Avisos Especiales de Salidas">
-                                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                    </svg>
-                                    <span class="hidden md:inline">Avisos Salidas</span>
-                                </a>
-                                @endif
 
                                 <a href="{{ route('salidas.monitor') }}"
                                     class="p-2 bg-[var(--bg-input)] text-[var(--text-muted)] border border-[var(--border)] rounded-xl hover:text-[var(--primary)] hover:border-[var(--primary)] transition-all"
@@ -311,14 +290,6 @@ Gestor de <span class="text-blue-500">pasillos</span>
                                         title="{{ $studentDisplayName }}">
                                         {{ $studentDisplayName }}
                                     </h3>
-                                    @if(isset($student->hallPassNotices) && $student->hallPassNotices->isNotEmpty())
-                                        <span class="p-1 rounded-lg bg-amber-500/15 text-amber-500 border border-amber-500/30 shrink-0"
-                                            title="Aviso especial de salida: {{ $student->hallPassNotices->pluck('message')->implode(' | ') }}">
-                                            <svg class="w-3.5 h-3.5 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                                            </svg>
-                                        </span>
-                                    @endif
                                     @if($todayCount > 0 && !$activePass)
                                         <span class="today-exits-badge text-[10px] font-extrabold px-1.5 py-0.5 rounded-md {{ $todayCount >= 3 ? 'bg-rose-500/15 text-rose-500 border border-rose-500/30' : 'bg-amber-500/15 text-amber-500 border border-amber-500/30' }}" title="{{ $todayCount }} salidas hoy">
                                             {{ $todayCount }}

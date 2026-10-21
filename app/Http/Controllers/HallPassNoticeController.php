@@ -53,7 +53,7 @@ class HallPassNoticeController extends Controller implements HasMiddleware
         }
 
         $notices = $query->paginate(15)->withQueryString();
-        $classGroups = Group::orderBy('name')->get();
+        $classGroups = Group::orderBy('course')->orderBy('name')->get();
 
         return view('salidas.notices.index', compact('notices', 'search', 'status', 'groupId', 'classGroups'));
     }
@@ -64,7 +64,7 @@ class HallPassNoticeController extends Controller implements HasMiddleware
     public function create()
     {
         $students = $this->getSortedStudents();
-        $classGroups = Group::orderBy('name')->get();
+        $classGroups = Group::orderBy('course')->orderBy('name')->get();
 
         return view('salidas.notices.form', [
             'notice' => new HallPassNotice(['is_active' => true]),
@@ -107,7 +107,7 @@ class HallPassNoticeController extends Controller implements HasMiddleware
     public function edit(HallPassNotice $notice)
     {
         $students = $this->getSortedStudents();
-        $classGroups = Group::orderBy('name')->get();
+        $classGroups = Group::orderBy('course')->orderBy('name')->get();
 
         return view('salidas.notices.form', [
             'notice' => $notice,

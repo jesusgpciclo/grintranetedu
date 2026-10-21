@@ -88,7 +88,7 @@
                             class="w-full bg-[var(--bg-input)] border border-[var(--border)] rounded-xl py-2.5 px-3 text-sm text-[var(--text-color)] focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-all">
                             <option value="">Todas las clases</option>
                             @foreach($classGroups as $cg)
-                                <option value="{{ $cg->id }}">{{ $cg->name }}</option>
+                                <option value="{{ $cg->id }}">{{ trim(($cg->course ? $cg->course . ' ' : '') . $cg->name) }}</option>
                             @endforeach
                         </select>
                     </div>

@@ -140,7 +140,7 @@ En la parte superior dispones de dos botones muy prácticos:
 * **Descargar Excel:** te descarga una hoja de cálculo con todos los datos filtrados para sacar estadísticas o porcentajes.
 ### 6.4. Gestión de Incompatibilidades entre Alumnos
 Para evitar altercados o distracciones entre alumnos con conflictos previos o medidas disciplinarias, el sistema permite definir **Grupos de Incompatibilidad**:
-1. Accede mediante el botón **"Incompatibilidades"** situado en la barra superior o en el menú lateral (**Pasillos > Incompatibilidades**).
+1. Accede desde el menú lateral (**Pasillos > Incompatibilidades**).
 2. Pulsa en **"Nuevo Grupo"**.
 3. Asigna un nombre al grupo (ej: *"Conflicto 2º ESO A - Alumnos X e Y"*) y una descripción opcional.
 4. Utiliza el buscador y el selector de clases para localizar a los alumnos y marca sus casillas (mínimo 2 alumnos).
@@ -160,7 +160,7 @@ El docente puede entonces elegir si autoriza la salida de todos modos (**"Sí, a
 
 ### 6.5. Avisos Especiales de Salidas (Avisos Personalizados por Alumno)
 Permite configurar notas o advertencias específicas para alumnos individuales (por ejemplo: *"Debe salir siempre acompañado"*, *"Dejarle salir siempre que lo solicite por prescripción médica"*, etc.):
-1. Accede desde el botón **"Avisos Salidas"** en la barra superior o en el menú lateral (**Pasillos > Avisos Salidas**).
+1. Accede desde el menú lateral (**Pasillos > Avisos Salidas**).
 2. Pulsa en **"Nuevo Aviso"**.
 3. Selecciona al alumno o alumna deseada mediante el buscador o selector de clase.
 4. Escribe el texto del mensaje o selecciona una de las sugerencias rápidas disponibles.
