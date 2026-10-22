@@ -247,4 +247,18 @@ class HallPassNoticeTest extends TestCase
         $conserje->givePermissionTo('salidas.notices');
         $this->actingAs($conserje->fresh())->get(route('salidas.notices.index'))->assertStatus(200);
     }
+
+    public function test_notice_form_has_student_pagination_elements(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $response = $this->actingAs($teacher)->get(route('salidas.notices.create'));
+
+        $response->assertStatus(200);
+        $response->assertSee('id="student-pagination"', false);
+        $response->assertSee('id="student-pagination-info"', false);
+        $response->assertSee('id="student-pagination-controls"', false);
+    }
 }
+

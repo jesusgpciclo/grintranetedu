@@ -231,4 +231,62 @@ class HallPassIncompatibilityTest extends TestCase
             'end_time' => null,
         ]);
     }
+
+    public function test_incompatibility_form_has_student_pagination_elements(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $response = $this->actingAs($teacher)->get(route('salidas.incompatibilities.create'));
+
+        $response->assertStatus(200);
+        $response->assertSee('id="student-pagination"', false);
+        $response->assertSee('id="student-pagination-info"', false);
+        $response->assertSee('id="student-pagination-controls"', false);
+    }
+
+    public function test_incompatibility_group_card_paginates_students_when_over_40(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $incompGroup = HallPassIncompatibilityGroup::create(['name' => 'Grupo Grande Mas de 40']);
+
+        // Create 45 students
+        $students = User::factory()->count(45)->create();
+        foreach ($students as $st) {
+            $st->assignRole('alumno');
+        }
+        $incompGroup->students()->attach($students->pluck('id')->toArray());
+
+        $response = $this->actingAs($teacher)->get(route('salidas.incompatibilities.index'));
+
+        $response->assertStatus(200);
+        $response->assertSee('group-' . $incompGroup->id . '-page-info', false);
+        $response->assertSee('group-' . $incompGroup->id . '-prev-btn', false);
+        $response->assertSee('group-' . $incompGroup->id . '-next-btn', false);
+        $response->assertSee('data-student-page="2"', false);
+    }
+
+    public function test_incompatibility_group_card_does_not_paginate_students_when_40_or_less(): void
+    {
+        $teacher = User::factory()->create();
+        $teacher->assignRole('profesor');
+
+        $incompGroup = HallPassIncompatibilityGroup::create(['name' => 'Grupo Pequeno Menor de 40']);
+
+        // Create 10 students
+        $students = User::factory()->count(10)->create();
+        foreach ($students as $st) {
+            $st->assignRole('alumno');
+        }
+        $incompGroup->students()->attach($students->pluck('id')->toArray());
+
+        $response = $this->actingAs($teacher)->get(route('salidas.incompatibilities.index'));
+
+        $response->assertStatus(200);
+        $response->assertDontSee('group-' . $incompGroup->id . '-page-info', false);
+        $response->assertDontSee('group-' . $incompGroup->id . '-prev-btn', false);
+    }
 }
+

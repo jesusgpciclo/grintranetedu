@@ -185,6 +185,12 @@
                         No hay alumnos que coincidan con los filtros aplicados.
                     </div>
                 </div>
+
+                <!-- Controles de paginación de alumnos (40 en 40) -->
+                <div id="student-pagination" class="hidden flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-[var(--border)] text-xs text-[var(--text-muted)]">
+                    <div id="student-pagination-info" class="font-medium"></div>
+                    <div class="flex items-center gap-1 flex-wrap justify-center" id="student-pagination-controls"></div>
+                </div>
             </div>
 
             <!-- Botones de Acción -->
@@ -224,11 +230,123 @@
         updateSelectedCount();
     }
 
-    function filterStudents() {
+    const STUDENTS_PER_PAGE = 40;
+    let currentStudentPage = 1;
+    let currentFilteredCards = [];
+
+    function renderStudentPagination(totalCount) {
+        const paginationContainer = document.getElementById('student-pagination');
+        const paginationInfo = document.getElementById('student-pagination-info');
+        const paginationControls = document.getElementById('student-pagination-controls');
+
+        if (!paginationContainer || !paginationControls || !paginationInfo) return;
+
+        if (totalCount <= STUDENTS_PER_PAGE) {
+            paginationContainer.classList.add('hidden');
+            return;
+        }
+
+        paginationContainer.classList.remove('hidden');
+
+        const totalPages = Math.ceil(totalCount / STUDENTS_PER_PAGE);
+        const startItem = (currentStudentPage - 1) * STUDENTS_PER_PAGE + 1;
+        const endItem = Math.min(currentStudentPage * STUDENTS_PER_PAGE, totalCount);
+
+        paginationInfo.innerHTML = `Mostrando <span class="font-bold text-[var(--text-heading)]">${startItem} - ${endItem}</span> de <span class="font-bold text-[var(--text-heading)]">${totalCount}</span> alumnos`;
+
+        let html = '';
+
+        // Botón Anterior
+        const prevDisabled = currentStudentPage === 1;
+        html += `
+            <button type="button" onclick="goToStudentPage(${currentStudentPage - 1})"
+                ${prevDisabled ? 'disabled' : ''}
+                class="px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-color)] hover:bg-[var(--bg-hover)] hover:text-rose-500 font-semibold text-xs flex items-center gap-1 transition-all ${prevDisabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}"
+                title="Página anterior">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span class="hidden sm:inline">Anterior</span>
+            </button>
+        `;
+
+        // Botones numéricos
+        const pageNumbers = getPageNumbers(currentStudentPage, totalPages);
+        pageNumbers.forEach(p => {
+            if (p === '...') {
+                html += `<span class="px-1.5 py-1 text-[var(--text-muted)] select-none">...</span>`;
+            } else {
+                const isActive = p === currentStudentPage;
+                html += `
+                    <button type="button" onclick="goToStudentPage(${p})"
+                        class="min-w-[30px] h-7 px-2 flex items-center justify-center rounded-lg text-xs font-bold transition-all ${isActive ? 'bg-rose-500 text-white shadow-xs' : 'border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-color)] hover:bg-[var(--bg-hover)] hover:border-rose-500/50'}">
+                        ${p}
+                    </button>
+                `;
+            }
+        });
+
+        // Botón Siguiente
+        const nextDisabled = currentStudentPage === totalPages;
+        html += `
+            <button type="button" onclick="goToStudentPage(${currentStudentPage + 1})"
+                ${nextDisabled ? 'disabled' : ''}
+                class="px-2.5 py-1.5 rounded-lg border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-color)] hover:bg-[var(--bg-hover)] hover:text-rose-500 font-semibold text-xs flex items-center gap-1 transition-all ${nextDisabled ? 'opacity-40 cursor-not-allowed pointer-events-none' : ''}"
+                title="Página siguiente">
+                <span class="hidden sm:inline">Siguiente</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        `;
+
+        paginationControls.innerHTML = html;
+    }
+
+    function getPageNumbers(current, total) {
+        if (total <= 7) {
+            return Array.from({ length: total }, (_, i) => i + 1);
+        }
+        if (current <= 4) {
+            return [1, 2, 3, 4, 5, '...', total];
+        }
+        if (current >= total - 3) {
+            return [1, '...', total - 4, total - 3, total - 2, total - 1, total];
+        }
+        return [1, '...', current - 1, current, current + 1, '...', total];
+    }
+
+    function goToStudentPage(page) {
+        const totalPages = Math.ceil(currentFilteredCards.length / STUDENTS_PER_PAGE);
+        if (page < 1 || page > totalPages) return;
+        currentStudentPage = page;
+        applyStudentPageVisibility();
+        renderStudentPagination(currentFilteredCards.length);
+        const container = document.getElementById('students-container');
+        if (container && container.parentElement) {
+            container.parentElement.scrollTop = 0;
+        }
+    }
+
+    function applyStudentPageVisibility() {
+        const startIndex = (currentStudentPage - 1) * STUDENTS_PER_PAGE;
+        const endIndex = startIndex + STUDENTS_PER_PAGE;
+
+        currentFilteredCards.forEach((card, index) => {
+            if (index >= startIndex && index < endIndex) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    function filterStudents(resetPage = true) {
         const search = document.getElementById('student-search-input').value.toLowerCase().trim();
         const groupId = document.getElementById('group-filter-select').value;
-        const cards = document.querySelectorAll('.student-select-card');
-        let visibleCount = 0;
+        const cards = Array.from(document.querySelectorAll('.student-select-card'));
+        
+        currentFilteredCards = [];
 
         cards.forEach(card => {
             const cardSearch = card.getAttribute('data-search') || '';
@@ -238,19 +356,28 @@
             const matchesGroup = groupId === '' || cardGroupId === groupId;
 
             if (matchesSearch && matchesGroup) {
-                card.classList.remove('hidden');
-                visibleCount++;
+                currentFilteredCards.push(card);
             } else {
                 card.classList.add('hidden');
             }
         });
 
         const noMatchEl = document.getElementById('no-students-match');
-        if (visibleCount === 0) {
+        if (currentFilteredCards.length === 0) {
             noMatchEl.classList.remove('hidden');
         } else {
             noMatchEl.classList.add('hidden');
         }
+
+        if (resetPage) {
+            currentStudentPage = 1;
+        } else {
+            const totalPages = Math.ceil(currentFilteredCards.length / STUDENTS_PER_PAGE) || 1;
+            if (currentStudentPage > totalPages) currentStudentPage = totalPages;
+        }
+
+        applyStudentPageVisibility();
+        renderStudentPagination(currentFilteredCards.length);
     }
 
     function selectAllVisible() {
@@ -285,6 +412,9 @@
     });
 
     // Initialize on load
-    document.addEventListener('DOMContentLoaded', updateSelectedCount);
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSelectedCount();
+        filterStudents(true);
+    });
 </script>
 @endsection

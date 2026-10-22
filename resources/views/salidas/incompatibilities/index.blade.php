@@ -180,13 +180,20 @@ Incompatibilidades de <span class="text-rose-500">pasillos</span>
                                 <h4 class="text-xs font-bold text-[var(--text-muted)] uppercase tracking-wider mb-2.5">
                                     Alumnos en este grupo:
                                 </h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="group-students-list-{{ $group->id }}">
+                                    @php
+                                        $hasStudentPagination = $group->students->count() > 40;
+                                        $totalStudentPages = $hasStudentPagination ? ceil($group->students->count() / 40) : 1;
+                                    @endphp
                                     @foreach($group->students as $student)
                                         @php
                                             $courseName = trim(($student->groupRel?->course ? $student->groupRel->course . ' ' : '') . ($student->groupRel?->name ?? ''));
                                             $fullName = trim(($student->last_name ?? '') . ', ' . $student->name);
+                                            $studentPage = floor($loop->index / 40) + 1;
+                                            $isInitialHidden = $hasStudentPagination && $loop->index >= 40;
                                         @endphp
-                                        <div class="flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border)]">
+                                        <div class="group-student-item-{{ $group->id }} flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] {{ $isInitialHidden ? 'hidden' : '' }}"
+                                            data-student-page="{{ $studentPage }}">
                                             <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-xs">
                                                 {{ substr($student->last_name ?? $student->name, 0, 1) }}{{ substr($student->name, 0, 1) }}
                                             </div>
@@ -203,6 +210,41 @@ Incompatibilidades de <span class="text-rose-500">pasillos</span>
                                         </div>
                                     @endforeach
                                 </div>
+
+                                @if($hasStudentPagination)
+                                    <!-- Controles de paginación para el grupo si supera 40 alumnos -->
+                                    <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2.5 mt-2.5 border-t border-[var(--border)] text-xs text-[var(--text-muted)]">
+                                        <span id="group-{{ $group->id }}-page-info" class="font-medium text-[11px]">
+                                            Mostrando <span class="font-bold text-[var(--text-heading)]">1 - 40</span> de <span class="font-bold text-[var(--text-heading)]">{{ $group->students->count() }}</span> alumnos
+                                        </span>
+                                        <div class="flex items-center gap-1">
+                                            <button type="button"
+                                                id="group-{{ $group->id }}-prev-btn"
+                                                onclick="changeGroupStudentPage({{ $group->id }}, -1, {{ $totalStudentPages }}, {{ $group->students->count() }})"
+                                                disabled
+                                                class="px-2 py-1 rounded-lg border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-color)] opacity-40 cursor-not-allowed pointer-events-none text-xs font-semibold flex items-center gap-1 transition-all"
+                                                title="Alumnos anteriores">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                                                </svg>
+                                                <span>Ant.</span>
+                                            </button>
+                                            <span class="px-2 font-bold text-[var(--text-heading)] text-xs" id="group-{{ $group->id }}-curr-page">
+                                                1 / {{ $totalStudentPages }}
+                                            </span>
+                                            <button type="button"
+                                                id="group-{{ $group->id }}-next-btn"
+                                                onclick="changeGroupStudentPage({{ $group->id }}, 1, {{ $totalStudentPages }}, {{ $group->students->count() }})"
+                                                class="px-2 py-1 rounded-lg border border-[var(--border)] bg-[var(--bg-input)] text-[var(--text-color)] hover:bg-[var(--bg-hover)] hover:text-rose-500 text-xs font-semibold flex items-center gap-1 transition-all"
+                                                title="Alumnos siguientes">
+                                                <span>Sig.</span>
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -267,6 +309,68 @@ Incompatibilidades de <span class="text-rose-500">pasillos</span>
 
     function closeDeleteModal() {
         document.getElementById('delete-modal-overlay').classList.add('hidden');
+    }
+
+    const groupStudentPages = {};
+
+    function changeGroupStudentPage(groupId, delta, totalPages, totalCount) {
+        if (!groupStudentPages[groupId]) {
+            groupStudentPages[groupId] = 1;
+        }
+        const newPage = groupStudentPages[groupId] + delta;
+        if (newPage < 1 || newPage > totalPages) return;
+
+        groupStudentPages[groupId] = newPage;
+
+        const items = document.querySelectorAll('.group-student-item-' + groupId);
+        items.forEach(el => {
+            const page = parseInt(el.getAttribute('data-student-page'), 10);
+            if (page === newPage) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        });
+
+        const startItem = (newPage - 1) * 40 + 1;
+        const endItem = Math.min(newPage * 40, totalCount);
+
+        const infoEl = document.getElementById('group-' + groupId + '-page-info');
+        if (infoEl) {
+            infoEl.innerHTML = `Mostrando <span class="font-bold text-[var(--text-heading)]">${startItem} - ${endItem}</span> de <span class="font-bold text-[var(--text-heading)]">${totalCount}</span> alumnos`;
+        }
+
+        const currEl = document.getElementById('group-' + groupId + '-curr-page');
+        if (currEl) {
+            currEl.textContent = `${newPage} / ${totalPages}`;
+        }
+
+        const prevBtn = document.getElementById('group-' + groupId + '-prev-btn');
+        const nextBtn = document.getElementById('group-' + groupId + '-next-btn');
+
+        if (prevBtn) {
+            if (newPage === 1) {
+                prevBtn.disabled = true;
+                prevBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+                prevBtn.classList.remove('hover:bg-[var(--bg-hover)]', 'hover:text-rose-500');
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+                prevBtn.classList.add('hover:bg-[var(--bg-hover)]', 'hover:text-rose-500');
+            }
+        }
+
+        if (nextBtn) {
+            if (newPage === totalPages) {
+                nextBtn.disabled = true;
+                nextBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+                nextBtn.classList.remove('hover:bg-[var(--bg-hover)]', 'hover:text-rose-500');
+            } else {
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+                nextBtn.classList.add('hover:bg-[var(--bg-hover)]', 'hover:text-rose-500');
+            }
+        }
     }
 </script>
 @endsection
