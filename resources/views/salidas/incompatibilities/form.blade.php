@@ -164,7 +164,7 @@
                                     onchange="handleStudentCheck(this)">
 
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-slate-400 to-slate-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-xs">
-                                    {{ substr($student->last_name ?? $student->name, 0, 1) }}{{ substr($student->name, 0, 1) }}
+                                    {{ $student->initials }}
                                 </div>
 
                                 <div class="min-w-0 flex-1">

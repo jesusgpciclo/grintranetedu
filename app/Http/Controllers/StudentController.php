@@ -10,8 +10,33 @@ use Illuminate\Support\Str;
 
 class StudentController extends Controller
 {
+    private function authorizeStudentManage(?User $student = null): void
+    {
+        $user = auth()->user();
+        if (!$user) {
+            abort(401);
+        }
+
+        if ($user->hasAnyRole(['admin', 'directiva'])) {
+            return;
+        }
+
+        if ($user->hasRole('profesor')) {
+            if ($student === null) {
+                return;
+            }
+            if ($student->group_id && Group::where('tutor_id', $user->id)->where('id', $student->group_id)->exists()) {
+                return;
+            }
+        }
+
+        abort(403, 'No tienes permisos para gestionar este alumno.');
+    }
+
     public function index(Request $request)
     {
+        $this->authorizeStudentManage();
+
         $user = auth()->user();
         $activeSchoolYearId = session('active_school_year_id');
         $query = User::role('alumno')->with('groupRel');
@@ -45,22 +70,26 @@ class StudentController extends Controller
         }
 
         $sort = $request->get('sort', 'name');
-        $direction = $request->get('direction', 'asc');
+        $rawDirection = strtolower((string) $request->get('direction', 'asc'));
+        $direction = in_array($rawDirection, ['asc', 'desc'], true) ? $rawDirection : 'asc';
 
         if ($sort === 'group') {
             $query->leftJoin('groups', 'users.group_id', '=', 'groups.id')
                   ->orderBy('groups.course', $direction)
                   ->orderBy('groups.name', $direction)
                   ->select('users.*');
-        } else {
+        } elseif (in_array($sort, ['name', 'last_name', 'email', 'created_at'], true)) {
             $query->orderBy($sort, $direction);
+        } else {
+            $query->orderBy('name', 'asc');
         }
 
         $perPage = $request->get('per_page', 30);
         if ($perPage === 'all') {
             $students = $query->paginate(max(1, $query->count()))->appends($request->all());
         } else {
-            $students = $query->paginate((int) $perPage)->appends($request->all());
+            $perPage = min(500, max(1, (int) $perPage));
+            $students = $query->paginate($perPage)->appends($request->all());
         }
 
         return view('students.index', compact('students', 'groups', 'sort', 'direction', 'perPage'));
@@ -68,6 +97,8 @@ class StudentController extends Controller
 
     public function create()
     {
+        $this->authorizeStudentManage();
+
         $user = auth()->user();
         $query = Group::query();
         if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
@@ -79,6 +110,8 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorizeStudentManage();
+
         $user = auth()->user();
         $request->validate([
             'name' => 'required|string|max:255',
@@ -91,7 +124,7 @@ class StudentController extends Controller
 
         if ($request->group_id && $user->hasRole('profesor') && !$user->hasRole('admin')) {
             $group = Group::find($request->group_id);
-            if ($group->tutor_id !== $user->id) {
+            if (!$group || $group->tutor_id !== $user->id) {
                 abort(403, 'No tienes permiso para asignar alumnos a este grupo.');
             }
         }
@@ -113,16 +146,10 @@ class StudentController extends Controller
 
     public function edit($id)
     {
-        $student = User::findOrFail($id);
+        $student = User::role('alumno')->findOrFail($id);
+        $this->authorizeStudentManage($student);
+
         $user = auth()->user();
-
-        if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
-            $tutoredGroupIds = Group::where('tutor_id', $user->id)->pluck('id')->toArray();
-            if (!in_array($student->group_id, $tutoredGroupIds)) {
-                abort(403, 'No tienes permiso para editar este alumno.');
-            }
-        }
-
         $query = Group::query();
         if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
             $query->where('tutor_id', $user->id);
@@ -134,15 +161,10 @@ class StudentController extends Controller
 
     public function update(Request $request, $id)
     {
-        $student = User::findOrFail($id);
-        $user = auth()->user();
+        $student = User::role('alumno')->findOrFail($id);
+        $this->authorizeStudentManage($student);
 
-        if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
-            $tutoredGroupIds = Group::where('tutor_id', $user->id)->pluck('id')->toArray();
-            if (!in_array($student->group_id, $tutoredGroupIds)) {
-                abort(403, 'No tienes permiso para editar este alumno.');
-            }
-        }
+        $user = auth()->user();
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -155,7 +177,7 @@ class StudentController extends Controller
 
         if ($request->group_id && $user->hasRole('profesor') && !$user->hasRole('admin')) {
             $group = Group::find($request->group_id);
-            if ($group->tutor_id !== $user->id) {
+            if (!$group || $group->tutor_id !== $user->id) {
                 abort(403, 'No tienes permiso para asignar alumnos a este grupo.');
             }
         }
@@ -179,15 +201,8 @@ class StudentController extends Controller
 
     public function destroy($id)
     {
-        $student = User::findOrFail($id);
-        $user = auth()->user();
-
-        if ($user->hasRole('profesor') && !$user->hasRole('admin')) {
-            $tutoredGroupIds = Group::where('tutor_id', $user->id)->pluck('id')->toArray();
-            if (!in_array($student->group_id, $tutoredGroupIds)) {
-                abort(403, 'No tienes permiso para eliminar este alumno.');
-            }
-        }
+        $student = User::role('alumno')->findOrFail($id);
+        $this->authorizeStudentManage($student);
 
         $student->delete();
         return redirect()->route('students.index')->with('success', 'Alumno eliminado correctamente.');
@@ -195,6 +210,8 @@ class StudentController extends Controller
 
     public function export(Request $request, $format)
     {
+        $this->authorizeStudentManage();
+
         $user = auth()->user();
         $query = User::role('alumno')->with('groupRel');
 
@@ -639,8 +656,10 @@ class StudentController extends Controller
 
     public function bulkDelete(Request $request)
     {
+        $this->authorizeStudentManage();
+
         $user = auth()->user();
-        $studentIds = $request->input('student_ids', []);
+        $studentIds = array_map('intval', (array) $request->input('student_ids', []));
 
         if (empty($studentIds)) {
             return back()->withErrors('No se seleccionó ningún alumno.');
@@ -660,8 +679,10 @@ class StudentController extends Controller
 
     public function bulkChangeGroup(Request $request)
     {
+        $this->authorizeStudentManage();
+
         $user = auth()->user();
-        $studentIds = $request->input('student_ids', []);
+        $studentIds = array_map('intval', (array) $request->input('student_ids', []));
         $newGroupId = $request->input('new_group_id');
 
         if (empty($studentIds)) {

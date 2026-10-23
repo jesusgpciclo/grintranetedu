@@ -33,19 +33,23 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer(['layouts.app', 'components.sidebar', 'layouts.sidebar'], function ($view) {
             if (Auth::check()) {
-                $todayStr = now()->format('Y-m-d');
-                $userId = Auth::id();
-                $view->with([
-                    'sidebarBadgeGuardias' => Ausencia::whereDate('fecha', $todayStr)
-                        ->where('es_guardia', false)
-                        ->whereNull('guardia_confirmed_at')
-                        ->count(),
-                    'misGuardiasHoyCount' => Ausencia::whereDate('fecha', $todayStr)
-                        ->where('guardia_user_id', $userId)
-                        ->count(),
-                    'sidebarBadgeSalidas' => HallPass::whereNull('end_time')->count(),
-                    'sidebarBadgeIncidencias' => Incidencia::where('estado', 'abierta')->count(),
-                ]);
+                static $sidebarBadgeData = null;
+                if ($sidebarBadgeData === null) {
+                    $todayStr = now()->format('Y-m-d');
+                    $userId = Auth::id();
+                    $sidebarBadgeData = [
+                        'sidebarBadgeGuardias' => Ausencia::whereDate('fecha', $todayStr)
+                            ->where('es_guardia', false)
+                            ->whereNull('guardia_confirmed_at')
+                            ->count(),
+                        'misGuardiasHoyCount' => Ausencia::whereDate('fecha', $todayStr)
+                            ->where('guardia_user_id', $userId)
+                            ->count(),
+                        'sidebarBadgeSalidas' => HallPass::whereNull('end_time')->count(),
+                        'sidebarBadgeIncidencias' => Incidencia::where('estado', 'abierta')->count(),
+                    ];
+                }
+                $view->with($sidebarBadgeData);
             }
         });
     }

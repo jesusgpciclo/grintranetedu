@@ -195,7 +195,7 @@ Incompatibilidades de <span class="text-rose-500">pasillos</span>
                                         <div class="group-student-item-{{ $group->id }} flex items-center gap-2 p-2 rounded-xl bg-[var(--bg-input)] border border-[var(--border)] {{ $isInitialHidden ? 'hidden' : '' }}"
                                             data-student-page="{{ $studentPage }}">
                                             <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-xs">
-                                                {{ substr($student->last_name ?? $student->name, 0, 1) }}{{ substr($student->name, 0, 1) }}
+                                                {{ $student->initials }}
                                             </div>
                                             <div class="min-w-0 flex-1">
                                                 <div class="text-xs font-bold text-[var(--text-heading)] truncate" title="{{ $fullName }}">

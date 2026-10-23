@@ -147,7 +147,7 @@
                         <tr class="hover:bg-slate-50/80 dark:hover:bg-slate-800/20 transition">
                             <td class="py-3.5 px-5 flex items-center gap-3">
                                 <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-800 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs shrink-0">
-                                    {{ strtoupper(substr($item['name'], 0, 1)) }}
+                                    {{ mb_strtoupper(mb_substr($item['name'] ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                 </div>
                                 <span class="font-bold text-slate-900 dark:text-white">{{ $item['name'] }}</span>
                             </td>

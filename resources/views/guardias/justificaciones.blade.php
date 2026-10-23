@@ -146,7 +146,7 @@
                                         <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" class="w-9 h-9 rounded-full object-cover shadow-sm border border-slate-200 dark:border-slate-700">
                                     @else
                                         <div class="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-primary text-white flex items-center justify-center font-bold text-xs shadow-sm">
-                                            {{ strtoupper(substr($user->name ?? 'P', 0, 1)) }}
+                                            {{ mb_strtoupper(mb_substr($user->name ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                         </div>
                                     @endif
 

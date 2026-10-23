@@ -113,8 +113,11 @@ class BackupController extends Controller
         }
 
         $errorMsg = empty($output) ? 'No hay salida de error.' : implode(' ', $output);
-        $fullDebug = "CMD: $command | RESULT: $result | OUTPUT: $errorMsg";
-        return redirect()->route('backups.index')->with('error', 'Error al crear backup. Depuración: ' . $fullDebug);
+        \Illuminate\Support\Facades\Log::error("Backup creation failed", [
+            'exit_code' => $result,
+            'output' => \Illuminate\Support\Str::limit($errorMsg, 500),
+        ]);
+        return redirect()->route('backups.index')->with('error', 'Error al crear la copia de seguridad. Consulte los registros del sistema.');
     }
 
     /**

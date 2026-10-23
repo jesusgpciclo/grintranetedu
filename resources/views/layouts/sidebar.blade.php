@@ -48,7 +48,7 @@
             @else
                 <div
                     style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #2563eb); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; box-shadow: var(--shadow-sm);" class="group-hover:scale-105 transition-transform duration-200">
-                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                    {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                 </div>
             @endif
             <div style="overflow: hidden; flex: 1;">
@@ -109,7 +109,8 @@
     <!-- School Year Selector -->
     @if(isset($allSchoolYears) && count($allSchoolYears) > 0 && auth()->check() && auth()->user()->canSelectSchoolYear())
     <div class="school-year-selector" style="margin: 0 0 1rem 0; padding: 0.75rem; background: var(--bg-hover); border: 1px solid var(--border); border-radius: 0.75rem;">
-        <form action="" method="GET" id="school-year-select-form">
+        <form action="{{ route('school-year.set-active') }}" method="POST" id="school-year-select-form">
+            @csrf
             <label for="set_school_year_id" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.725rem; color: var(--text-muted); margin-bottom: 0.35rem; font-weight: 700;">
                 <svg class="w-3.5 h-3.5 text-sky-500" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
                     <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

@@ -15,8 +15,18 @@ class TeacherController extends Controller
         return Role::where('name', 'profesor')->exists();
     }
 
+    private function authorizeAdmin(): void
+    {
+        $user = auth()->user();
+        if (!$user || !$user->hasRole('admin')) {
+            abort(403, 'Acción solo para administradores.');
+        }
+    }
+
     public function index(Request $request)
     {
+        $this->authorizeAdmin();
+
         $roleExists = $this->checkProfesorRoleExists();
         
         $query = $roleExists ? User::role('profesor') : User::whereRaw('1 = 0');
@@ -33,7 +43,8 @@ class TeacherController extends Controller
         }
 
         $sort = $request->get('sort', 'name');
-        $direction = $request->get('direction', 'asc');
+        $rawDirection = strtolower((string) $request->get('direction', 'asc'));
+        $direction = in_array($rawDirection, ['asc', 'desc'], true) ? $rawDirection : 'asc';
 
         if (in_array($sort, ['name', 'last_name', 'email', 'departamento', 'created_at'])) {
             $query->orderBy($sort, $direction);
@@ -45,7 +56,8 @@ class TeacherController extends Controller
         if ($perPage === 'all') {
             $teachers = $query->paginate(max(1, $query->count()))->appends($request->all());
         } else {
-            $teachers = $query->paginate((int) $perPage)->appends($request->all());
+            $perPage = min(500, max(1, (int) $perPage));
+            $teachers = $query->paginate($perPage)->appends($request->all());
         }
 
         return view('teachers.index', compact('teachers', 'sort', 'direction', 'perPage', 'roleExists'));
@@ -53,6 +65,8 @@ class TeacherController extends Controller
 
     public function create()
     {
+        $this->authorizeAdmin();
+
         if (!$this->checkProfesorRoleExists()) {
             return redirect()->route('teachers.index')->with('error', 'El rol "profesor" no existe en el sistema. Debes crearlo previamente en la sección de Administración > Roles.');
         }
@@ -62,6 +76,8 @@ class TeacherController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorizeAdmin();
+
         if (!$this->checkProfesorRoleExists()) {
             return back()->withErrors('El rol "profesor" no existe en el sistema. Debes crearlo previamente en la sección de Administración > Roles.');
         }
@@ -92,12 +108,16 @@ class TeacherController extends Controller
 
     public function edit($id)
     {
+        $this->authorizeAdmin();
+
         $teacher = User::role('profesor')->findOrFail($id);
         return view('teachers.edit', compact('teacher'));
     }
 
     public function update(Request $request, $id)
     {
+        $this->authorizeAdmin();
+
         $teacher = User::role('profesor')->findOrFail($id);
 
         $request->validate([
@@ -128,7 +148,11 @@ class TeacherController extends Controller
 
     public function destroy($id)
     {
+        $this->authorizeAdmin();
+
         $teacher = User::role('profesor')->findOrFail($id);
+        abort_if($teacher->id === auth()->id(), 403, 'No puedes eliminar tu propia cuenta de administrador.');
+
         $teacher->delete();
         return redirect()->route('teachers.index')->with('success', 'Profesor eliminado correctamente.');
     }
@@ -178,6 +202,8 @@ class TeacherController extends Controller
 
     public function import(Request $request)
     {
+        $this->authorizeAdmin();
+
         if (!$this->checkProfesorRoleExists()) {
             return back()->withErrors('El rol "profesor" no existe en el sistema. Debes crearlo previamente en la sección de Administración > Roles.');
         }
@@ -185,7 +211,7 @@ class TeacherController extends Controller
         set_time_limit(300);
 
         $request->validate([
-            'file' => 'required|file',
+            'file' => 'required|file|max:5120',
         ]);
 
         $file = $request->file('file');
@@ -338,13 +364,18 @@ class TeacherController extends Controller
 
     public function bulkDelete(Request $request)
     {
-        $teacherIds = $request->input('teacher_ids', []);
+        $this->authorizeAdmin();
+
+        $teacherIds = array_map('intval', (array) $request->input('teacher_ids', []));
 
         if (empty($teacherIds)) {
             return back()->withErrors('No se seleccionó ningún profesor.');
         }
 
-        $query = User::whereIn('id', $teacherIds)->role('profesor');
+        $query = User::whereIn('id', $teacherIds)
+            ->role('profesor')
+            ->where('id', '!=', auth()->id());
+
         $deletedCount = $query->delete();
 
         return back()->with('success', "Se han eliminado $deletedCount profesores correctamente.");

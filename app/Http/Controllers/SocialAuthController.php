@@ -21,6 +21,14 @@ class SocialAuthController extends Controller
         try {
             $googleUser = Socialite::driver('google')->user();
             
+            $allowedDomain = config('services.google.allowed_domain') ?: env('GOOGLE_ALLOWED_DOMAIN');
+            if (!empty($allowedDomain) && !empty($googleUser->email)) {
+                $emailDomain = strtolower((string) substr(strrchr($googleUser->email, '@'), 1));
+                if ($emailDomain !== strtolower((string) $allowedDomain)) {
+                    return redirect()->route('login')->with('error', 'Debe utilizar una cuenta del dominio institucional del centro (' . $allowedDomain . ').');
+                }
+            }
+
             $user = User::where('google_id', $googleUser->id)
                         ->orWhere('email', $googleUser->email)
                         ->first();

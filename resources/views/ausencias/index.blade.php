@@ -170,7 +170,7 @@
                                                 <img src="{{ $ausencia->user->avatar_url }}" alt="" class="w-7 h-7 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700">
                                             @else
                                                 <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 text-white font-extrabold text-[0.68rem] flex items-center justify-center shrink-0">
-                                                    {{ strtoupper(substr($ausencia->user->name ?? 'P', 0, 1)) }}
+                                                    {{ mb_strtoupper(mb_substr($ausencia->user->name ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                                 </div>
                                             @endif
                                             <div class="overflow-hidden">

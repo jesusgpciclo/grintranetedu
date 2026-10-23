@@ -1046,7 +1046,7 @@
                                 <img src="{{ $user->avatar_url }}" alt="Avatar" class="w-8 h-8 rounded-full object-cover border border-slate-200 dark:border-slate-700 group-hover:scale-105 transition-transform duration-200">
                             @else
                                 <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-sky-500 to-indigo-600 text-white font-extrabold text-xs flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform duration-200">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                 </div>
                             @endif
                             <div class="hidden lg:block text-left leading-tight pr-1">

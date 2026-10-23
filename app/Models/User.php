@@ -357,4 +357,26 @@ class User extends Authenticatable
 
         return $this->spatieGetRoleNames();
     }
+
+    /**
+     * Obtiene las iniciales del usuario (soporta caracteres UTF-8 con tildes, eñes y caracteres diacríticos).
+     */
+    public function getInitialsAttribute(): string
+    {
+        $last = trim((string) ($this->last_name ?? ''));
+        $first = trim((string) ($this->name ?? ''));
+
+        if ($last !== '' && $first !== '') {
+            $char1 = mb_substr($last, 0, 1, 'UTF-8');
+            $char2 = mb_substr($first, 0, 1, 'UTF-8');
+            return mb_strtoupper($char1 . $char2, 'UTF-8');
+        }
+
+        $source = $last !== '' ? $last : $first;
+        if ($source === '') {
+            return 'U';
+        }
+
+        return mb_strtoupper(mb_substr($source, 0, 1, 'UTF-8'), 'UTF-8');
+    }
 }

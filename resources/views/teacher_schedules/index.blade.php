@@ -125,7 +125,7 @@
                         <td style="padding: 1rem 1.25rem; vertical-align: middle;">
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                 <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem; border: 1px solid var(--primary-border);">
-                                    {{ strtoupper(substr($teacher->name, 0, 1) . substr($teacher->last_name ?? '', 0, 1)) }}
+                                    {{ $teacher->initials }}
                                 </div>
                                 <div>
                                     <div style="font-weight: 700; color: var(--text-heading); font-size: 0.95rem;">

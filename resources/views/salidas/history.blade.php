@@ -408,7 +408,7 @@ Historial de <span class="text-blue-500">pasillos</span>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-8 h-8 rounded-full bg-sky-500/10 text-sky-600 dark:text-sky-400 flex items-center justify-center font-bold text-xs border border-sky-500/20">
-                                                    {{ strtoupper(substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1)) }}
+                                                    {{ mb_strtoupper(mb_substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1, 'UTF-8'), 'UTF-8') }}
                                                 </div>
                                                 <span class="text-sm font-semibold text-[var(--text-heading)] group-hover:text-[var(--primary)] transition-colors">
                                                     {{ $pass->student?->last_name ? trim($pass->student->last_name . ', ' . $pass->student->name) : ($pass->student?->name ?? 'Alumno') }}
@@ -463,7 +463,7 @@ Historial de <span class="text-blue-500">pasillos</span>
                                         <input type="checkbox" class="pass-checkbox w-5 h-5 rounded border-[var(--border)] text-rose-600 focus:ring-rose-500 cursor-pointer shrink-0" 
                                                value="{{ $pass->id }}" onchange="updateSelectedCount()">
                                         <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 text-white flex items-center justify-center font-black text-sm shrink-0 shadow-xs">
-                                            {{ strtoupper(substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1)) }}{{ strtoupper(substr($pass->student?->name ?? '', 0, 1)) }}
+                                            {{ $pass->student?->initials ?? 'A' }}
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <h3 class="text-base font-black text-[var(--text-heading)] leading-snug truncate">

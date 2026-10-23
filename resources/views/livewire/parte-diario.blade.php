@@ -261,7 +261,7 @@
                                                     <img src="{{ $ausencia->user->avatar_url }}" alt="" class="w-9 h-9 rounded-full object-cover shrink-0 border border-slate-200 dark:border-slate-700">
                                                 @else
                                                     <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white font-extrabold text-xs flex items-center justify-center shrink-0">
-                                                        {{ strtoupper(substr($ausencia->user->name ?? 'P', 0, 1)) }}
+                                                        {{ mb_strtoupper(mb_substr($ausencia->user->name ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                                     </div>
                                                 @endif
                                                 <div class="overflow-hidden">
@@ -378,7 +378,7 @@
                                 @foreach($disponibles as $disp)
                                     <div class="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-xl border text-xs font-medium {{ $disp['is_recommended'] ? 'bg-sky-50/80 text-sky-900 dark:bg-sky-950/40 dark:text-sky-200 border-sky-300 dark:border-sky-700/80 shadow-sm shadow-sky-500/10' : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700' }}">
                                         <div class="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-black text-[0.65rem] flex items-center justify-center">
-                                            {{ strtoupper(substr($disp['name'], 0, 1)) }}
+                                            {{ mb_strtoupper(mb_substr($disp['name'] ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                         </div>
                                         <span class="font-bold">{{ $disp['name'] }}</span>
                                         @if(!empty($disp['departamento']))

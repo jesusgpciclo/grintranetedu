@@ -540,7 +540,7 @@
                                         <div class="flex items-center justify-between gap-2 p-2 rounded-lg bg-[var(--bg-card)] border border-[var(--border)]">
                                             <div class="flex items-center gap-2 overflow-hidden">
                                                 <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-rose-500 to-amber-500 text-white font-black text-xs flex items-center justify-center shrink-0">
-                                                    {{ strtoupper(substr($ausencia->user->name ?? 'P', 0, 1)) }}
+                                                    {{ mb_strtoupper(mb_substr($ausencia->user->name ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                                 </div>
                                                 <div class="min-w-0 overflow-hidden">
                                                     <div class="text-xs font-extrabold text-[var(--text-heading)] truncate">
@@ -1075,7 +1075,7 @@
                                                         <img src="{{ $ausencia->user->avatar_url }}" alt="" style="width: 34px; height: 34px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;">
                                                     @else
                                                         <div style="width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, #f43f5e, #f59e0b); color: #fff; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
-                                                            {{ strtoupper(substr($ausencia->user->name ?? 'P', 0, 1)) }}
+                                                            {{ mb_strtoupper(mb_substr($ausencia->user->name ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                                         </div>
                                                     @endif
                                                 </div>
@@ -1189,7 +1189,7 @@
                                     @foreach($disponibles as $disp)
                                         <div class="teacher-chip {{ $disp['is_recommended'] ? 'is-priority' : '' }}">
                                             <div style="width: 22px; height: 22px; border-radius: 50%; background: var(--bg-hover); color: var(--primary); font-weight: 800; font-size: 0.7rem; display: flex; align-items: center; justify-content: center;">
-                                                {{ strtoupper(substr($disp['name'], 0, 1)) }}
+                                                {{ mb_strtoupper(mb_substr($disp['name'] ?? 'P', 0, 1, 'UTF-8'), 'UTF-8') }}
                                             </div>
                                             <div style="font-weight: 600; color: var(--text-heading);">
                                                 {{ $disp['name'] }}

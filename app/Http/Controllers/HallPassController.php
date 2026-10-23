@@ -47,17 +47,20 @@ class HallPassController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         if ($user && ($user->hasRole('conserje') || (!$user->can('salidas.create') && !$user->can('salidas.manage') && !$user->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor'])))) {
             return redirect()->route('salidas.monitor');
         }
 
-        // Auto-cerrar salidas no regresadas de días anteriores
-        HallPass::whereNull('end_time')
-            ->whereDate('date', '<', now()->toDateString())
-            ->update(['end_time' => now()]);
+        // Auto-cerrar salidas no regresadas de días anteriores (como máximo una vez al día para evitar write locks innecesarios en peticiones GET)
+        if (!cache()->has('hall_passes_autoclosed_today_' . now()->toDateString())) {
+            HallPass::whereNull('end_time')
+                ->whereDate('date', '<', now()->toDateString())
+                ->update(['end_time' => now()]);
+            cache()->put('hall_passes_autoclosed_today_' . now()->toDateString(), true, now()->endOfDay());
+        }
 
         // Teacher Dashboard
         // Get all groups
@@ -67,14 +70,45 @@ class HallPassController extends Controller
         $activePasses = HallPass::whereNull('end_time')->with(['student.groupRel'])->get();
         $activeStudentIds = $activePasses->pluck('user_id')->flip();
 
-        // Get students (Users with role 'alumno')
-        // Sorted: 1) Active passes first, 2) Alphabetical order by last_name (apellidos), then name
-        $students = User::role('alumno')
+        // Favorite groups from user profile in DB (if available)
+        $userFavorites = ($user && isset($user->favorite_groups)) ? (array) $user->favorite_groups : [];
+
+        // Determinar grupo seleccionado inicialmente
+        $selectedGroupId = $request->query('group_id')
+            ?? $request->cookie('salidas_selected_class')
+            ?? $request->cookie('selected_class');
+
+        if (!$selectedGroupId && !empty($userFavorites) && count($userFavorites) === 1) {
+            $selectedGroupId = (string) $userFavorites[0];
+        }
+        if (!$selectedGroupId && $groups->count() === 1) {
+            $selectedGroupId = (string) $groups->first()->id;
+        }
+
+        // Consulta optimizada de alumnos (cargando solo el grupo seleccionado para máximo rendimiento)
+        $studentsQuery = User::role('alumno')
             ->with(['groupRel', 'hallPassNotices' => function ($q) {
                 $q->where('is_active', true);
             }])
-            ->get()
-            ->sort(function ($a, $b) use ($activeStudentIds) {
+            ->orderBy('last_name')
+            ->orderBy('name');
+
+        if ($selectedGroupId) {
+            $studentsQuery->where('group_id', $selectedGroupId);
+        } elseif ($groups->count() > 1 && User::role('alumno')->count() > 60) {
+            // En centros con muchos alumnos y ningún grupo seleccionado aún en primer acceso,
+            // cargamos solo alumnos con pases activos (para que no se muestren cientos de tarjetas ocultas innecesarias)
+            if (!empty($activeStudentIds)) {
+                $studentsQuery->whereIn('id', array_keys($activeStudentIds->toArray()));
+            } else {
+                $studentsQuery->whereRaw('1 = 0');
+            }
+        }
+
+        $students = $studentsQuery->get();
+
+        if ($activeStudentIds->isNotEmpty() && $students->isNotEmpty()) {
+            $students = $students->sort(function ($a, $b) use ($activeStudentIds) {
                 $aActive = isset($activeStudentIds[$a->id]) ? 0 : 1;
                 $bActive = isset($activeStudentIds[$b->id]) ? 0 : 1;
                 if ($aActive !== $bActive) {
@@ -91,8 +125,8 @@ class HallPassController extends Controller
                 $aName = mb_strtolower(trim($a->name));
                 $bName = mb_strtolower(trim($b->name));
                 return strcoll($aName, $bName);
-            })
-            ->values();
+            })->values();
+        }
 
         // Today's passes for history stats per student, eager loading teacher
         $todayPassesByStudent = HallPass::whereDate('date', now()->toDateString())
@@ -127,10 +161,112 @@ class HallPassController extends Controller
             'today_count' => HallPass::whereDate('date', now()->toDateString())->count(),
         ];
 
-        // Favorite groups from user profile in DB (if available)
-        $userFavorites = ($user && isset($user->favorite_groups)) ? (array) $user->favorite_groups : [];
+        return view('salidas.dashboard', compact('students', 'activePasses', 'groups', 'stats', 'todayPassesByStudent', 'todayPassesJson', 'userFavorites', 'selectedGroupId'));
+    }
 
-        return view('salidas.dashboard', compact('students', 'activePasses', 'groups', 'stats', 'todayPassesByStudent', 'todayPassesJson', 'userFavorites'));
+    /**
+     * Retorna dinámicamente las tarjetas de alumnos de una clase o búsqueda (AJAX ultrarrápido).
+     */
+    public function getCards(Request $request)
+    {
+        $groupId = $request->input('group_id');
+        $search = trim($request->input('search', ''));
+
+        $activePasses = HallPass::whereNull('end_time')->with(['student.groupRel'])->get();
+        $activeStudentIds = $activePasses->pluck('user_id')->flip();
+
+        $studentsQuery = User::role('alumno')
+            ->with(['groupRel', 'hallPassNotices' => function ($q) {
+                $q->where('is_active', true);
+            }])
+            ->orderBy('last_name')
+            ->orderBy('name');
+
+        if ($groupId) {
+            $studentsQuery->where('group_id', $groupId);
+        }
+
+        if ($search !== '') {
+            $tokens = preg_split('/\s+/', $search, -1, PREG_SPLIT_NO_EMPTY);
+            $studentsQuery->where(function ($q) use ($tokens) {
+                foreach ($tokens as $token) {
+                    $q->where(function ($sub) use ($token) {
+                        $sub->where('name', 'like', "%{$token}%")
+                            ->orWhere('last_name', 'like', "%{$token}%");
+                    });
+                }
+            });
+        }
+
+        if (!$groupId && $search !== '') {
+            $studentsQuery->limit(60);
+        } elseif (!$groupId && $search === '') {
+            $studentsQuery->whereRaw('1 = 0');
+        }
+
+        $students = $studentsQuery->get();
+
+        if ($activeStudentIds->isNotEmpty() && $students->isNotEmpty()) {
+            $students = $students->sort(function ($a, $b) use ($activeStudentIds) {
+                $aActive = isset($activeStudentIds[$a->id]) ? 0 : 1;
+                $bActive = isset($activeStudentIds[$b->id]) ? 0 : 1;
+                if ($aActive !== $bActive) {
+                    return $aActive <=> $bActive;
+                }
+
+                $aLastName = mb_strtolower(trim($a->last_name ?? ''));
+                $bLastName = mb_strtolower(trim($b->last_name ?? ''));
+                $cmpLast = strcoll($aLastName, $bLastName);
+                if ($cmpLast !== 0) {
+                    return $cmpLast;
+                }
+
+                $aName = mb_strtolower(trim($a->name));
+                $bName = mb_strtolower(trim($b->name));
+                return strcoll($aName, $bName);
+            })->values();
+        }
+
+        $studentIds = $students->pluck('id');
+        $todayPassesByStudent = HallPass::whereDate('date', now()->toDateString())
+            ->whereIn('user_id', $studentIds)
+            ->with('teacher')
+            ->orderBy('start_time', 'desc')
+            ->get()
+            ->groupBy('user_id');
+
+        $user = auth()->user();
+        $todayPassesJson = $todayPassesByStudent->map(function ($passes) use ($user) {
+            return $passes->map(function ($pass) use ($user) {
+                $start = $pass->start_time ? \Carbon\Carbon::parse($pass->start_time) : null;
+                $end = $pass->end_time ? \Carbon\Carbon::parse($pass->end_time) : null;
+                $duration = ($start && $end) ? max(1, $start->diffInMinutes($end)) : null;
+
+                return [
+                    'id' => $pass->id,
+                    'user_id' => $pass->user_id,
+                    'teacher_id' => $pass->teacher_id,
+                    'teacher_name' => $pass->teacher ? trim($pass->teacher->name . ' ' . ($pass->teacher->last_name ?? '')) : 'Profesor',
+                    'reason' => $pass->reason,
+                    'start_time' => $start ? $start->format('H:i') : '',
+                    'end_time' => $end ? $end->format('H:i') : null,
+                    'duration_minutes' => $duration,
+                    'can_edit_time' => ($user && $pass->teacher_id === $user->id) || ($user && $user->hasRole(['admin', 'jefatura', 'directiva', 'director'])),
+                ];
+            });
+        });
+
+        $html = view('salidas.partials.student_cards', compact('students', 'activePasses', 'todayPassesByStudent'))->render();
+
+        return response()->json([
+            'html' => $html,
+            'count' => $students->count(),
+            'todayPasses' => $todayPassesJson,
+            'groupId' => $groupId,
+            'hasActiveInGroup' => $students->contains(function ($s) use ($activeStudentIds) {
+                return isset($activeStudentIds[$s->id]);
+            }),
+        ]);
     }
 
     /**
@@ -152,9 +288,18 @@ class HallPassController extends Controller
         }
 
         $request->validate([
-            'student_id' => 'required|exists:users,id', // 'student_id' comes from frontend but maps to 'user_id'
+            'student_id' => 'required|exists:users,id',
             'reason' => 'required|string|max:255',
         ]);
+
+        $studentUser = User::find($request->student_id);
+        if (!$studentUser) {
+            return response()->json(['error' => 'Alumno no encontrado.'], 404);
+        }
+
+        if ($studentUser->roles()->exists() && !$studentUser->hasRole('alumno')) {
+            return response()->json(['error' => 'El usuario seleccionado no es un alumno.'], 422);
+        }
 
         // Check active pass for the same student
         $activePass = HallPass::where('user_id', $request->student_id)
@@ -166,8 +311,7 @@ class HallPassController extends Controller
         }
 
         // Check group active passes limit (2 max per group unless forced)
-        $studentUser = User::find($request->student_id);
-        if ($studentUser && $studentUser->group_id && !$request->boolean('force')) {
+        if ($studentUser->group_id && !$request->boolean('force')) {
             $activeGroupPassesCount = HallPass::whereNull('end_time')
                 ->whereHas('student', function($q) use ($studentUser) {
                     $q->where('group_id', $studentUser->group_id);
@@ -348,15 +492,14 @@ class HallPassController extends Controller
             abort(401);
         }
 
-        $canDelete = $user->hasRole(['admin', 'jefatura', 'directiva', 'director', 'profesor'])
-            || $user->can('salidas.manage')
-            || $hallPass->teacher_id === $user->id;
+        $isOwnerTeacher = ($hallPass->teacher_id === $user->id);
+        $isExecutive = $user->hasAnyRole(['admin', 'jefatura', 'directiva', 'director']) || $user->can('salidas.manage');
 
-        if (!$canDelete) {
+        if (!$isOwnerTeacher && !$isExecutive) {
             if (request()->expectsJson()) {
-                return response()->json(['error' => 'No tienes permiso para eliminar esta salida.'], 403);
+                return response()->json(['error' => 'No tienes permiso para eliminar una salida autorizada por otro docente.'], 403);
             }
-            return back()->withErrors('No tienes permiso para eliminar esta salida.');
+            abort(403, 'No tienes permiso para eliminar una salida autorizada por otro docente.');
         }
 
         $hallPass->delete();
@@ -481,11 +624,11 @@ class HallPassController extends Controller
         }
 
         // Sorting
-        $sort = $request->input('sort', 'fecha');
-        $direction = $request->input('direction', 'desc');
-        if (!in_array($direction, ['asc', 'desc'])) {
-            $direction = 'desc';
-        }
+        $allowedSorts = ['fecha', 'alumno', 'clase', 'motivo', 'duracion', 'profesor'];
+        $sort = in_array($request->input('sort'), $allowedSorts, true) ? $request->input('sort') : 'fecha';
+        $rawDirection = strtolower((string) $request->input('direction', 'desc'));
+        $direction = in_array($rawDirection, ['asc', 'desc'], true) ? $rawDirection : 'desc';
+        $directionSql = strtoupper($direction); // strictly 'ASC' or 'DESC'
 
         switch ($sort) {
             case 'alumno':
@@ -506,9 +649,9 @@ class HallPassController extends Controller
                 break;
             case 'duracion':
                 if (\Illuminate\Support\Facades\DB::getDriverName() === 'sqlite') {
-                    $query->orderByRaw('(julianday(end_time) - julianday(start_time)) ' . $direction);
+                    $query->orderByRaw("(julianday(end_time) - julianday(start_time)) {$directionSql}");
                 } else {
-                    $query->orderByRaw('TIMESTAMPDIFF(MINUTE, start_time, end_time) ' . $direction);
+                    $query->orderByRaw("TIMESTAMPDIFF(MINUTE, start_time, end_time) {$directionSql}");
                 }
                 break;
             case 'profesor':
@@ -588,13 +731,22 @@ class HallPassController extends Controller
         return view('salidas.print', compact('passes'));
     }
 
-    public function clearHistory()
+    public function clearHistory(Request $request)
     {
         $this->authorizeHistory();
 
+        $user = auth()->user();
+        if (!$user || !$user->hasRole('admin')) {
+            abort(403, 'Solo los administradores pueden vaciar todo el historial de salidas.');
+        }
+
         HallPass::query()->delete();
 
-        return response()->json(['message' => 'Historial vaciado correctamente.']);
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json(['message' => 'Todo el historial de salidas ha sido eliminado correctamente.']);
+        }
+
+        return back()->with('success', 'Todo el historial de salidas ha sido eliminado correctamente.');
     }
 
     /**

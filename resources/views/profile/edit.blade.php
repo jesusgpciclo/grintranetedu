@@ -92,7 +92,7 @@
                     @if($user->avatar_url)
                         <img id="banner-avatar-preview" src="{{ $user->avatar_url }}" alt="{{ $user->name }}" class="w-full h-full object-cover">
                     @else
-                        <span id="banner-avatar-initial" class="text-2xl font-black">{{ strtoupper(substr($user->name, 0, 1)) }}</span>
+                        <span id="banner-avatar-initial" class="text-2xl font-black">{{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}</span>
                     @endif
                 </div>
                 <div>
@@ -292,7 +292,7 @@
                                     <img id="current-avatar-img" src="{{ $user->avatar_url }}" alt="Avatar" class="w-full h-full object-cover">
                                 @else
                                     <div id="current-avatar-letter" class="w-full h-full bg-sky-500 text-white flex items-center justify-center font-bold text-xl">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                     </div>
                                 @endif
                             </div>
@@ -420,6 +420,15 @@
                         </p>
                     </div>
                 </div>
+
+                @if(!$user->must_change_password)
+                    <div>
+                        <label for="current_password" class="form-label">Contraseña Actual (requerida para cambiar tu contraseña)</label>
+                        <input type="password" id="current_password" name="current_password" 
+                               placeholder="Introduce tu contraseña actual"
+                               class="form-input">
+                    </div>
+                @endif
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>

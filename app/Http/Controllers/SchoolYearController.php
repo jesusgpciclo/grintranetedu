@@ -13,10 +13,31 @@ class SchoolYearController extends Controller implements \Illuminate\Routing\Con
 {
     public static function middleware(): array
     {
-        // Enforce admin role for all School Year management operations
+        // Enforce admin role for all School Year management operations except setActiveYear
         return [
-            'role:admin',
+            new \Illuminate\Routing\Controllers\Middleware('role:admin', except: ['setActiveYear']),
         ];
+    }
+
+    /**
+     * Alterna el curso escolar activo para el contexto de la sesión actual (POST con CSRF).
+     */
+    public function setActiveYear(Request $request)
+    {
+        $user = $request->user();
+        if (!$user || !$user->canSelectSchoolYear()) {
+            abort(403, 'No tienes permiso para cambiar el curso escolar.');
+        }
+
+        $request->validate([
+            'set_school_year_id' => 'required|exists:school_years,id',
+        ]);
+
+        $year = SchoolYear::findOrFail($request->set_school_year_id);
+        Session::put('active_school_year_id', $year->id);
+        Session::put('active_school_year_name', $year->name);
+
+        return back()->with('success', "Curso escolar activo cambiado a {$year->name}.");
     }
 
     /**

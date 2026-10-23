@@ -30,11 +30,11 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('forgot-password', [PasswordResetController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('forgot-password', [PasswordResetController::class, 'sendResetLinkEmail'])->middleware('throttle:3,1')->name('password.email');
 Route::get('reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
-Route::post('reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+Route::post('reset-password', [PasswordResetController::class, 'reset'])->middleware('throttle:5,1')->name('password.update');
 
 // Google Auth Routes
 Route::get('auth/google', [SocialAuthController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback']);
+Route::get('auth/google/callback', [SocialAuthController::class, 'handleGoogleCallback'])->middleware('throttle:10,1');
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\GroupController;
@@ -54,20 +54,27 @@ Route::middleware(['auth'])->group(function () {
     Route::post('groups/import', [GroupController::class, 'import'])->name('groups.import');
     Route::resource('groups', GroupController::class);
 
-    // Student Manager routes
-    Route::post('students/bulk-delete', [\App\Http\Controllers\StudentController::class, 'bulkDelete'])->name('students.bulk-delete');
-    Route::post('students/bulk-change-group', [\App\Http\Controllers\StudentController::class, 'bulkChangeGroup'])->name('students.bulk-change-group');
-    Route::get('students/export/{format}', [\App\Http\Controllers\StudentController::class, 'export'])->name('students.export');
-    Route::get('students/template/{format}', [\App\Http\Controllers\StudentController::class, 'template'])->name('students.template');
-    Route::post('students/import-mass', [\App\Http\Controllers\StudentController::class, 'import'])->name('students.mass-import');
-    Route::resource('students', \App\Http\Controllers\StudentController::class);
+    // School Year Active Context Switch (POST with CSRF)
+    Route::post('/school-year/set-active', [\App\Http\Controllers\SchoolYearController::class, 'setActiveYear'])->name('school-year.set-active');
 
-    // Teacher Manager routes
-    Route::post('teachers/bulk-delete', [\App\Http\Controllers\TeacherController::class, 'bulkDelete'])->name('teachers.bulk-delete');
-    Route::get('teachers/export/{format}', [\App\Http\Controllers\TeacherController::class, 'export'])->name('teachers.export');
-    Route::get('teachers/template/{format}', [\App\Http\Controllers\TeacherController::class, 'template'])->name('teachers.template');
-    Route::post('teachers/import-mass', [\App\Http\Controllers\TeacherController::class, 'import'])->name('teachers.mass-import');
-    Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
+    // Student Manager routes (admin, directiva y profesorado)
+    Route::middleware(['role:admin|directiva|profesor'])->group(function () {
+        Route::post('students/bulk-delete', [\App\Http\Controllers\StudentController::class, 'bulkDelete'])->name('students.bulk-delete');
+        Route::post('students/bulk-change-group', [\App\Http\Controllers\StudentController::class, 'bulkChangeGroup'])->name('students.bulk-change-group');
+        Route::get('students/export/{format}', [\App\Http\Controllers\StudentController::class, 'export'])->name('students.export');
+        Route::get('students/template/{format}', [\App\Http\Controllers\StudentController::class, 'template'])->name('students.template');
+        Route::post('students/import-mass', [\App\Http\Controllers\StudentController::class, 'import'])->name('students.mass-import');
+        Route::resource('students', \App\Http\Controllers\StudentController::class);
+    });
+
+    // Teacher Manager routes (Admin Only)
+    Route::middleware(['role:admin'])->group(function () {
+        Route::post('teachers/bulk-delete', [\App\Http\Controllers\TeacherController::class, 'bulkDelete'])->name('teachers.bulk-delete');
+        Route::get('teachers/export/{format}', [\App\Http\Controllers\TeacherController::class, 'export'])->name('teachers.export');
+        Route::get('teachers/template/{format}', [\App\Http\Controllers\TeacherController::class, 'template'])->name('teachers.template');
+        Route::post('teachers/import-mass', [\App\Http\Controllers\TeacherController::class, 'import'])->name('teachers.mass-import');
+        Route::resource('teachers', \App\Http\Controllers\TeacherController::class);
+    });
 
     // Only admins can manage users, roles, and backups
     Route::middleware(['role:admin'])->group(function () {
@@ -144,38 +151,41 @@ Route::middleware(['auth'])->group(function () {
         });
     });
 
-    // Salidas Integration
+    // Salidas Integration (Operativa docente y control de pasillos)
     Route::middleware(['role:admin|profesor|conserje|directiva|director|controlador-pasillo|jefatura|jefe-de-departamento'])->group(function () {
         Route::get('/salidas', [\App\Http\Controllers\HallPassController::class, 'index'])->name('salidas.index');
+        Route::get('/salidas/cards', [\App\Http\Controllers\HallPassController::class, 'getCards'])->name('salidas.cards');
         Route::post('/salidas/pass', [\App\Http\Controllers\HallPassController::class, 'store'])->name('salidas.store');
         Route::post('/salidas/return-all', [\App\Http\Controllers\HallPassController::class, 'returnAll'])->name('salidas.return-all');
         Route::patch('/salidas/pass/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'update'])->name('salidas.update');
         Route::get('/salidas/monitor', [\App\Http\Controllers\HallPassController::class, 'monitor'])->name('salidas.monitor');
-        Route::get('/salidas/history', [\App\Http\Controllers\HallPassController::class, 'history'])->name('salidas.history');
-        
-        // Salidas history extensions
-        Route::get('/salidas/history/export-csv', [\App\Http\Controllers\HallPassController::class, 'exportCsv'])->name('salidas.history.export-csv');
-        Route::get('/salidas/history/print', [\App\Http\Controllers\HallPassController::class, 'printHistory'])->name('salidas.history.print');
-        Route::delete('/salidas/history/clear', [\App\Http\Controllers\HallPassController::class, 'clearHistory'])->name('salidas.history.clear');
-        Route::delete('/salidas/history/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.history.destroy');
         Route::delete('/salidas/pass/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.destroy');
-        Route::post('/salidas/history/bulk-delete', [\App\Http\Controllers\HallPassController::class, 'bulkDelete'])->name('salidas.history.bulk-delete');
-        Route::patch('/salidas/settings', [\App\Http\Controllers\HallPassController::class, 'updateSettings'])->name('salidas.settings.update');
+        Route::delete('/salidas/history/{hallPass}', [\App\Http\Controllers\HallPassController::class, 'destroy'])->name('salidas.history.destroy');
         Route::post('/salidas/favorites', [\App\Http\Controllers\HallPassController::class, 'toggleFavoriteGroup'])->name('salidas.toggle-favorite');
         Route::patch('/salidas/pass/{hallPass}/time', [\App\Http\Controllers\HallPassController::class, 'updatePassTime'])->name('salidas.pass.update-time');
 
-        // Salidas Incompatibilidades
+        // Salidas Incompatibilidades (autorización granular gestionada por controlador)
         Route::resource('salidas/incompatibilities', \App\Http\Controllers\HallPassIncompatibilityController::class, [
             'as' => 'salidas',
             'parameters' => ['incompatibilities' => 'incompatibility']
         ]);
 
-        // Salidas Avisos
+        // Salidas Avisos (autorización granular gestionada por controlador)
         Route::patch('salidas/notices/{notice}/toggle', [\App\Http\Controllers\HallPassNoticeController::class, 'toggle'])->name('salidas.notices.toggle');
         Route::resource('salidas/notices', \App\Http\Controllers\HallPassNoticeController::class, [
             'as' => 'salidas',
             'parameters' => ['notices' => 'notice']
         ]);
+    });
+
+    // Salidas History y Gestión Avanzada (Roles Directivos y Admin)
+    Route::middleware(['role:admin|jefatura|directiva|director'])->group(function () {
+        Route::get('/salidas/history', [\App\Http\Controllers\HallPassController::class, 'history'])->name('salidas.history');
+        Route::get('/salidas/history/export-csv', [\App\Http\Controllers\HallPassController::class, 'exportCsv'])->name('salidas.history.export-csv');
+        Route::get('/salidas/history/print', [\App\Http\Controllers\HallPassController::class, 'printHistory'])->name('salidas.history.print');
+        Route::delete('/salidas/history/clear', [\App\Http\Controllers\HallPassController::class, 'clearHistory'])->name('salidas.history.clear');
+        Route::post('/salidas/history/bulk-delete', [\App\Http\Controllers\HallPassController::class, 'bulkDelete'])->name('salidas.history.bulk-delete');
+        Route::patch('/salidas/settings', [\App\Http\Controllers\HallPassController::class, 'updateSettings'])->name('salidas.settings.update');
     });
 
     // --- MÓDULO: Mensajería Interna (Fernández, Raquel) ---

@@ -82,7 +82,7 @@
                         <td>
                             <div style="display: flex; align-items: center; gap: 0.75rem;">
                                 <div style="width: 32px; height: 32px; border-radius: 50%; background: #4b5563; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;">
-                                    {{ strtoupper(substr($message->receiver->name, 0, 1)) }}
+                                    {{ mb_strtoupper(mb_substr($message->receiver->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                 </div>
                                 <span>{{ $message->receiver->name }}</span>
                             </div>

@@ -26,32 +26,29 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
+        $genericStatus = 'Si el correo electrónico existe en nuestra base de datos, hemos enviado un enlace de restablecimiento de contraseña.';
+
         $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
-            return back()->withErrors(['email' => 'No encontramos un usuario con ese correo electrónico.']);
+        if ($user) {
+            $token = Str::random(64);
+
+            DB::table('password_reset_tokens')->updateOrInsert(
+                ['email' => $request->email],
+                [
+                    'email' => $request->email,
+                    'token' => Hash::make($token),
+                    'created_at' => Carbon::now()
+                ]
+            );
+
+            $resetLink = route('password.reset', ['token' => $token, 'email' => $request->email]);
+            
+            // Send the email via configured mailer
+            Mail::to($request->email)->send(new ResetPasswordMail($resetLink));
         }
-
-        $token = Str::random(64);
-
-        DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $request->email],
-            [
-                'email' => $request->email,
-                'token' => Hash::make($token),
-                'created_at' => Carbon::now()
-            ]
-        );
-
-        $resetLink = route('password.reset', ['token' => $token, 'email' => $request->email]);
         
-        // Send the email (it will be logged in storage/logs/laravel.log due to MAIL_MAILER=log)
-        Mail::to($request->email)->send(new ResetPasswordMail($resetLink));
-
-        // Also log the link for testing purposes
-        Log::info("Password Reset Link for {$request->email}: {$resetLink}");
-        
-        return back()->with('status', '¡Hemos enviado por correo electrónico su enlace de restablecimiento de contraseña! Revisa "storage/logs/laravel.log" para ver el contenido del correo.');
+        return back()->with('status', $genericStatus);
     }
 
     public function showResetForm(Request $request, $token)
@@ -71,13 +68,18 @@ class PasswordResetController extends Controller
             ->where('email', $request->email)
             ->first();
 
-        if (!$reset || !Hash::check($request->token, $reset->token)) {
-            return back()->withErrors(['email' => 'Este token de restablecimiento de contraseña no es válido.']);
+        $isExpired = false;
+        if ($reset && $reset->created_at) {
+            $isExpired = Carbon::parse($reset->created_at)->addMinutes(60)->isPast();
+        }
+
+        if (!$reset || $isExpired || !Hash::check($request->token, $reset->token)) {
+            return back()->withErrors(['email' => 'Este enlace de restablecimiento de contraseña no es válido o ha caducado.']);
         }
 
         $user = User::where('email', $request->email)->first();
         if (!$user) {
-            return back()->withErrors(['email' => 'No encontramos un usuario con ese correo electrónico.']);
+            return redirect()->route('login');
         }
 
         $user->forceFill([

@@ -93,7 +93,7 @@ Monitor de <span class="text-blue-500">pasillos</span>
                                         <td class="py-3.5 px-4">
                                             <div class="flex items-center gap-3">
                                                 <div class="h-11 w-11 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-xs shrink-0">
-                                                    {{ substr($pass->student?->last_name ?? $pass->student?->name ?? 'A', 0, 1) }}{{ substr($pass->student?->name ?? '', 0, 1) }}
+                                                    {{ $pass->student?->initials ?? 'A' }}
                                                 </div>
                                                 <div>
                                                     <div class="flex items-center gap-2">

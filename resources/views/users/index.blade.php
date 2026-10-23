@@ -83,7 +83,7 @@
                                 <img src="{{ asset('storage/' . $user->avatar) }}" alt="Avatar" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
                             @else
                                 <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem;">
-                                    {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    {{ mb_strtoupper(mb_substr($user->name, 0, 1, 'UTF-8'), 'UTF-8') }}
                                 </div>
                             @endif
                         </td>

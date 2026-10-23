@@ -117,7 +117,7 @@
                                     {{ $isSelected ? 'checked' : '' }}
                                     onchange="handleStudentSelect(this, '{{ addslashes($displayName) }}')">
                                 <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center font-bold text-xs shrink-0">
-                                    {{ substr($student->last_name ?? $student->name, 0, 1) }}{{ substr($student->name, 0, 1) }}
+                                    {{ $student->initials }}
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <div class="text-xs sm:text-sm font-bold text-[var(--text-heading)] truncate">

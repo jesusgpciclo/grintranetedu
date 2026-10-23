@@ -168,7 +168,7 @@ Avisos de <span class="text-amber-500">salidas</span>
                             <div class="flex items-start justify-between gap-3 mb-3">
                                 <div class="flex items-center gap-3 min-w-0 flex-1">
                                     <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-amber-500 to-amber-600 text-white flex items-center justify-center font-black text-xs shrink-0 shadow-xs">
-                                        {{ substr($student?->last_name ?? $student?->name ?? 'A', 0, 1) }}{{ substr($student?->name ?? '', 0, 1) }}
+                                        {{ $student?->initials ?? 'A' }}
                                     </div>
                                     <div class="min-w-0 flex-1">
                                         <h3 class="text-sm sm:text-base font-bold text-[var(--text-heading)] truncate" title="{{ $studentDisplayName }}">
